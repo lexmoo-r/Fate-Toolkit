@@ -1,0 +1,56 @@
+name: Package Foundry module
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'module.json'
+      - 'scripts/**'
+      - 'styles/**'
+      - 'templates/**'
+      - 'lang/**'
+      - '.github/workflows/package.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fate-toolkit-package-main
+  cancel-in-progress: false
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+      - name: Create installable ZIP
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          from zipfile import ZIP_DEFLATED, ZipFile
+          root = Path.cwd()
+          version = json.loads((root / 'module.json').read_text())['version']
+          target = root / 'dist' / f'fate-toolkit-v{version}.zip'
+          target.parent.mkdir(exist_ok=True)
+          files = [root / name for name in ('module.json', 'README.md', 'CHANGELOG.md', 'LICENSE')]
+          for folder in ('scripts', 'styles', 'templates', 'lang', 'docs'):
+              files.extend(p for p in (root / folder).rglob('*') if p.is_file())
+          with ZipFile(target, 'w', ZIP_DEFLATED, compresslevel=9) as archive:
+              for file in sorted(files):
+                  archive.write(file, file.relative_to(root).as_posix())
+          print(f'Packaged {len(files)} files: {target}')
+          PY
+      - name: Publish archive to main
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          version=$(node -p "require('./module.json').version")
+          git add "dist/fate-toolkit-v${version}.zip"
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Package Fate Toolkit v${version}"
+          git push origin HEAD:main
