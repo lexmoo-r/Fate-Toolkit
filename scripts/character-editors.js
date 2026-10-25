@@ -48,9 +48,10 @@
   const field=(label,control,full=false)=>`<div class="fte-field${full?' fte-field-full':''}"><span class="fte-field-label">${label}</span>${control}</div>`;
   const prettyName=value=>{
     const raw=String(value??'');
-    return /^New Aspect(?: \d+)?$/i.test(raw)?'Новый аспект':
-      /^New Stunt(?: \d+)?$/i.test(raw)?'Новый трюк':
-      /^New Skill(?: \d+)?$/i.test(raw)?'Новый навык':raw;
+    const match=/^(New Aspect|New Stunt|New Skill)(?: (\d+))?$/i.exec(raw);
+    if(!match)return raw;
+    const names={'new aspect':'Новый аспект','new stunt':'Новый трюк','new skill':'Новый навык'};
+    return names[match[1].toLowerCase()]+(match[2]===undefined?'':` ${match[2]}`);
   };
   const skillNames=actor=>[...new Set([...Object.values(actor?.system?.skills||{})
     .map(v=>String(v?.name||'').trim()),...(globalThis.FateToolkitFramework?.names||[])].filter(Boolean))]
