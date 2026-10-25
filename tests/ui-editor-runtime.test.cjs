@@ -27,6 +27,12 @@ const script=fs.readFileSync(path.join(root,'scripts/character-editors.js'),'utf
   assert.ok(contents.every(x=>!x.includes('<form class="fte-editor"')),'no nested forms inside DialogV2');
   assert.equal((contents[0].match(/data-trait-key=/g)||[]).length,19,'skills must be all present, with a scrollable list');
   assert.equal((contents[1].match(/data-trait-key=/g)||[]).length,5,'aspects must be all present');
+  assert.match(contents[0], /<details class="fte-pyramid-shell" data-pyramid-shell open>/, 'ladder is collapsible but visible initially');
+  assert.doesNotMatch(contents[0], /fte-editor-intro/, 'skill editor has no redundant explanatory paragraph');
+  assert.match(contents[1], /fte-editor-intro/, 'other editor explanations remain unchanged');
+  assert.doesNotMatch(contents[0], /fte-skill-progress/, 'no redundant progress meter');
+  assert.match(css, /\.fte-editor \.fte-pyramid\{[^}]*max-height:112px!important/, 'ladder has a compact bounded viewport');
+  assert.match(css, /\.fte-editor:has\(\[data-skill-pyramid\]\) \.fte-skills\{[^}]*flex:1 1 auto!important/, 'skill list gets remaining vertical space');
   assert.match(css,/\.fte-trait\.fte-skill-row\{display:grid!important/, 'compact skills layout is required');
   assert.match(css,/\.fte-list\{[^}]*overflow-y:scroll!important/, 'scrolling must be on the list, not whole document');
   assert.match(css,/\.fte-field\{display:flex!important;flex-direction:column!important/, 'labels stack above controls');

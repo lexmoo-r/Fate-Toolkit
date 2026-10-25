@@ -9,6 +9,7 @@ assert.match(editor,/fte-skill-row/, 'Skills use compact rows');
 assert.match(editor,/data-trait-search/, 'Search is present');
 assert.match(css,/\.fte-skills[^}]*max-height:/, 'Skill list must have a scrollable height');
 assert.match(css,/\.fte-skills[^}]*max-height:/);
+assert.match(css,/\.fte-pyramid-shell\{[^}]*flex:none!important/,'ladder can be collapsed without resizing the list');
 assert.match(css,/overflow-y:(auto|scroll)!important/, 'Scrollable editor rows');
 assert.doesNotMatch(tpl,/data-action="setupCampaignWorldSkills"/, 'World mechanics may not live on actor sheet');
 assert.match(dock,/data-world-traits/);

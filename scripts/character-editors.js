@@ -49,6 +49,34 @@
 .fte-editor .fte-skill-feedback.is-error{background:rgba(191,61,61,.14)!important;color:#ffb0a7!important;font-weight:600!important;}
 .fte-editor .fte-skill-row input.fte-skill-rank:out-of-range{border-color:#c65f5f!important;box-shadow:inset 0 0 0 1px #c65f5f!important;}
 @media(max-width:640px){.fte-editor .fte-pyramid{padding:7px 12px!important;}.fte-editor .fte-pyramid-slot{font-size:10px!important;padding:0 3px!important}.fte-editor .fte-pyramid-heading span{font-size:10px!important;}.fte-editor .fte-pyramid-zero span:last-child{display:none!important}}
+
+/* Compact skill editor: keep the live visual ladder, give the list the height. */
+.fte-editor:has([data-skill-pyramid]){height:clamp(420px,76vh,730px)!important;max-height:calc(100vh - 150px)!important}
+.fte-editor:has([data-skill-pyramid]) .fte-editor-tools{min-height:0!important;padding:6px 14px!important;gap:8px!important}
+.fte-editor:has([data-skill-pyramid]) .fte-skill-summary{display:flex!important;flex-wrap:wrap!important;align-items:center!important;justify-content:space-between!important;gap:6px 14px!important;padding:5px 14px!important;min-height:28px!important}
+.fte-editor:has([data-skill-pyramid]) .fte-skill-metric{display:inline-flex!important;flex-direction:row!important;align-items:baseline!important;gap:5px!important;padding:0!important;background:none!important;font-size:12px!important}
+.fte-editor:has([data-skill-pyramid]) .fte-skill-metric strong{font-size:13px!important;line-height:1.2!important}
+.fte-editor .fte-pyramid-shell{display:block!important;flex:none!important;min-height:0!important;border-bottom:1px solid var(--fte-line)!important}
+.fte-editor .fte-pyramid-toggle{display:flex!important;align-items:center!important;gap:8px!important;min-height:27px!important;padding:3px 14px!important;cursor:pointer!important;list-style:none!important;color:var(--fte-ink)!important;font-size:12px!important;font-weight:600!important}
+.fte-editor .fte-pyramid-toggle::-webkit-details-marker{display:none!important}
+.fte-editor .fte-pyramid-toggle::before{content:"▸";font-size:12px!important;color:var(--fte-dim)!important}
+.fte-editor .fte-pyramid-shell[open]>.fte-pyramid-toggle::before{content:"▾"}
+.fte-editor .fte-pyramid-toggle [data-pyramid-zero]{margin-left:auto!important;color:var(--fte-dim)!important;font-size:11px!important;font-weight:400!important}
+.fte-editor .fte-pyramid{flex:0 1 auto!important;gap:2px!important;max-height:112px!important;overflow-y:auto!important;overscroll-behavior:contain!important;padding:3px 14px 5px!important}
+.fte-editor .fte-pyramid-tier{height:22px!important;grid-template-columns:28px minmax(0,1fr) 34px!important;gap:6px!important}
+.fte-editor .fte-pyramid-tier.is-free{min-height:22px!important}
+.fte-editor .fte-pyramid-track{gap:4px!important}
+.fte-editor .fte-pyramid-slot{height:19px!important;max-width:125px!important;padding:0 4px!important;border-radius:4px!important;font-size:11px!important}
+.fte-editor .fte-pyramid-usage{font-size:10px!important}
+.fte-editor .fte-pyramid-empty{margin:2px 0!important;font-size:11px!important}
+.fte-editor .fte-skill-feedback[hidden]{display:none!important}
+.fte-editor:has([data-skill-pyramid]) .fte-skill-feedback:not([hidden]){padding:5px 14px!important}
+.fte-editor:has([data-skill-pyramid]) .fte-skill-head{min-height:24px!important;padding:3px 22px!important}
+.fte-editor:has([data-skill-pyramid]) .fte-skills{flex:1 1 auto!important;min-height:80px!important;max-height:none!important;overflow-y:auto!important;overflow-x:hidden!important;padding:0 14px 6px!important;scrollbar-gutter:stable!important}
+.fte-editor:has([data-skill-pyramid]) .fte-trait.fte-skill-row{min-height:38px!important;max-height:42px!important;padding:2px 8px!important}
+.fte-editor:has([data-skill-pyramid]) .fte-toolbar{min-height:42px!important;padding:5px 14px!important}
+.fte-editor:has([data-skill-pyramid]) .fte-toolbar>button{min-height:32px!important;max-height:34px!important}
+@media(max-width:640px){.fte-editor:has([data-skill-pyramid]) .fte-editor-tools{grid-template-columns:minmax(0,1fr)!important;gap:4px!important}.fte-editor .fte-pyramid-toggle{padding-inline:10px!important}.fte-editor .fte-pyramid{padding-inline:10px!important}.fte-editor:has([data-skill-pyramid]) .fte-skill-summary{padding-inline:10px!important}.fte-editor:has([data-skill-pyramid]) .fte-skills{padding-inline:8px!important}}
 `;
   function ensureEditorStyles(){
     if(typeof document==='undefined'||!document.head)return;
@@ -127,12 +155,11 @@
     if(overBudget)errors.push(`Превышен бюджет на ${pointsLabel(spent-limit)}.`);
     const remaining=limit===null?null:limit-spent;
     const complete=isPc&&!errors.length&&remaining===0&&tiers.every(t=>t.names.length===t.cap);
-    const note=errors.length?errors.join(' '):!isPc?'Для NPC нет ограничений по пирамиде.':
-      complete?'Стартовая пирамида полностью распределена.':`Осталось распределить ${pointsLabel(remaining)}. Поднимайте навыки по ступеням, не превышая число мест.`;
+    const note=errors.join(' ');
     return {spent,limit,remaining,tiers,invalid:invalid.length,valid:errors.length===0,errors,note,complete,zero:entries.filter(r=>Number(r.rank)===0).length};
   }
   function skillPyramidMarkup(stats){
-    return `<section class="fte-pyramid ${stats.limit===null?'is-free':''}" data-skill-pyramid aria-label="Пирамида навыков"><div class="fte-pyramid-heading"><strong>Пирамида навыков</strong><span data-pyramid-mode>${stats.limit===null?'Свободное распределение NPC':'Начальная форма · +4 / +3 / +2 / +1'}</span></div>${stats.tiers.length?'':'<p class="fte-pyramid-empty">Навыки с рангом +1 и выше появятся здесь.</p>'}${stats.tiers.map(t=>`<div class="fte-pyramid-tier ${stats.limit===null?'is-free':''}" data-pyramid-tier="${t.rank}"><span class="fte-pyramid-grade">+${t.rank}</span><div class="fte-pyramid-track">${Array.from({length:t.cap},(_,i)=>`<span class="fte-pyramid-slot ${t.names[i]?'is-filled':''}" data-pyramid-slot="${i}" title="${quote(t.names[i]||'Свободное место')}">${quote(t.names[i]||'＋')}</span>`).join('')}</div><span class="fte-pyramid-usage" data-pyramid-usage>${stats.limit===null?t.names.length+' нав.':t.names.length+'/'+t.cap}</span></div>`).join('')}<div class="fte-pyramid-zero"><span>+0 — ${stats.zero} навык(ов)</span><span>Заполняйте ступени в списке ниже</span></div></section>`;
+    return `<section class="fte-pyramid ${stats.limit===null?'is-free':''}" data-skill-pyramid aria-label="Лестница навыков">${stats.tiers.length?'':'<p class="fte-pyramid-empty">Нет навыков выше +0</p>'}${stats.tiers.map(t=>`<div class="fte-pyramid-tier ${stats.limit===null?'is-free':''}" data-pyramid-tier="${t.rank}"><span class="fte-pyramid-grade">+${t.rank}</span><div class="fte-pyramid-track">${Array.from({length:t.cap},(_,i)=>`<span class="fte-pyramid-slot ${t.names[i]?'is-filled':''}" data-pyramid-slot="${i}" title="${quote(t.names[i]||'Свободное место')}">${quote(t.names[i]||'＋')}</span>`).join('')}</div><span class="fte-pyramid-usage" data-pyramid-usage>${stats.limit===null?t.names.length+' нав.':t.names.length+'/'+t.cap}</span></div>`).join('')}</section>`;
   }
   function skillRows(root,actor){
     return [...(root?.querySelectorAll?.(isPlayerSkills(actor)?'.fte-skill-row:not([data-extra-owned="true"])':'.fte-skill-row')||[])].map(r=>({name:r.querySelector('[name="name"]')?.value||'',rank:r.querySelector('[name="rank"]')?.value}));
@@ -145,13 +172,11 @@
     assign('[data-skill-remaining]',stats.remaining===null?'—':stats.remaining);
     assign('[data-skill-limit]',stats.limit===null?'Без ограничений':stats.limit);
     const note=root.querySelector('[data-skill-warning]');
-    if(note){note.textContent=stats.note;note.classList.toggle('is-error',!stats.valid);note.setAttribute('role',stats.valid?'status':'alert');}
-    const progress=root.querySelector('[data-skill-progress]');
-    if(progress){progress.max=Math.max(1,stats.limit??stats.spent??1);progress.value=Math.min(progress.max,stats.spent);}
+    if(note){note.hidden=stats.valid;note.textContent=stats.note;note.classList.toggle('is-error',!stats.valid);note.setAttribute('role',stats.valid?'status':'alert');}
     // Rebuild entire graphic: NPC tiers and slot counts vary as inputs change.
     const pyramid=root.querySelector?.('[data-skill-pyramid]');
     if(pyramid) pyramid.outerHTML=skillPyramidMarkup(stats);
-    assign('.fte-pyramid-zero span',`+0 — ${stats.zero} навыков`);
+    assign('[data-pyramid-zero]',`+0: ${stats.zero}`);
     panel.classList.toggle('is-invalid',!stats.valid);
     const editor=root.querySelector('.fte-editor')||root;
     editor.dataset.skillValid=String(stats.valid);
@@ -211,13 +236,12 @@
     ensureEditorStyles();
     const initialSkillStats=getSkillStats(actor,Object.values(original).filter(row=>!isPlayerSkills(actor)||!row?.extra_id).map(row=>({name:row.name,rank:row.rank})));
     const summary=kind==='skills'?`<div data-skill-summary class="fte-skill-summary" role="status" aria-live="polite">
-       <div class="fte-skill-metric"><span>Распределено</span><strong data-skill-spent>${initialSkillStats.spent}</strong></div>
-       <div class="fte-skill-metric"><span>Осталось</span><strong data-skill-remaining>${initialSkillStats.remaining===null?'—':initialSkillStats.remaining}</strong></div>
-       <div class="fte-skill-metric"><span>Бюджет</span><strong data-skill-limit>${initialSkillStats.limit===null?'Без ограничений':initialSkillStats.limit}</strong></div>
-       <progress class="fte-skill-progress" data-skill-progress value="${initialSkillStats.spent}" max="${Math.max(1,initialSkillStats.limit??initialSkillStats.spent)}"></progress>
-     </div>${skillPyramidMarkup(initialSkillStats)}<div class="fte-skill-feedback" data-skill-warning role="status">${initialSkillStats.note}</div>`:'';
-    const form=`<div class="fte-editor" data-fte-editor autocomplete="off"><div class="fte-editor-intro">Изменения сохраняются в анкете персонажа. Свойства, полученные от дополнений, редактируются в самих дополнениях.</div><div class="fte-editor-tools"><strong>${titles[kind]} <span class="fte-count">${Object.keys(original).length}</span></strong><input type="search" class="fte-search" data-trait-search placeholder="Найти ${kind==='skills'?'навык':'запись'}…" aria-label="Поиск по названию"></div>${summary}${kind==='skills'?'<div class="fte-skill-head"><span>Навык</span><span>Ранг</span><span></span></div>':''}<div class="fte-list ${kind==='skills'?'fte-skills':''}" data-traits>${Object.entries(original).map(([k,v])=>entry(kind,k,v,!game.user?.isGM,names)).join('')}</div>${game.user?.isGM?`<div class="fte-toolbar"><button type="button" data-add-trait><i class="fa-solid fa-plus" aria-hidden="true"></i> Добавить ${kind==='skills'?'навык':kind==='aspects'?'аспект':kind==='stunts'?'трюк':'состояние'}</button></div>`:''}</div>`;
-    const response=await foundry.applications.api.DialogV2.wait({window:{title:`Fate Toolkit · ${titles[kind]}`,resizable:true},position:{width:800,height:710},content:form,buttons:[
+       <span class="fte-skill-metric">Очки <strong data-skill-spent>${initialSkillStats.spent}</strong> / <strong data-skill-limit>${initialSkillStats.limit===null?'Без ограничений':initialSkillStats.limit}</strong></span>
+       <span class="fte-skill-metric">Осталось <strong data-skill-remaining>${initialSkillStats.remaining===null?'—':initialSkillStats.remaining}</strong></span>
+     </div><details class="fte-pyramid-shell" data-pyramid-shell open><summary class="fte-pyramid-toggle"><span>Лестница навыков</span><span data-pyramid-zero>+0: ${initialSkillStats.zero}</span></summary>${skillPyramidMarkup(initialSkillStats)}</details><div class="fte-skill-feedback" data-skill-warning role="status" ${initialSkillStats.valid?'hidden':''}>${initialSkillStats.note}</div>`:'';
+    const intro=kind==='skills'?'':'<div class="fte-editor-intro">Изменения сохраняются в анкете персонажа. Свойства, полученные от дополнений, редактируются в самих дополнениях.</div>';
+    const form=`<div class="fte-editor" data-fte-editor autocomplete="off">${intro}<div class="fte-editor-tools"><strong>${titles[kind]} <span class="fte-count">${Object.keys(original).length}</span></strong><input type="search" class="fte-search" data-trait-search placeholder="Найти ${kind==='skills'?'навык':'запись'}…" aria-label="Поиск по названию"></div>${summary}${kind==='skills'?'<div class="fte-skill-head"><span>Навык</span><span>Ранг</span><span></span></div>':''}<div class="fte-list ${kind==='skills'?'fte-skills':''}" data-traits>${Object.entries(original).map(([k,v])=>entry(kind,k,v,!game.user?.isGM,names)).join('')}</div>${game.user?.isGM?`<div class="fte-toolbar"><button type="button" data-add-trait><i class="fa-solid fa-plus" aria-hidden="true"></i> Добавить ${kind==='skills'?'навык':kind==='aspects'?'аспект':kind==='stunts'?'трюк':'состояние'}</button></div>`:''}</div>`;
+    const response=await foundry.applications.api.DialogV2.wait({window:{title:`Fate Toolkit · ${titles[kind]}`,resizable:true},position:{width:kind==='skills'?860:800,height:kind==='skills'?760:710},content:form,buttons:[
       {action:'cancel',label:'Отмена',callback:()=>null},
       {action:'save',label:'Сохранить',default:true,callback:(_event,button)=>{
         const root=button.form||button.closest?.('.application')||document.querySelector?.('.application:has(.fte-editor)');

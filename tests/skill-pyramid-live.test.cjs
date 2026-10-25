@@ -14,6 +14,9 @@ const script=fs.readFileSync(path.join(__dirname,'..','scripts/character-editors
  const actor={isOwner:true,system:{skills:{one:{name:'Атлетика',rank:0},two:{name:'Драка',rank:0}}}};
  await context.FateToolkitEditors.editActor(actor,'skills');
  assert.match(cfg.content,/data-skill-pyramid/);
+ assert.match(cfg.content,/data-pyramid-shell open/,'ladder remains visible and can be collapsed to free list space');
+ assert.doesNotMatch(cfg.content,/Заполняйте ступени|Начальная форма|Изменения сохраняются в анкете персонажа/,'no redundant tips in skills');
+ assert.match(cfg.content,/data-skill-warning role="status" hidden/,'valid allocation hides unnecessary feedback');
  for(const [rank,cap] of [[4,1],[3,2],[2,3],[1,5]]){
    const row=cfg.content.match(new RegExp(`data-pyramid-tier="${rank}"[\\s\\S]*?<\\/div><span class="fte-pyramid-usage"`));
    assert.ok(row,`pyramid tier ${rank} missing`);
