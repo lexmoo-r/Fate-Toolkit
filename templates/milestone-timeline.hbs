@@ -1,0 +1,49 @@
+<div class="fms-root fms-timeline">
+  <div class="fms-scroll">
+    <header class="fms-hero">
+      <div class="fms-hero-icon"><i class="fa-solid fa-timeline" aria-hidden="true"></i></div>
+      <div><h2>{{localize "FMS.Timeline.Title"}}</h2><p>{{localize "FMS.Timeline.Intro"}}</p></div>
+      {{#if isGM}}<button type="button" class="fms-timeline-new" data-fms-new-milestone><i class="fa-solid fa-plus" aria-hidden="true"></i> {{#if hasActive}}{{localize "FMS.Timeline.Manage"}}{{else}}{{localize "FMS.NewMilestone"}}{{/if}}</button>{{/if}}
+    </header>
+    {{#if isGM}}
+    <div class="fms-play-session-bar">
+      {{#if playSessionActive}}
+        <span><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> {{localize "FMS.Timeline.Session"}} № {{playSessionNumber}} · {{playSessionDate}}</span>
+        <button type="button" data-fms-end-play><i class="fa-solid fa-flag-checkered" aria-hidden="true"></i> {{localize "FMS.Timeline.EndPlay"}}</button>
+      {{else}}
+        <span>{{localize "FMS.Timeline.NoPlay"}}</span>
+        <button type="button" data-fms-start-play><i class="fa-solid fa-play" aria-hidden="true"></i> {{localize "FMS.Timeline.StartPlay"}}</button>
+      {{/if}}
+    </div>
+    {{/if}}
+    {{#unless hasEvents}}<div class="fms-empty-state">{{localize "FMS.Timeline.Empty"}}</div>{{/unless}}
+    <div class="fms-campaign-line" role="list">
+      {{#each events}}
+      <article class="fms-timeline-event {{#if active}}is-current{{/if}}" role="listitem">
+        <div class="fms-timeline-rail" aria-hidden="true"><span class="fms-timeline-dot"></span></div>
+        <div class="fms-timeline-content">
+          <header class="fms-timeline-event-head">
+            <div>
+              <strong>{{title}}</strong>
+              <div class="fms-timeline-meta"><span>{{typeLabel}}</span><span>{{dateLabel}}</span>{{#if sessionLabel}}<span>{{sessionLabel}}</span>{{/if}}</div>
+            </div>
+            <span class="fms-status {{#if active}}is-active{{else}}done{{/if}}">{{#if active}}{{localize "FMS.Timeline.Open"}}{{else}}{{localize "FMS.Timeline.Closed"}}{{/if}}</span>
+          </header>
+          {{#if note}}<p class="fms-timeline-note">{{note}}</p>{{/if}}
+          <div class="fms-timeline-count">{{completedCount}} / {{totalCount}} — {{localize "FMS.Timeline.Done"}}</div>
+          {{#if hasParticipants}}<div class="fms-timeline-actors">
+            {{#each participants}}
+            <div class="fms-timeline-actor">
+              <span class="fms-timeline-actor-name"><i class="fa-solid {{#if completed}}fa-check-circle{{else}}fa-hourglass-half{{/if}}" aria-hidden="true"></i> {{actorName}}</span>
+              <span>{{#if completed}}{{localize "FMS.Completed"}}{{else}}{{#if ../active}}{{localize "FMS.Pending"}}{{else}}{{localize "FMS.Timeline.Unfinished"}}{{/if}}{{/if}}</span>
+              {{#if owned}}<button type="button" data-fms-open-choice="{{actorId}}" aria-label="{{localize 'FMS.Timeline.SeeChoice'}}">{{localize "FMS.Timeline.SeeChoice"}}</button>{{/if}}
+              {{#if hasChanges}}<details class="fms-timeline-choice"><summary>{{localize "FMS.Timeline.Choices"}}</summary><ul>{{#each changes}}<li>{{this}}</li>{{/each}}</ul></details>{{/if}}
+            </div>
+            {{/each}}
+          </div>{{/if}}
+        </div>
+      </article>
+      {{/each}}
+    </div>
+  </div>
+</div>

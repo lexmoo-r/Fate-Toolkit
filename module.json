@@ -1,0 +1,128 @@
+{
+  "id": "fate-aspect-widget",
+  "title": "Fate Toolkit: Аспекты и броски",
+  "description": "Fate Toolkit для Foundry VTT v13: русифицированные аспекты, действия, броски, конфликты и анкета персонажа.",
+  "version": "1.50.0-preview.9.3",
+  "authors": [
+    {
+      "name": "Фиша"
+    }
+  ],
+  "compatibility": {
+    "minimum": "13.351",
+    "verified": "13.351",
+    "maximum": "13.351"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "fate-core-official",
+        "type": "system",
+        "compatibility": {
+          "minimum": "4.7.13.6",
+          "verified": "4.7.13.6",
+          "maximum": "4.7.13.6"
+        }
+      }
+    ],
+    "requires": [
+      {
+        "id": "socketlib",
+        "type": "module",
+        "compatibility": {
+          "minimum": "1.1.3",
+          "verified": "1.1.3"
+        }
+      }
+    ]
+  },
+  "esmodules": [
+    "scripts/window-restore-0.8.8.js",
+    "scripts/ux.js",
+    "scripts/permissions.js",
+    "scripts/rpc.js",
+    "scripts/data-migrations.js",
+    "scripts/module-i18n.js",
+    "scripts/help.js",
+    "scripts/window-runtime.js",
+    "scripts/campaign-will.js",
+    "scripts/campaign-framework.js",
+    "scripts/unified-dock.js",
+    "scripts/main.js",
+    "scripts/extra-engine.js",
+    "scripts/extra-builder-ui.js",
+    "scripts/character-editors.js",
+    "scripts/character-sheet.js",
+    "scripts/private-storage.js",
+    "scripts/roll-presentation.js",
+    "scripts/outcome-sounds.js",
+    "scripts/fate-rules.js",
+    "scripts/action-state.js",
+    "scripts/result-rules.js",
+    "scripts/sound-settings-ui.js",
+    "scripts/roll-request-ui.js",
+    "scripts/opposition-public.js",
+    "scripts/request-state.js",
+    "scripts/request-builder.js",
+    "scripts/request-result-validation.js",
+    "scripts/request-result-compute.js",
+    "scripts/boost-claim-plan.js",
+    "scripts/boost-claim-commit.js",
+    "scripts/opposition-revision.js",
+    "scripts/result-action-plan.js",
+    "scripts/result-action-commit.js",
+    "scripts/roll-revision.js",
+    "scripts/opposition-refresh-compute.js",
+    "scripts/action-opposition.js",
+    "scripts/action-opposition-ui.js",
+    "scripts/player-opposition-ui.js",
+    "scripts/defend-choice-ui.js",
+    "scripts/player-opposition-roll.js",
+    "scripts/runtime-contracts.js",
+    "scripts/campaign-bargain-ui.js",
+    "scripts/roll-request.js",
+    "scripts/turn-finalization.js",
+    "scripts/campaign-concession.js",
+    "scripts/combat-tracker.js",
+    "scripts/milestones.js",
+    "scripts/damage-resolution.js",
+    "scripts/invoke-resource.js",
+    "scripts/invoke-resolution.js",
+    "scripts/chat-actions.js",
+    "scripts/conflict-flow.js",
+    "scripts/workflow-center.js",
+    "scripts/ui-runtime-diagnostic.js",
+    "scripts/multi-client-diagnostic.js",
+    "scripts/smoke.js"
+  ],
+  "styles": [
+    "styles/widget.css",
+    "styles/fate-roll-request.css",
+    "styles/combat-tracker.css",
+    "styles/milestones.css",
+    "styles/design-system.css",
+    "styles/chat-actions.css",
+    "styles/workflow-center.css",
+    "styles/character-sheet.css",
+    "styles/ui-polish.css",
+    "styles/component-audit.css",
+    "styles/extra-builder.css",
+    "styles/layout-overhaul.css",
+    "styles/compact-actions.css",
+    "styles/character-editors.css",
+    "styles/unified-dock.css"
+  ],
+  "languages": [
+    {
+      "lang": "ru",
+      "name": "Русский",
+      "path": "lang/ru.json"
+    },
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "socket": true
+}

@@ -1,0 +1,23 @@
+const assert = require('assert');
+const { loadScript } = require('./harness.cjs');
+const { exports: m } = loadScript('scripts/milestones.js', ['validateSkillColumns','applyMinorSkillSwap','validateMinorSkillSwap','allowedRecoveryHarm','exceedsSkillCapOnAdvance']);
+assert.equal(m.validateSkillColumns({A:4,B:3,C:3,D:2,E:2,F:2,G:1,H:1,I:1,J:1}).valid,true);
+assert.equal(m.validateSkillColumns({A:3,B:3,C:2}).valid,false,'two rank-3 skills cannot rest on one rank-2 skill');
+const swapped=m.applyMinorSkillSwap({Fight:3,Will:2},{type:'skills',skillA:'Fight',skillB:'Will'});
+assert.equal(swapped.Fight,2); assert.equal(swapped.Will,3);
+assert.equal(m.validateMinorSkillSwap({Fight:2,New:0},{type:'skills',skillA:'Fight',skillB:'New'}).valid,false);
+assert.equal(m.validateMinorSkillSwap({Fight:1,New:0},{type:'skills',skillA:'Fight',skillB:'New'}).valid,true);
+assert.equal(m.allowedRecoveryHarm('minor',2),false);
+assert.equal(m.allowedRecoveryHarm('minor',4),true);
+assert.equal(m.allowedRecoveryHarm('significant',4),true);
+assert.equal(m.allowedRecoveryHarm('major',6),true);
+
+const sig={type:'significant',baseSkillCap:4};
+const major={type:'major',baseSkillCap:4};
+const legacyRow={baseline:{skills:{Shoot:5}}};
+assert.equal(m.exceedsSkillCapOnAdvance({},sig,legacyRow,{minor:{type:'none'},skillRanks:{}}),false,'an existing rank above the session cap must not invalidate an unchanged milestone draft');
+assert.equal(m.exceedsSkillCapOnAdvance({},sig,legacyRow,{minor:{type:'none'},skillRanks:{Shoot:5}}),false,'re-stating an unchanged legacy rank must remain valid');
+assert.equal(m.exceedsSkillCapOnAdvance({},sig,legacyRow,{minor:{type:'none'},skillRanks:{Shoot:6}}),true,'raising an already-high skill further must still respect the cap');
+assert.equal(m.exceedsSkillCapOnAdvance({},major,{baseline:{skills:{Shoot:4}}},{minor:{type:'none'},skillRanks:{Shoot:5}}),false,'a major milestone may raise one rank above the base campaign cap');
+assert.equal(m.exceedsSkillCapOnAdvance({},major,{baseline:{skills:{Shoot:4}}},{minor:{type:'none'},skillRanks:{Shoot:6}}),true,'a major milestone may not jump two ranks beyond the base campaign cap');
+console.log('milestones.test.cjs OK');

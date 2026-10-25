@@ -1,0 +1,16 @@
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const root = path.resolve(__dirname, '..');
+const sheet = fs.readFileSync(path.join(root, 'templates/character-sheet.hbs'), 'utf8');
+const js = fs.readFileSync(path.join(root, 'scripts/character-sheet.js'), 'utf8');
+const ru = JSON.parse(fs.readFileSync(path.join(root, 'lang/ru.json'), 'utf8'));
+const en = JSON.parse(fs.readFileSync(path.join(root, 'lang/en.json'), 'utf8'));
+assert.match(sheet, /data-action="editSkills"/, 'skill manager button must be visible on the Toolkit sheet');
+assert.doesNotMatch(sheet, /name="system\.skills\.\{\{this\.key\}\}\.rank"/, 'skill ranks must not bypass the constrained skill editor');
+assert.match(js, /async function promptSkillEditor\(actor\)/, 'Toolkit must provide its own skill editor');
+assert.match(js, /fateWorldSkills\(\)/, 'skill editor must read the Fate world skill list instead of inventing a separate database');
+assert.equal(ru['FAW.Sheet.Play'], 'Механика');
+assert.equal(ru['FAW.Sheet.Story'], 'Текст и заметки');
+assert.deepEqual(en, ru, 'English fallback must remain Russian so Toolkit UI does not depend on Foundry/system locale');
+console.log('v1471-regression.test.cjs OK');

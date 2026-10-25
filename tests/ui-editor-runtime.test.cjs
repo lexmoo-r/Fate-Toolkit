@@ -1,0 +1,35 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const {baseContext}=require('./harness.cjs');
+const root=path.join(__dirname,'..');
+const css=fs.readFileSync(path.join(root,'styles/character-editors.css'),'utf8');
+const script=fs.readFileSync(path.join(root,'scripts/character-editors.js'),'utf8');
+(async()=>{
+  const nodes=new Map();
+  const doc={head:{appendChild(node){nodes.set(node.id,node)}},getElementById(id){return nodes.get(id)||null},createElement(tag){assert.equal(tag,'style');return {id:'',textContent:''}}};
+  const ctx=baseContext({game:{user:{isGM:true,id:'gm'},settings:{get:()=>''}}});
+  ctx.document=doc;
+  ctx.foundry.utils.deepClone=structuredClone;
+  ctx.foundry.utils.randomID=()=>Math.random().toString(16).slice(2);
+  const contents=[];
+  ctx.foundry.applications.api.DialogV2.wait=async config=>{contents.push(config.content);return null;};
+  vm.createContext(ctx);
+  vm.runInContext(script,ctx);
+  for(const kind of ['skills','aspects']){
+    const entries=Object.fromEntries(Array.from({length:kind==='skills'?19:5},(_,i)=>['id'+i,{name:'Запись '+i,rank:i%5,value:'Суть '+i,description:'Описание '+i}]));
+    await ctx.FateToolkitEditors.editActor({isOwner:true,system:{[kind]:entries}},kind);
+  }
+  const styles=nodes.get('fate-toolkit-character-editors-runtime-v2');
+  assert.ok(styles,'editor must inject a scoped style into the document, not rely on manifest styles alone');
+  assert.equal(styles.textContent,css,'runtime styles must be byte-for-byte equal to module CSS');
+  assert.equal(nodes.size,1,'reopening editor must not insert duplicate styles');
+  assert.ok(contents.every(x=>x.includes('<div class="fte-editor"')),'Dialog content has a stable, styled root');
+  assert.ok(contents.every(x=>!x.includes('<form class="fte-editor"')),'no nested forms inside DialogV2');
+  assert.equal((contents[0].match(/data-trait-key=/g)||[]).length,19,'skills must be all present, with a scrollable list');
+  assert.equal((contents[1].match(/data-trait-key=/g)||[]).length,5,'aspects must be all present');
+  assert.match(css,/\.fte-trait\.fte-skill-row\{display:grid!important/, 'compact skills layout is required');
+  assert.match(css,/\.fte-list\{[^}]*overflow-y:scroll!important/, 'scrolling must be on the list, not whole document');
+  assert.match(css,/\.fte-field\{display:flex!important;flex-direction:column!important/, 'labels stack above controls');
+  assert.match(css,/\.fte-trait-fields\{display:grid!important;grid-template-columns:repeat\(2,minmax\(0,1fr\)\)!important/, 'aspect fields use an actual grid');
+  console.log('ui-editor-runtime.test.cjs OK');
+})().catch(e=>{console.error(e);process.exitCode=1});

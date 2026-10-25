@@ -1,0 +1,14 @@
+<div class="faw-help-root">
+  <header class="faw-help-hero">
+    <i class="{{icon}}" aria-hidden="true"></i>
+    <div><h2>{{title}}</h2><p>{{intro}}</p></div>
+  </header>
+  <ul class="faw-help-list">
+    {{#each bullets}}<li>{{this}}</li>{{/each}}
+  </ul>
+  {{#if next.length}}
+    <nav class="faw-help-nav" aria-label="Related help">
+      {{#each next}}<button type="button" data-faw-help="{{key}}">{{title}}</button>{{/each}}
+    </nav>
+  {{/if}}
+</div>

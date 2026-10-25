@@ -1,0 +1,15 @@
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const root = path.resolve(__dirname, '..');
+const js = fs.readFileSync(path.join(root, 'scripts/character-sheet.js'), 'utf8');
+const sheet = fs.readFileSync(path.join(root, 'templates/character-sheet.hbs'), 'utf8');
+const ru = JSON.parse(fs.readFileSync(path.join(root, 'lang/ru.json'), 'utf8'));
+assert.doesNotMatch(sheet, /system\.skills\.\{\{this\.key\}\}\.rank/, 'main sheet must not write skill ranks directly');
+assert.match(js, /validateSkillConfiguration\(actor, skills\)/, 'skill editor must validate proposed skills');
+assert.match(js, /enforceColumn/, 'skill editor must respect Fate Core Official column enforcement');
+assert.match(js, /enforceSkillTotal/, 'skill editor must respect Fate Core Official skill total enforcement');
+assert.match(js, /allowedTotal/, 'skill editor must use the configured allowed skill total');
+assert.match(js, /save\.disabled = !validation\.valid/, 'invalid skill configurations must disable saving');
+assert.equal(ru['FAW.Sheet.SkillConfigInvalid'], 'Сохранение невозможно.');
+console.log('v1472-regression.test.cjs OK');

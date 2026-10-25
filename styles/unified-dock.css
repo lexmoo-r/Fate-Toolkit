@@ -1,0 +1,26 @@
+.faw-unified-dock {min-width:250px;}
+.faw-unified-dock .window-content {padding:4px;}
+.faw-dock-shell {display:flex;flex-direction:column;gap:6px;font-size:12px;}
+.faw-dock-person {display:flex;gap:7px;align-items:center;padding:5px;border-radius:6px;background:rgba(110,110,110,.12);}
+.faw-dock-person img {width:40px;height:40px;object-fit:cover;border-radius:5px;}
+.faw-dock-main {min-width:0;flex:1;display:flex;flex-direction:column;gap:4px;}
+.faw-dock-main strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.faw-dock-person button{width:28px;flex:0 0 28px;min-width:0;padding:4px;}
+.faw-dock-will b {color:#e2b36f;}
+.faw-dock-hidden {display:none !important;}
+.faw-dock-badges {display:flex;gap:4px;flex-wrap:wrap;}
+.faw-dock-pill{border:1px solid #7777;border-radius:5px;padding:2px 5px;font-size:10px;}
+.faw-dock-consequence {border-color:#ce7767;}
+.faw-dock-actor-select {display:flex;flex-direction:column;gap:3px;}
+.faw-dock-actor-select select{height:26px;}
+.faw-dock-section-head{display:flex;align-items:center;gap:6px;width:100%;border-radius:5px;padding:7px 8px;text-align:left;}
+.faw-dock-section-head >i:last-child{margin-left:auto;}
+.faw-dock-section-content{display:flex;flex-direction:column;gap:6px;padding:7px 4px;}
+.faw-dock-action-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;}
+.faw-dock-action{min-height:38px;font-size:20px;}
+.faw-dock-extra{display:flex;align-items:center;gap:5px;min-height:32px;}
+.faw-dock-extra img{width:28px;height:28px;object-fit:cover;border-radius:4px;}
+.faw-dock-extra>span:nth-child(2){flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+.faw-dock-extra small{display:block;font-size:10px;opacity:.7;}
+.faw-dock-extra button{width:29px;min-width:29px;padding:4px;}
+.faw-dock-extra [data-drag-extra]{cursor:grab;padding:6px;}

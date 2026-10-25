@@ -1,0 +1,129 @@
+<div class="fwc-body">
+  <header class="fwc-summary">
+    <div>
+      <h2>{{localize "FWC.Title"}}</h2>
+      <p>{{#if gmFocus}}{{localize "FWC.GmFocusActive"}}{{else}}{{localize "FWC.Hint"}}{{/if}}</p>
+    </div>
+    <button type="button" class="faw-context-help" data-faw-help="workflow" title="{{localize 'FAW.Help'}}" aria-label="{{localize 'FAW.Help'}}"><i class="fa-solid fa-circle-question" aria-hidden="true"></i></button>
+    {{#if isGM}}<button type="button" class="fwc-focus-toggle {{#if gmFocus}}is-active{{/if}}" data-fwc-action="toggle-gm-focus" aria-pressed="{{#if gmFocus}}true{{else}}false{{/if}}" title="{{localize 'FWC.GmFocusToggle'}}" aria-label="{{localize 'FWC.GmFocusToggle'}}"><i class="fa-solid fa-filter" aria-hidden="true"></i></button>{{/if}}
+    {{#if actionable}}<span class="fwc-badge">{{actionable}}</span>{{/if}}
+  </header>
+
+  {{#if showGmDashboard}}
+    <section class="fwc-card fwc-gm-dashboard">
+      <div class="fwc-card-head">
+        <div class="fwc-icon"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i></div>
+        <div class="fwc-card-title">
+          <strong>{{localize "FWC.GmDashboard"}}</strong>
+          <span>{{#if gmDashboard.sceneName}}{{gmDashboard.sceneName}}{{else}}{{localize "FAW.NoScene"}}{{/if}}</span>
+        </div>
+        <button type="button" class="fwc-icon-button" data-fwc-action="aspects" title="{{localize 'FWC.OpenAspectWidget'}}" aria-label="{{localize 'FWC.OpenAspectWidget'}}"><i class="fa-solid fa-tags" aria-hidden="true"></i></button>
+      </div>
+      <div class="fwc-gm-kpis">
+
+        <div><span>{{localize "FWC.SceneAspects"}}</span><strong>{{gmDashboard.aspectCount}}</strong></div>
+        <div><span>{{localize "FWC.SceneBoosts"}}</span><strong>{{gmDashboard.boostCount}}</strong></div>
+      </div>
+      {{#if gmDashboard.sceneAspects.length}}
+        <div class="fwc-resource-list">
+          <h4>{{localize "FWC.SceneAspects"}}</h4>
+          {{#each gmDashboard.sceneAspects}}<div><span>{{name}}</span><small><i class="fa-regular fa-circle-dot" aria-hidden="true"></i> {{freeInvokes}}</small></div>{{/each}}
+        </div>
+      {{/if}}
+      {{#if gmDashboard.boosts.length}}
+        <div class="fwc-resource-list">
+          <h4>{{localize "FWC.SceneBoosts"}}</h4>
+          {{#each gmDashboard.boosts}}<div><span>{{name}}</span><small>{{actorName}}{{#if hidden}} · <i class="fa-solid fa-eye-slash" aria-hidden="true"></i>{{/if}}</small></div>{{/each}}
+        </div>
+      {{/if}}
+      <div class="fwc-actions"><button type="button" data-fwc-action="aspects"><i class="fa-solid fa-tags" aria-hidden="true"></i> {{localize "FWC.OpenAspectWidget"}}</button></div>
+    </section>
+  {{/if}}
+
+  {{#if showActionProcess}}
+    <section class="fwc-card {{#if actionProcess.needsAttention}}is-actionable{{/if}}">
+      <div class="fwc-card-head">
+        <div class="fwc-icon"><i class="fa-solid fa-route" aria-hidden="true"></i></div>
+        <div class="fwc-card-title">
+          <strong>{{localize "FWC.ProcessRestore"}}</strong>
+          <span>{{actionProcess.status}}</span>
+        </div>
+        {{#if actionProcess.oppositionCount}}<span class="fwc-count">{{actionProcess.oppositionCount}}</span>{{/if}}
+      </div>
+      {{#if actionProcess.hasPending}}
+        <p class="fwc-status"><strong>{{actionProcess.actorName}}</strong>{{#if actionProcess.targetName}} → {{actionProcess.targetName}}{{/if}}</p>
+      {{/if}}
+      <div class="fwc-actions">
+        {{#if actionProcess.oppositionCount}}<button type="button" class="fwc-primary" data-fwc-action="resume-opposition"><i class="fa-solid fa-shield" aria-hidden="true"></i> {{localize "FWC.ResumeOpposition"}}</button>{{/if}}
+        {{#unless actionProcess.oppositionCount}}{{#if actionProcess.hasPending}}<button type="button" data-fwc-action="action"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> {{localize "FWC.OpenActionDraft"}}</button>{{/if}}{{/unless}}
+      </div>
+    </section>
+  {{/if}}
+
+  {{#if showCombat}}
+    <section class="fwc-card {{#if combat.current}}is-current{{/if}} {{#if combat.hasAnyPendingDamage}}is-warning{{/if}}">
+      <div class="fwc-card-head">
+        <div class="fwc-icon"><i class="fa-solid fa-swords" aria-hidden="true"></i></div>
+        <div class="fwc-card-title">
+          <strong>{{combat.name}}</strong>
+          <span>{{localize "FWC.Conflict"}} · {{#if combat.started}}{{localize "FCT.Exchange"}} {{combat.round}}{{else}}{{localize "FWC.Preparation"}}{{/if}}</span>
+        </div>
+        <button type="button" class="fwc-icon-button" data-fwc-action="combat" title="{{localize 'FCT.ControlTitle'}}" aria-label="{{localize 'FCT.ControlTitle'}}"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></button>
+      </div>
+      <p class="fwc-status">{{combat.status}}</p>
+      {{#if combat.hasAnyPendingDamage}}
+        <div class="fwc-alert"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span>{{localize "FWC.ResolveDamage"}}</span><strong>{{combat.pendingCount}}</strong></div>
+        {{#if isGM}}
+          <div class="fwc-hit-list">
+            {{#each combat.pendingRows}}
+              <button type="button" data-fwc-damage-message="{{messageId}}"><span>{{name}}</span><strong>{{remaining}}</strong><i class="fa-solid fa-message" aria-hidden="true"></i></button>
+            {{/each}}
+          </div>
+        {{/if}}
+      {{/if}}
+      <div class="fwc-actions">
+        {{#if combat.hasPendingDamage}}<button type="button" class="fwc-primary" data-fwc-action="damage"><i class="fa-solid fa-message" aria-hidden="true"></i> {{localize "FWC.OpenDamage"}}</button>{{/if}}
+        {{#if combat.canFinish}}<button type="button" class="fwc-primary" data-fwc-action="finish-turn"><i class="fa-solid fa-check" aria-hidden="true"></i> {{localize "FCT.FinishTurn"}}</button>{{/if}}
+        {{#if combat.needsTurnAssignment}}<button type="button" class="fwc-primary" data-fwc-action="resume-turn"><i class="fa-solid fa-play" aria-hidden="true"></i> {{localize "FCT.ResumeTurn"}}</button>{{/if}}
+        {{#if combat.exchangeReady}}<button type="button" class="fwc-primary" data-fwc-action="next-exchange"><i class="fa-solid fa-rotate-right" aria-hidden="true"></i> {{#if combat.started}}{{localize "FCT.NextExchange"}}{{else}}{{localize "FCT.StartExchange"}}{{/if}}</button>{{/if}}
+        <button type="button" data-fwc-action="action"><i class="fa-solid fa-burst" aria-hidden="true"></i> {{localize "FWC.OpenActions"}}</button>
+      </div>
+    </section>
+  {{/if}}
+
+  {{#if showRequests}}
+  <section class="fwc-card {{#if requests.has}}is-actionable{{/if}}">
+    <div class="fwc-card-head">
+      <div class="fwc-icon"><i class="fa-solid fa-inbox" aria-hidden="true"></i></div>
+      <div class="fwc-card-title">
+        <strong>{{localize "FWC.RollRequests"}}</strong>
+        <span>{{requests.status}}</span>
+      </div>
+      {{#if requests.has}}<span class="fwc-count">{{#if requests.gm}}{{requests.pending}}{{else}}{{requests.count}}{{/if}}</span>{{/if}}
+    </div>
+    {{#if requests.has}}
+      <div class="fwc-actions"><button type="button" class="fwc-primary" data-fwc-action="requests"><i class="fa-solid fa-dice" aria-hidden="true"></i> {{localize "FWC.OpenRequests"}}</button></div>
+    {{else}}
+      <div class="fwc-inline-empty"><i class="fa-regular fa-circle-check" aria-hidden="true"></i><span>{{localize "FWC.NoRequests"}}</span></div>
+    {{/if}}
+  </section>
+  {{/if}}
+
+  {{#if showMilestone}}
+    <section class="fwc-card {{#unless milestone.completed}}is-actionable{{/unless}}">
+      <div class="fwc-card-head">
+        <div class="fwc-icon"><i class="fa-solid fa-road" aria-hidden="true"></i></div>
+        <div class="fwc-card-title">
+          <strong>{{milestone.title}}</strong>
+          <span>{{milestone.status}}</span>
+        </div>
+        {{#unless milestone.completed}}<span class="fwc-count">{{#if milestone.gm}}{{milestone.pending}}{{else}}{{milestone.count}}{{/if}}</span>{{/unless}}
+      </div>
+      <div class="fwc-actions"><button type="button" class="fwc-primary" data-fwc-action="milestone"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i> {{#if milestone.gm}}{{localize "FWC.OpenMilestoneManager"}}{{else}}{{localize "FWC.ContinueMilestone"}}{{/if}}</button></div>
+    </section>
+  {{/if}}
+
+  {{#if empty}}
+    <div class="fwc-empty"><i class="fa-regular fa-circle-check" aria-hidden="true"></i><strong>{{localize "FWC.AllClear"}}</strong><span>{{localize "FWC.AllClearHint"}}</span></div>
+  {{/if}}
+</div>

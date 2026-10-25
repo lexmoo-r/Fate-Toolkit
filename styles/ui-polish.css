@@ -1,0 +1,1676 @@
+/* Fate Toolkit UI polish — v1.37.0
+ * Cross-window visual and accessibility pass informed by mature Foundry sheets:
+ * strong hierarchy, compact contextual actions, responsive density, visible states,
+ * restrained theming, and consistent empty / warning / primary-action treatment.
+ */
+
+:where(
+  .fate-aspect-widget,
+  .fate-action-widget,
+  .faw-combat-tracker,
+  .fwc-window,
+  .fms-window,
+  .frr-request-app,
+  .frr-player-requests-app,
+  .frr-sound-settings-app,
+  .faw-help-window,
+  .fate-toolkit-character-sheet
+) {
+  --ft-ui-bg: color-mix(in srgb, var(--color-cool-5, #1d1e22) 94%, transparent);
+  --ft-ui-panel: color-mix(in srgb, var(--color-bg-option, #292a30) 90%, white 2.5%);
+  --ft-ui-panel-2: color-mix(in srgb, var(--color-bg-option, #24252a) 78%, transparent);
+  --ft-ui-panel-hover: color-mix(in srgb, var(--ft-ui-panel) 92%, white 5%);
+  --ft-ui-border: color-mix(in srgb, var(--color-border-light-primary, #8e8e92) 42%, transparent);
+  --ft-ui-border-strong: color-mix(in srgb, var(--color-warm-2, #c49a57) 65%, transparent);
+  --ft-ui-text: var(--color-text-primary, var(--color-text-light-highlight, #f1efe8));
+  --ft-ui-muted: color-mix(in srgb, var(--color-text-secondary, #a9a7a2) 92%, transparent);
+  --ft-ui-accent: var(--color-warm-2, #c49a57);
+  --ft-ui-success: var(--color-level-success, #4f9d69);
+  --ft-ui-warning: var(--color-level-warning, #c77b2b);
+  --ft-ui-danger: var(--color-level-error, #c85d5d);
+  --ft-ui-info: #6489bb;
+  --ft-ui-radius-xs: 5px;
+  --ft-ui-radius-sm: 7px;
+  --ft-ui-radius: 10px;
+  --ft-ui-radius-lg: 14px;
+  --ft-ui-shadow-sm: 0 1px 3px rgb(0 0 0 / 18%);
+  --ft-ui-shadow: 0 5px 18px rgb(0 0 0 / 20%);
+  --ft-ui-shadow-pop: 0 12px 32px rgb(0 0 0 / 34%);
+  --ft-ui-control: 32px;
+  --ft-ui-icon: 32px;
+  --ft-ui-fast: 120ms ease;
+  color: var(--ft-ui-text);
+}
+
+:where(
+  .fate-aspect-widget,
+  .fate-action-widget,
+  .faw-combat-tracker,
+  .fwc-window,
+  .fms-window,
+  .frr-request-app,
+  .frr-player-requests-app,
+  .frr-sound-settings-app,
+  .faw-help-window
+) .window-content {
+  color: var(--ft-ui-text);
+  background:
+    radial-gradient(circle at 8% 0%, color-mix(in srgb, var(--ft-ui-accent) 6%, transparent), transparent 30rem),
+    var(--ft-ui-bg);
+}
+
+/* Universal controls ----------------------------------------------------- */
+:where(
+  .fate-aspect-widget,
+  .fate-action-widget,
+  .faw-combat-tracker,
+  .fwc-window,
+  .fms-window,
+  .frr-request-app,
+  .frr-player-requests-app,
+  .frr-sound-settings-app,
+  .faw-help-window,
+  .fate-toolkit-character-sheet
+) :is(button, input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select) {
+  min-height: var(--ft-ui-control);
+}
+
+:where(
+  .fate-aspect-widget,
+  .fate-action-widget,
+  .faw-combat-tracker,
+  .fwc-window,
+  .fms-window,
+  .frr-request-app,
+  .frr-player-requests-app,
+  .frr-sound-settings-app,
+  .faw-help-window,
+  .fate-toolkit-character-sheet
+) :is(button, input, select, textarea, summary) {
+  transition:
+    background-color var(--ft-ui-fast),
+    border-color var(--ft-ui-fast),
+    box-shadow var(--ft-ui-fast),
+    color var(--ft-ui-fast),
+    opacity var(--ft-ui-fast),
+    transform var(--ft-ui-fast);
+}
+
+:where(
+  .fate-aspect-widget,
+  .fate-action-widget,
+  .faw-combat-tracker,
+  .fwc-window,
+  .fms-window,
+  .frr-request-app,
+  .frr-player-requests-app,
+  .frr-sound-settings-app,
+  .faw-help-window,
+  .fate-toolkit-character-sheet
+) :is(button, input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--ft-ui-accent) !important;
+  outline-offset: 2px;
+}
+
+:where(
+  .fate-aspect-widget,
+  .fate-action-widget,
+  .faw-combat-tracker,
+  .fwc-window,
+  .fms-window,
+  .frr-request-app,
+  .frr-player-requests-app,
+  .frr-sound-settings-app,
+  .faw-help-window,
+  .fate-toolkit-character-sheet
+) button:disabled {
+  opacity: .42;
+  filter: saturate(.55);
+  cursor: not-allowed;
+}
+
+:where(
+  .fate-aspect-widget,
+  .fate-action-widget,
+  .faw-combat-tracker,
+  .fwc-window,
+  .fms-window,
+  .frr-request-app,
+  .frr-player-requests-app,
+  .frr-sound-settings-app,
+  .faw-help-window,
+  .fate-toolkit-character-sheet
+) :is(input, select, textarea) {
+  border-color: var(--ft-ui-border);
+}
+
+:where(
+  .fate-aspect-widget,
+  .fate-action-widget,
+  .faw-combat-tracker,
+  .fwc-window,
+  .fms-window,
+  .frr-request-app,
+  .frr-player-requests-app,
+  .frr-sound-settings-app,
+  .faw-help-window,
+  .fate-toolkit-character-sheet
+) :is(input, select, textarea):hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--ft-ui-border-strong) 70%, var(--ft-ui-border));
+}
+
+:where(
+  .fate-aspect-widget,
+  .fate-action-widget,
+  .faw-combat-tracker,
+  .fwc-window,
+  .fms-window,
+  .frr-request-app,
+  .frr-player-requests-app,
+  .frr-sound-settings-app,
+  .faw-help-window,
+  .fate-toolkit-character-sheet
+) ::-webkit-scrollbar { width: 9px; height: 9px; }
+:where(
+  .fate-aspect-widget,
+  .fate-action-widget,
+  .faw-combat-tracker,
+  .fwc-window,
+  .fms-window,
+  .frr-request-app,
+  .frr-player-requests-app,
+  .frr-sound-settings-app,
+  .faw-help-window,
+  .fate-toolkit-character-sheet
+) ::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--ft-ui-muted) 42%, transparent);
+  background-clip: padding-box;
+}
+
+/* Shared contextual controls -------------------------------------------- */
+.faw-context-help,
+.fwc-icon-button,
+.fct-row-actions > button,
+.fct-journal-row button,
+.frr-sound-row > button,
+.fts-icon-button,
+.fts-star,
+.fts-toggle,
+.fts-mini-actions button,
+.fts-layout-actions button {
+  width: var(--ft-ui-icon);
+  min-width: var(--ft-ui-icon);
+  height: var(--ft-ui-icon);
+  min-height: var(--ft-ui-icon);
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  border-radius: var(--ft-ui-radius-sm);
+}
+
+.faw-context-help {
+  color: var(--ft-ui-muted);
+  border: 1px solid transparent;
+  background: transparent;
+}
+.faw-context-help:hover,
+.faw-context-help:focus-visible {
+  color: var(--ft-ui-accent);
+  border-color: var(--ft-ui-border);
+  background: color-mix(in srgb, var(--ft-ui-accent) 8%, transparent);
+}
+
+.faw-context-menu-popover {
+  padding: 5px;
+  border: 1px solid var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius-sm);
+  background: color-mix(in srgb, var(--ft-ui-panel) 97%, black 3%);
+  box-shadow: var(--ft-ui-shadow-pop);
+  backdrop-filter: blur(8px);
+}
+.faw-context-menu-popover button {
+  min-height: 34px;
+  border-radius: 5px;
+}
+
+/* Aspect widget ---------------------------------------------------------- */
+.fate-aspect-widget .faw-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  min-height: 44px;
+  gap: 7px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--ft-ui-border);
+  background: color-mix(in srgb, var(--ft-ui-bg) 94%, transparent);
+  backdrop-filter: blur(10px);
+}
+.fate-aspect-widget .faw-scene-name {
+  font-weight: 700;
+  color: var(--ft-ui-text);
+  opacity: .88;
+}
+.fate-aspect-widget .faw-toolbar-tools {
+  gap: 3px;
+  padding: 2px;
+  border: 1px solid var(--ft-ui-border);
+  border-radius: 9px;
+  background: var(--ft-ui-panel-2);
+}
+.fate-aspect-widget .faw-mini-button {
+  width: 30px;
+  min-width: 30px;
+  height: 30px;
+  min-height: 30px;
+  border-radius: 7px;
+}
+.fate-aspect-widget .faw-mini-button:hover,
+.fate-aspect-widget .faw-mini-button.faw-filter-active {
+  color: var(--ft-ui-text);
+  background: color-mix(in srgb, var(--ft-ui-accent) 11%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ft-ui-accent) 42%, transparent);
+}
+.fate-aspect-widget .faw-section {
+  border-color: var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius);
+  background: var(--ft-ui-panel);
+  box-shadow: var(--ft-ui-shadow-sm);
+}
+.fate-aspect-widget .faw-section > summary {
+  min-height: 42px;
+  padding: 8px 10px;
+  border-radius: var(--ft-ui-radius);
+  color: var(--ft-ui-text);
+}
+.fate-aspect-widget .faw-section[open] > summary {
+  border-radius: var(--ft-ui-radius) var(--ft-ui-radius) 0 0;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--ft-ui-accent) 7%, transparent), transparent 65%);
+}
+.fate-aspect-widget .faw-aspect-row,
+.fate-aspect-widget .faw-character-aspect,
+.fate-aspect-widget .faw-consequence-item,
+.fate-aspect-widget .faw-boost-item {
+  min-height: 36px;
+  border-radius: 7px;
+}
+.fate-aspect-widget .faw-action-button {
+  width: 30px;
+  height: 30px;
+  opacity: .38;
+}
+.fate-aspect-widget :is(.faw-aspect-row,.faw-character-aspect,.faw-consequence-item,.faw-boost-item):hover .faw-action-button,
+.fate-aspect-widget :is(.faw-aspect-row,.faw-character-aspect,.faw-consequence-item,.faw-boost-item):focus-within .faw-action-button {
+  opacity: .9;
+}
+.fate-aspect-widget .faw-add {
+  min-height: 34px;
+  border-radius: 7px;
+}
+.fate-aspect-widget .faw-empty {
+  min-height: 60px;
+  display: grid;
+  place-items: center;
+  color: var(--ft-ui-muted);
+}
+
+/* Action widget ---------------------------------------------------------- */
+.fate-action-widget .faw-action-shell {
+  gap: 10px;
+  padding: 10px;
+}
+.fate-action-widget .faw-action-help-row {
+  min-height: 0;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: -4px;
+}
+.fate-action-widget .faw-action-pending {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 9px;
+  align-items: center;
+  padding: 9px 10px;
+  border: 1px solid color-mix(in srgb, var(--ft-ui-warning) 42%, var(--ft-ui-border));
+  border-radius: var(--ft-ui-radius);
+  background: color-mix(in srgb, var(--ft-ui-warning) 9%, var(--ft-ui-panel));
+  box-shadow: var(--ft-ui-shadow-sm);
+}
+.faw-action-pending-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--ft-ui-warning);
+  background: color-mix(in srgb, var(--ft-ui-warning) 14%, transparent);
+}
+.fate-action-widget .faw-action-pending small {
+  display: block;
+  margin-top: 2px;
+  color: var(--ft-ui-muted);
+}
+.fate-action-widget .faw-action-selectors {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 10px;
+  border-color: var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius);
+  background: var(--ft-ui-panel);
+  box-shadow: var(--ft-ui-shadow-sm);
+}
+.fate-action-widget .faw-action-selectors label {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+.fate-action-widget .faw-action-selectors label > span:first-child,
+.fate-action-widget .faw-action-label-row > span:first-child {
+  color: var(--ft-ui-muted);
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .025em;
+}
+.faw-action-favorites {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius-sm);
+  background: var(--ft-ui-panel-2);
+}
+.faw-action-favorites-label {
+  flex: 0 0 auto;
+  color: var(--ft-ui-accent);
+  font-weight: 800;
+}
+.faw-action-favorite-list {
+  min-width: 0;
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+}
+.faw-action-favorite-pill {
+  flex: 0 0 auto;
+  padding: 3px 7px;
+  border: 1px solid var(--ft-ui-border);
+  border-radius: 999px;
+  background: var(--ft-ui-panel);
+}
+.fate-action-widget .faw-action-grid {
+  gap: 8px;
+}
+.fate-action-widget .faw-action-choice {
+  min-height: 76px;
+  display: grid;
+  grid-template-columns: 32px minmax(0,1fr);
+  grid-template-rows: auto auto;
+  column-gap: 8px;
+  align-content: center;
+  justify-items: start;
+  padding: 9px 10px;
+  border-color: var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius);
+  background: var(--ft-ui-panel);
+  box-shadow: var(--ft-ui-shadow-sm);
+  text-align: left;
+}
+.fate-action-widget .faw-action-choice > span:not(.faw-action-choice-icon) {
+  grid-column: 2;
+  font-weight: 850;
+  line-height: 1.15;
+}
+.fate-action-widget .faw-action-choice > small {
+  grid-column: 2;
+  margin-top: 2px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  color: var(--ft-ui-muted);
+  background: var(--ft-ui-panel-2);
+}
+.faw-action-choice-icon {
+  grid-row: 1 / 3;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  align-self: center;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--ft-ui-info) 12%, transparent);
+}
+.faw-action-attack .faw-action-choice-icon { color: var(--ft-ui-danger); background: color-mix(in srgb, var(--ft-ui-danger) 12%, transparent); }
+.faw-action-overcome .faw-action-choice-icon { color: var(--ft-ui-success); background: color-mix(in srgb, var(--ft-ui-success) 12%, transparent); }
+.faw-action-create .faw-action-choice-icon { color: var(--ft-ui-accent); background: color-mix(in srgb, var(--ft-ui-accent) 12%, transparent); }
+.faw-action-defend .faw-action-choice-icon { color: var(--ft-ui-info); background: color-mix(in srgb, var(--ft-ui-info) 12%, transparent); }
+.fate-action-widget .faw-action-choice:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: var(--ft-ui-border-strong);
+  background: var(--ft-ui-panel-hover);
+  box-shadow: var(--ft-ui-shadow);
+}
+.faw-action-guide {
+  border: 1px solid var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius-sm);
+  background: var(--ft-ui-panel-2);
+  color: var(--ft-ui-muted);
+}
+.faw-action-guide > summary {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.faw-action-guide > div {
+  padding: 0 9px 9px;
+  line-height: 1.4;
+}
+
+/* Combat tracker --------------------------------------------------------- */
+.faw-combat-tracker .window-content { padding: 9px; }
+.faw-combat-tracker .fct-root { gap: 8px; }
+.faw-combat-tracker .fct-header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  border-color: var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius);
+  background: color-mix(in srgb, var(--ft-ui-panel) 94%, transparent);
+  box-shadow: var(--ft-ui-shadow-sm);
+  backdrop-filter: blur(10px);
+}
+.faw-combat-tracker .fct-summary {
+  color: var(--ft-ui-muted);
+}
+.faw-combat-tracker .fct-pending-damage {
+  min-height: 38px;
+  border-color: color-mix(in srgb, var(--ft-ui-warning) 48%, transparent);
+  border-radius: var(--ft-ui-radius-sm);
+  background: color-mix(in srgb, var(--ft-ui-warning) 11%, transparent);
+}
+.faw-combat-tracker .fct-gm-tools,
+.faw-combat-tracker .fct-participant-search {
+  border-color: var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius-sm);
+  background: var(--ft-ui-panel-2);
+}
+.faw-combat-tracker .fct-row {
+  border-color: var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius);
+  background: var(--ft-ui-panel);
+  box-shadow: var(--ft-ui-shadow-sm);
+}
+.faw-combat-tracker .fct-row:hover:not(.fct-current) {
+  border-color: color-mix(in srgb, var(--ft-ui-border-strong) 58%, var(--ft-ui-border));
+  background: var(--ft-ui-panel-hover);
+}
+.faw-combat-tracker .fct-row.fct-current {
+  border-color: var(--ft-ui-border-strong);
+  background: color-mix(in srgb, var(--ft-ui-panel) 91%, var(--ft-ui-accent) 9%);
+  box-shadow: var(--ft-ui-shadow);
+}
+.faw-combat-tracker .fct-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 9px;
+}
+.faw-combat-tracker .fct-badge {
+  min-height: 20px;
+  padding-inline: 6px;
+  border-radius: 999px;
+}
+.faw-combat-tracker .fct-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  margin-top: 2px;
+  padding: 8px 0 0;
+  background: linear-gradient(to bottom, transparent, var(--ft-ui-bg) 24%);
+}
+.faw-combat-tracker .fct-journal {
+  border-color: var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius);
+  background: var(--ft-ui-panel-2);
+}
+
+/* Workflow center -------------------------------------------------------- */
+.fwc-window .window-content { padding: 0; }
+.fwc-window .fwc-body { gap: 9px; padding: 10px; }
+.fwc-window .fwc-summary {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  align-items: center;
+  padding: 2px 0 7px;
+  background: linear-gradient(to bottom, var(--ft-ui-bg) 80%, transparent);
+}
+.fwc-window .fwc-summary h2 { font-size: 1.1rem; letter-spacing: -.01em; }
+.fwc-window .fwc-card {
+  position: relative;
+  overflow: hidden;
+  border-color: var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius);
+  background: var(--ft-ui-panel);
+  box-shadow: var(--ft-ui-shadow-sm);
+}
+.fwc-window .fwc-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: transparent;
+}
+.fwc-window .fwc-card.is-current::before { background: var(--ft-ui-accent); }
+.fwc-window .fwc-card.is-warning::before { background: var(--ft-ui-warning); }
+.fwc-window .fwc-card.is-actionable:not(.is-warning)::before { background: var(--ft-ui-success); }
+.fwc-window .fwc-card-head { align-items: center; }
+.fwc-window .fwc-icon {
+  width: 34px;
+  height: 34px;
+  flex-basis: 34px;
+  border-radius: 9px;
+  color: var(--ft-ui-accent);
+  background: color-mix(in srgb, var(--ft-ui-accent) 11%, transparent);
+}
+.fwc-window .fwc-gm-kpis > div {
+  border: 1px solid var(--ft-ui-border);
+  background: var(--ft-ui-panel-2);
+}
+.fwc-window .fwc-alert {
+  border: 1px solid color-mix(in srgb, var(--ft-ui-warning) 35%, transparent);
+}
+.fwc-window .fwc-actions button {
+  min-height: 34px;
+}
+
+/* Milestones ------------------------------------------------------------- */
+.fms-window .fms-body { padding-bottom: 76px; }
+.fms-window .fms-hero {
+  overflow: hidden;
+  border-color: var(--ft-ui-border-strong);
+  background:
+    linear-gradient(120deg, color-mix(in srgb, var(--ft-ui-accent) 10%, transparent), transparent 62%),
+    var(--ft-ui-panel);
+  box-shadow: var(--ft-ui-shadow);
+}
+.fms-window .fms-card,
+.fms-window .fms-rule-card,
+.fms-window .fms-subcard {
+  border-color: var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius);
+  background: var(--ft-ui-panel);
+  box-shadow: var(--ft-ui-shadow-sm);
+}
+.fms-window .fms-step {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
+.fms-window .fms-sticky-footer {
+  padding-block: 9px;
+  background: color-mix(in srgb, var(--ft-ui-bg) 94%, transparent);
+  backdrop-filter: blur(10px);
+}
+.fms-window .fms-type-buttons > button {
+  min-height: 38px;
+}
+
+/* Roll requests ---------------------------------------------------------- */
+.frr-request-app .window-content,
+.frr-sound-settings-app .window-content,
+.frr-player-requests-app .window-content { padding: 0; }
+.frr-request-root,
+.frr-sound-settings,
+.frr-player-requests { padding: 10px; }
+.frr-request-app .frr-section,
+.frr-sound-settings-app .frr-section {
+  border-color: var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius);
+  background: var(--ft-ui-panel);
+  box-shadow: var(--ft-ui-shadow-sm);
+}
+.frr-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 9px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--ft-ui-border);
+}
+.frr-section-heading h2 { margin: 0; font-size: .95rem; }
+.frr-step-badge {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 24px;
+  border-radius: 50%;
+  color: #17130d;
+  background: var(--ft-ui-accent);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+.frr-request-app .frr-target-row {
+  min-height: 40px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: rgb(255 255 255 / 2.5%);
+}
+.frr-request-app .frr-target-row:hover {
+  border-color: var(--ft-ui-border);
+  background: rgb(255 255 255 / 4.5%);
+}
+.frr-request-app .frr-target-row:has(input:checked) {
+  border-color: color-mix(in srgb, var(--ft-ui-accent) 38%, var(--ft-ui-border));
+  background: color-mix(in srgb, var(--ft-ui-accent) 8%, transparent);
+}
+.frr-request-app .frr-actions,
+.frr-sound-settings-app .frr-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 4;
+  padding: 8px 0 0;
+  background: linear-gradient(to bottom, transparent, var(--ft-ui-bg) 24%);
+}
+.frr-player-requests-app .frr-player-request-list { display: grid; gap: 8px; }
+.frr-player-requests-app .frr-card {
+  overflow: hidden;
+  border-color: var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius);
+  background: var(--ft-ui-panel);
+  box-shadow: var(--ft-ui-shadow-sm);
+}
+.frr-player-requests-app .frr-card-head {
+  display: grid;
+  grid-template-columns: 34px minmax(0,1fr);
+  align-items: center;
+  gap: 9px;
+}
+.frr-card-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: var(--ft-ui-accent);
+  background: color-mix(in srgb, var(--ft-ui-accent) 11%, transparent);
+}
+.frr-player-empty {
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 6px;
+  text-align: center;
+  color: var(--ft-ui-muted);
+}
+.frr-player-empty strong { color: var(--ft-ui-text); }
+.frr-player-empty p { margin: 0; }
+.frr-empty-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 2px;
+  border: 1px solid var(--ft-ui-border);
+  border-radius: 50%;
+  color: var(--ft-ui-accent);
+  background: var(--ft-ui-panel);
+  font-size: 1.2rem;
+}
+
+/* Sound settings --------------------------------------------------------- */
+.frr-sound-master-toggle > span {
+  display: grid;
+  gap: 2px;
+}
+.frr-sound-master-toggle small { color: var(--ft-ui-muted); font-weight: 400; }
+.frr-sound-row {
+  min-height: 48px;
+  padding: 6px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+}
+.frr-sound-row:hover { border-color: var(--ft-ui-border); background: rgb(255 255 255 / 3%); }
+.frr-sound-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.frr-sound-label > span:last-child { min-width: 0; display: grid; gap: 1px; }
+.frr-sound-label small { color: var(--ft-ui-muted); }
+.frr-outcome-dot {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  border-radius: 50%;
+  background: var(--ft-ui-muted);
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 8%, transparent);
+}
+.frr-sound-row.is-failure .frr-outcome-dot { background: var(--ft-ui-danger); }
+.frr-sound-row.is-tie .frr-outcome-dot { background: var(--ft-ui-warning); }
+.frr-sound-row.is-success .frr-outcome-dot { background: var(--ft-ui-success); }
+.frr-sound-row.is-style .frr-outcome-dot { background: var(--ft-ui-accent); }
+
+/* Help ------------------------------------------------------------------- */
+.faw-help-window .window-content { padding: 0; }
+.faw-help-root { gap: 14px; padding: 14px; }
+.faw-help-hero {
+  padding: 12px;
+  border: 1px solid var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius);
+  background:
+    linear-gradient(120deg, color-mix(in srgb, var(--ft-ui-accent) 10%, transparent), transparent 65%),
+    var(--ft-ui-panel);
+  box-shadow: var(--ft-ui-shadow-sm);
+}
+.faw-help-hero > i {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 38px;
+  margin: 0;
+  border-radius: 10px;
+  color: var(--ft-ui-accent);
+  background: color-mix(in srgb, var(--ft-ui-accent) 11%, transparent);
+}
+.faw-help-list {
+  padding: 0;
+  list-style: none;
+  counter-reset: help-item;
+}
+.faw-help-list li {
+  counter-increment: help-item;
+  display: grid;
+  grid-template-columns: 26px minmax(0,1fr);
+  gap: 8px;
+  align-items: start;
+  padding: 7px 8px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ft-ui-border) 70%, transparent);
+}
+.faw-help-list li::before {
+  content: counter(help-item);
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--ft-ui-muted);
+  background: var(--ft-ui-panel-2);
+  font-size: .72rem;
+  font-weight: 800;
+}
+.faw-help-nav button { min-height: 34px; }
+
+/* Character sheet polish ------------------------------------------------- */
+.fate-toolkit-character-sheet .fts-header {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--fts-accent) 7%, transparent), transparent 58%),
+    linear-gradient(to bottom, rgb(255 255 255 / 4%), transparent);
+}
+.fate-toolkit-character-sheet .fts-portrait-button {
+  box-shadow: 0 5px 22px rgb(0 0 0 / 26%);
+}
+.fate-toolkit-character-sheet .fts-fate-orb {
+  position: relative;
+  overflow: hidden;
+}
+.fate-toolkit-character-sheet .fts-fate-orb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(120deg, rgb(255 255 255 / 7%), transparent 48%);
+}
+.fate-toolkit-character-sheet .fts-tabs {
+  gap: 5px;
+  padding-inline: 12px;
+}
+.fate-toolkit-character-sheet .fts-tab-button {
+  border-radius: 8px;
+}
+.fate-toolkit-character-sheet .fts-card {
+  position: relative;
+  box-shadow: 0 3px 13px rgb(0 0 0 / 15%);
+}
+.fate-toolkit-character-sheet .fts-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  pointer-events: none;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--fts-accent) 58%, transparent), transparent 68%);
+  opacity: .72;
+}
+.fate-toolkit-character-sheet .fts-card-header {
+  min-height: 44px;
+  background: linear-gradient(to right, color-mix(in srgb, var(--fts-accent) 5%, transparent), transparent 72%);
+}
+.fate-toolkit-character-sheet .fts-card-header > input[type="search"]:focus {
+  width: min(210px, 48%);
+}
+.fate-toolkit-character-sheet .fts-action {
+  min-height: 52px;
+}
+.fate-toolkit-character-sheet .fts-favorite-chip:hover {
+  border-color: var(--fts-border-strong);
+  background: color-mix(in srgb, var(--fts-panel) 92%, var(--fts-accent) 8%);
+}
+.fate-toolkit-character-sheet :is(.fts-aspect-row,.fts-stunt-row,.fts-extra-row,.fts-skill-row,.fts-track-row,.fts-custom-field) {
+  transition: border-color var(--ft-ui-fast), background-color var(--ft-ui-fast), transform var(--ft-ui-fast);
+}
+.fate-toolkit-character-sheet :is(.fts-skill-row,.fts-extra-row):hover { transform: translateX(1px); }
+
+/* Responsive passes ------------------------------------------------------ */
+@media (max-width: 720px) {
+  .fate-action-widget .faw-action-selectors { grid-template-columns: 1fr; }
+  .fate-action-widget .faw-action-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .frr-request-app .frr-grid-2,
+  .frr-sound-settings-app .frr-grid-2 { grid-template-columns: 1fr; }
+  .frr-sound-row { grid-template-columns: 1fr 32px 32px !important; }
+  .frr-sound-label { grid-column: 1 / -1; }
+  .fwc-window .fwc-gm-kpis { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+
+@media (max-width: 520px) {
+  :where(.fate-aspect-widget,.fate-action-widget,.faw-combat-tracker,.fwc-window,.fms-window,.frr-request-app,.frr-player-requests-app,.frr-sound-settings-app) {
+    --ft-ui-control: 34px;
+    --ft-ui-icon: 34px;
+  }
+  .fate-action-widget .faw-action-grid { grid-template-columns: 1fr; }
+  .fate-action-widget .faw-action-choice { min-height: 62px; }
+  .fate-aspect-widget .faw-toolbar { flex-wrap: wrap; }
+  .fate-aspect-widget .faw-toolbar-tools { width: 100%; justify-content: space-between; }
+  .faw-combat-tracker .fct-footer { flex-direction: column; }
+  .faw-combat-tracker .fct-footer button { width: 100%; }
+  .fwc-window .fwc-gm-kpis { grid-template-columns: 1fr; }
+  .frr-request-app .frr-list-toolbar { align-items: stretch; }
+  .frr-request-app .frr-list-search { flex-basis: 100%; }
+  .frr-request-app .frr-actions,
+  .frr-sound-settings-app .frr-actions { flex-direction: column-reverse; }
+  .frr-request-app .frr-actions button,
+  .frr-sound-settings-app .frr-actions button { width: 100%; }
+}
+
+/* Accessibility ---------------------------------------------------------- */
+@media (prefers-contrast: more) {
+  :where(
+    .fate-aspect-widget,
+    .fate-action-widget,
+    .faw-combat-tracker,
+    .fwc-window,
+    .fms-window,
+    .frr-request-app,
+    .frr-player-requests-app,
+    .frr-sound-settings-app,
+    .faw-help-window,
+    .fate-toolkit-character-sheet
+  ) {
+    --ft-ui-border: color-mix(in srgb, currentColor 58%, transparent);
+    --ft-ui-border-strong: var(--ft-ui-accent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(
+    .fate-aspect-widget,
+    .fate-action-widget,
+    .faw-combat-tracker,
+    .fwc-window,
+    .fms-window,
+    .frr-request-app,
+    .frr-player-requests-app,
+    .frr-sound-settings-app,
+    .faw-help-window,
+    .fate-toolkit-character-sheet
+  ) *,
+  :where(
+    .fate-aspect-widget,
+    .fate-action-widget,
+    .faw-combat-tracker,
+    .fwc-window,
+    .fms-window,
+    .frr-request-app,
+    .frr-player-requests-app,
+    .frr-sound-settings-app,
+    .faw-help-window,
+    .fate-toolkit-character-sheet
+  ) *::before,
+  :where(
+    .fate-aspect-widget,
+    .fate-action-widget,
+    .faw-combat-tracker,
+    .fwc-window,
+    .fms-window,
+    .frr-request-app,
+    .frr-player-requests-app,
+    .frr-sound-settings-app,
+    .faw-help-window,
+    .fate-toolkit-character-sheet
+  ) *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* Request target picker introduced by the UI audit. */
+.frr-list-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 7px;
+}
+.frr-list-search {
+  min-width: 180px;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 8px;
+  border: 1px solid var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius-sm);
+  background: var(--ft-ui-panel-2);
+}
+.frr-list-search > i { color: var(--ft-ui-muted); }
+.frr-list-search input {
+  min-width: 0;
+  width: 100%;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.frr-targets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 5px;
+}
+.frr-target-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+.frr-target-row > input { width: 18px; height: 18px; }
+.frr-target-main {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+.frr-target-main :is(strong,small) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.frr-target-main small { color: var(--ft-ui-muted); }
+
+/* Improve compact profile without falling below usable pointer targets. */
+html.faw-density-compact :where(
+  .fate-aspect-widget,
+  .fate-action-widget,
+  .faw-combat-tracker,
+  .fwc-window,
+  .fms-window,
+  .frr-request-app,
+  .frr-player-requests-app,
+  .frr-sound-settings-app
+) {
+  --ft-ui-control: 29px;
+  --ft-ui-icon: 29px;
+}
+
+/* Generic selected / destructive states for consistent visual grammar. */
+:where(.fate-aspect-widget,.fate-action-widget,.faw-combat-tracker,.fwc-window,.fms-window,.frr-request-app,.frr-player-requests-app,.frr-sound-settings-app,.fate-toolkit-character-sheet) .is-danger:hover:not(:disabled) {
+  color: #fff;
+  border-color: color-mix(in srgb, var(--ft-ui-danger) 72%, transparent);
+  background: color-mix(in srgb, var(--ft-ui-danger) 22%, transparent);
+}
+:where(.fate-aspect-widget,.fate-action-widget,.faw-combat-tracker,.fwc-window,.fms-window,.frr-request-app,.frr-player-requests-app,.frr-sound-settings-app,.fate-toolkit-character-sheet) [aria-pressed="true"] {
+  border-color: var(--ft-ui-border-strong);
+  background: color-mix(in srgb, var(--ft-ui-accent) 12%, transparent);
+}
+
+/* DialogV2 surfaces ------------------------------------------------------
+ * Temporary Fate dialogs are part of the same product surface as the
+ * persistent toolkit windows. :has() scopes the treatment to our dialogs
+ * without repainting unrelated Foundry/system dialogs.
+ */
+.application:has(.frr-opposition-prompt) {
+  --ft-ui-bg: color-mix(in srgb, var(--color-cool-5, #1d1e22) 94%, transparent);
+  --ft-ui-panel: color-mix(in srgb, var(--color-bg-option, #292a30) 90%, white 2.5%);
+  --ft-ui-panel-2: color-mix(in srgb, var(--color-bg-option, #24252a) 78%, transparent);
+  --ft-ui-panel-hover: color-mix(in srgb, var(--ft-ui-panel) 92%, white 5%);
+  --ft-ui-border: color-mix(in srgb, var(--color-border-light-primary, #8e8e92) 42%, transparent);
+  --ft-ui-border-strong: color-mix(in srgb, var(--color-warm-2, #c49a57) 65%, transparent);
+  --ft-ui-text: var(--color-text-primary, var(--color-text-light-highlight, #f1efe8));
+  --ft-ui-muted: color-mix(in srgb, var(--color-text-secondary, #a9a7a2) 92%, transparent);
+  --ft-ui-accent: var(--color-warm-2, #c49a57);
+  --ft-ui-success: var(--color-level-success, #4f9d69);
+  --ft-ui-warning: var(--color-level-warning, #c77b2b);
+  --ft-ui-danger: var(--color-level-error, #c85d5d);
+  --ft-ui-info: #6489bb;
+  --ft-ui-radius-xs: 5px;
+  --ft-ui-radius-sm: 7px;
+  --ft-ui-radius: 10px;
+  --ft-ui-radius-lg: 14px;
+  --ft-ui-shadow-sm: 0 1px 3px rgb(0 0 0 / 18%);
+  --ft-ui-shadow: 0 5px 18px rgb(0 0 0 / 20%);
+  color: var(--ft-ui-text);
+}
+.application:has(.frr-opposition-prompt) .window-content {
+  background:
+    radial-gradient(circle at 8% 0%, color-mix(in srgb, var(--ft-ui-accent) 7%, transparent), transparent 24rem),
+    var(--ft-ui-bg);
+}
+.application:has(.frr-opposition-prompt) .dialog-content {
+  padding: 10px 12px 6px;
+}
+.application:has(.frr-opposition-prompt) .dialog-buttons {
+  gap: 7px;
+  padding: 8px 12px 12px;
+  border-top: 1px solid color-mix(in srgb, var(--ft-ui-border) 72%, transparent);
+  background: color-mix(in srgb, var(--ft-ui-panel-2) 76%, transparent);
+}
+.application:has(.frr-opposition-prompt) .dialog-buttons button {
+  min-height: 36px;
+  border-radius: var(--ft-ui-radius-sm);
+}
+.application:has(.frr-opposition-prompt) :is(button,input,select,textarea):focus-visible {
+  outline: 2px solid var(--ft-ui-accent) !important;
+  outline-offset: 2px;
+}
+
+.frr-opposition-prompt {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  color: var(--ft-ui-text, currentColor);
+}
+.frr-opposition-prompt > :first-child { margin-top: 0; }
+.frr-opposition-prompt > :last-child { margin-bottom: 0; }
+.frr-dialog-lead {
+  margin: 0;
+  color: var(--ft-ui-muted, currentColor);
+  line-height: 1.45;
+}
+.frr-action-summary {
+  position: relative;
+  overflow: hidden;
+  padding: 10px 12px 10px 15px;
+  border: 1px solid var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius);
+  background:
+    linear-gradient(115deg, color-mix(in srgb, var(--ft-ui-accent) 11%, transparent), transparent 64%),
+    var(--ft-ui-panel);
+  box-shadow: var(--ft-ui-shadow-sm);
+  line-height: 1.35;
+}
+.frr-action-summary::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--ft-ui-accent);
+}
+.frr-dialog-field {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  min-width: 0;
+}
+.frr-dialog-field > span,
+.frr-stunt-picker-head > strong {
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+.frr-dialog-field :is(input,select) {
+  width: 100%;
+  min-width: 0;
+  min-height: 34px;
+  border: 1px solid var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius-sm);
+  background: var(--ft-ui-panel-2);
+}
+.frr-dialog-field :is(input,select):hover:not(:disabled) {
+  border-color: var(--ft-ui-border-strong);
+}
+.frr-dialog-search,
+.frr-skill-tools,
+.frr-stunt-search {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 0 8px;
+  border: 1px solid var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius-sm);
+  background: var(--ft-ui-panel-2);
+}
+.frr-dialog-search > i,
+.frr-skill-tools > i,
+.frr-stunt-search > i { color: var(--ft-ui-muted); }
+.frr-dialog-search input,
+.frr-skill-tools input,
+.frr-stunt-search input {
+  min-width: 0;
+  width: 100%;
+  min-height: 30px !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.frr-stunt-picker {
+  display: grid;
+  gap: 7px;
+  padding: 9px;
+  border: 1px solid var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius);
+  background: color-mix(in srgb, var(--ft-ui-panel) 84%, transparent);
+}
+.frr-stunt-picker-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ft-ui-border) 66%, transparent);
+}
+.frr-stunt-picker-head > span {
+  color: var(--ft-ui-muted);
+  font-size: .75rem;
+  text-align: right;
+}
+.frr-stunt-list {
+  display: grid;
+  gap: 5px;
+  max-height: min(36vh, 310px);
+  overflow: auto;
+  padding-right: 2px;
+}
+.frr-stunt-row,
+.frr-stunt-option {
+  border-radius: var(--ft-ui-radius-sm);
+}
+.frr-stunt-row:hover,
+.frr-stunt-option:hover {
+  background: color-mix(in srgb, var(--ft-ui-accent) 7%, transparent);
+}
+.frr-stunt-empty,
+.frr-hint {
+  margin: 0;
+  color: var(--ft-ui-muted);
+  font-size: .78rem;
+  line-height: 1.45;
+}
+.frr-rule-suggestion {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--ft-ui-info) 48%, var(--ft-ui-border));
+  border-radius: var(--ft-ui-radius-sm);
+  background: color-mix(in srgb, var(--ft-ui-info) 11%, transparent);
+  line-height: 1.4;
+}
+.frr-rule-suggestion > i {
+  margin-top: .16em;
+  color: var(--ft-ui-info);
+}
+.frr-check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 5px 8px;
+  border: 1px solid var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius-sm);
+  background: var(--ft-ui-panel-2);
+  cursor: pointer;
+}
+.frr-check-row:hover { border-color: var(--ft-ui-border-strong); }
+.frr-check-row input { width: 18px; height: 18px; flex: 0 0 auto; }
+.frr-confirm-prompt {
+  grid-template-columns: 42px minmax(0,1fr);
+  align-items: center;
+}
+.frr-confirm-prompt > p { margin: 0; line-height: 1.5; }
+.frr-confirm-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  color: var(--ft-ui-accent);
+  background: color-mix(in srgb, var(--ft-ui-accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ft-ui-accent) 35%, transparent);
+}
+
+@media (max-width: 520px) {
+  .application:has(.frr-opposition-prompt) .dialog-content { padding-inline: 8px; }
+  .application:has(.frr-opposition-prompt) .dialog-buttons {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding-inline: 8px;
+  }
+  .frr-stunt-picker-head { align-items: flex-start; flex-direction: column; gap: 2px; }
+  .frr-stunt-picker-head > span { text-align: left; }
+  .frr-confirm-prompt { grid-template-columns: 34px minmax(0,1fr); }
+  .frr-confirm-icon { width: 34px; height: 34px; }
+}
+
+@media (prefers-contrast: more) {
+  .application:has(.frr-opposition-prompt) {
+    --ft-ui-border: color-mix(in srgb, currentColor 58%, transparent);
+    --ft-ui-border-strong: var(--ft-ui-accent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .application:has(.frr-opposition-prompt) *,
+  .application:has(.frr-opposition-prompt) *::before,
+  .application:has(.frr-opposition-prompt) *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* Toolkit-wide DialogV2 shell -------------------------------------------
+ * Covers confirmations and the remaining small editors which are not part
+ * of the roll-request dialog family.
+ */
+.application:has(.faw-toolkit-confirm, .faw-toolkit-dialog, .faw-compact-dialog) {
+  --ft-ui-bg: color-mix(in srgb, var(--color-cool-5, #1d1e22) 94%, transparent);
+  --ft-ui-panel: color-mix(in srgb, var(--color-bg-option, #292a30) 90%, white 2.5%);
+  --ft-ui-panel-2: color-mix(in srgb, var(--color-bg-option, #24252a) 78%, transparent);
+  --ft-ui-border: color-mix(in srgb, var(--color-border-light-primary, #8e8e92) 42%, transparent);
+  --ft-ui-border-strong: color-mix(in srgb, var(--color-warm-2, #c49a57) 65%, transparent);
+  --ft-ui-text: var(--color-text-primary, var(--color-text-light-highlight, #f1efe8));
+  --ft-ui-muted: color-mix(in srgb, var(--color-text-secondary, #a9a7a2) 92%, transparent);
+  --ft-ui-accent: var(--color-warm-2, #c49a57);
+  --ft-ui-danger: var(--color-level-error, #c85d5d);
+  --ft-ui-radius-sm: 7px;
+  --ft-ui-radius: 10px;
+  --ft-ui-shadow-sm: 0 1px 3px rgb(0 0 0 / 18%);
+  color: var(--ft-ui-text);
+}
+.application:has(.faw-toolkit-confirm, .faw-toolkit-dialog, .faw-compact-dialog) .window-content {
+  background:
+    radial-gradient(circle at 10% 0%, color-mix(in srgb, var(--ft-ui-accent) 6%, transparent), transparent 22rem),
+    var(--ft-ui-bg);
+}
+.application:has(.faw-toolkit-confirm, .faw-toolkit-dialog, .faw-compact-dialog) .dialog-buttons {
+  gap: 7px;
+  padding: 8px 12px 12px;
+  border-top: 1px solid color-mix(in srgb, var(--ft-ui-border) 72%, transparent);
+}
+.application:has(.faw-toolkit-confirm, .faw-toolkit-dialog, .faw-compact-dialog) .dialog-buttons button {
+  min-height: 36px;
+  border-radius: var(--ft-ui-radius-sm);
+}
+.application:has(.faw-toolkit-confirm, .faw-toolkit-dialog, .faw-compact-dialog) :is(button,input,select,textarea):focus-visible {
+  outline: 2px solid var(--ft-ui-accent) !important;
+  outline-offset: 2px;
+}
+
+.faw-toolkit-confirm {
+  position: relative;
+  margin: 2px 0;
+  padding: 12px 13px 12px 16px;
+  border: 1px solid var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius);
+  background: var(--ft-ui-panel);
+  box-shadow: var(--ft-ui-shadow-sm);
+  line-height: 1.5;
+}
+.faw-toolkit-confirm::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  border-radius: var(--ft-ui-radius) 0 0 var(--ft-ui-radius);
+  background: var(--ft-ui-accent);
+}
+.faw-toolkit-confirm.is-danger {
+  border-color: color-mix(in srgb, var(--ft-ui-danger) 52%, var(--ft-ui-border));
+  background: color-mix(in srgb, var(--ft-ui-danger) 8%, var(--ft-ui-panel));
+}
+.faw-toolkit-confirm.is-danger::before { background: var(--ft-ui-danger); }
+.faw-toolkit-confirm > :first-child { margin-top: 0; }
+.faw-toolkit-confirm > :last-child { margin-bottom: 0; }
+
+.faw-toolkit-dialog,
+.faw-compact-dialog {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+.faw-toolkit-dialog .form-group,
+.faw-compact-dialog label {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+}
+.faw-toolkit-dialog .form-group > label,
+.faw-compact-dialog label > span {
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: var(--ft-ui-text);
+}
+.faw-toolkit-dialog :is(input,select,textarea),
+.faw-compact-dialog :is(input,select,textarea) {
+  width: 100%;
+  min-width: 0;
+  min-height: 34px;
+  border: 1px solid var(--ft-ui-border);
+  border-radius: var(--ft-ui-radius-sm);
+  background: var(--ft-ui-panel-2);
+}
+.faw-toolkit-dialog :is(input,select,textarea):hover:not(:disabled),
+.faw-compact-dialog :is(input,select,textarea):hover:not(:disabled) {
+  border-color: var(--ft-ui-border-strong);
+}
+.faw-custom-field-dialog {
+  grid-template-columns: repeat(2, minmax(0,1fr));
+}
+.faw-custom-field-dialog .form-group:first-child,
+.faw-custom-field-dialog .form-group:nth-child(3) {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 520px) {
+  .application:has(.faw-toolkit-confirm, .faw-toolkit-dialog, .faw-compact-dialog) .dialog-buttons {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding-inline: 8px;
+  }
+  .faw-custom-field-dialog { grid-template-columns: 1fr; }
+  .faw-custom-field-dialog .form-group { grid-column: auto !important; }
+}
+
+@media (prefers-contrast: more) {
+  .application:has(.faw-toolkit-confirm, .faw-toolkit-dialog, .faw-compact-dialog) {
+    --ft-ui-border: color-mix(in srgb, currentColor 58%, transparent);
+    --ft-ui-border-strong: var(--ft-ui-accent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .application:has(.faw-toolkit-confirm, .faw-toolkit-dialog, .faw-compact-dialog) *,
+  .application:has(.faw-toolkit-confirm, .faw-toolkit-dialog, .faw-compact-dialog) *::before,
+  .application:has(.faw-toolkit-confirm, .faw-toolkit-dialog, .faw-compact-dialog) *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* v1.38 — runtime-audited narrow-window hardening ------------------------- */
+:where(.frr-request-app,.frr-sound-settings-app) :is(.frr-request-form,.frr-sound-settings) {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+:where(.faw-combat-tracker,.fms-window) {
+  min-width: min(100%, 300px);
+}
+
+.fate-aspect-widget .faw-action-button,
+.faw-combat-tracker :is(.fct-row-actions button,.fct-manage-row button),
+details.faw-context-menu > summary {
+  min-width: 30px;
+  width: 30px;
+  height: 30px;
+}
+
+.fate-aspect-widget .faw-hidden-note,
+.faw-combat-tracker .fct-last-event,
+.fate-aspect-widget .faw-count {
+  font-size: max(.75rem, 11px);
+}
+
+html.faw-density-compact :is(.fate-aspect-widget,.fate-action-widget,.faw-combat-tracker,.fms-window,.fwc-window,.frr-request-app,.frr-player-requests-app) :is(button,input,select) {
+  min-height: 30px;
+}
+
+html.faw-density-compact details.faw-context-menu > summary {
+  width: 30px;
+  min-width: 30px;
+  height: 30px;
+}
+
+.faw-ui-audit-highlight {
+  outline: 2px solid var(--color-level-error, #e26d6d) !important;
+  outline-offset: 2px;
+}
+
+@media (max-width: 420px) {
+  :where(.faw-combat-tracker,.fms-window,.frr-request-app,.frr-sound-settings-app) {
+    min-width: 0;
+    max-width: calc(100vw - 8px);
+  }
+
+  .faw-combat-tracker .fct-main-row {
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+  }
+  .faw-combat-tracker .fct-order-number { display: none; }
+  .faw-combat-tracker .fct-state,
+  .faw-combat-tracker .fct-manage-row { margin-left: 38px; }
+  .faw-combat-tracker .fct-row-actions { max-width: 64px; }
+
+  .frr-request-app .frr-target-toolbar,
+  .frr-request-app .frr-list-toolbar { flex-wrap: wrap; }
+  .frr-request-app .frr-primary { min-width: 0; width: 100%; }
+
+  .fms-window .fms-scroll { padding-inline: 8px; }
+  .fms-window .fms-hero { align-items: flex-start; }
+  .fms-window .fms-type-buttons { grid-template-columns: 1fr; }
+}
+
+/* v1.39 — per-user toolkit ergonomics ------------------------------------- */
+html.faw-density-comfortable :where(
+  .fate-aspect-widget,
+  .fate-action-widget,
+  .faw-combat-tracker,
+  .fwc-window,
+  .fms-window,
+  .frr-request-app,
+  .frr-player-requests-app,
+  .frr-sound-settings-app,
+  .faw-help-window,
+  .fate-toolkit-character-sheet
+) {
+  --ft-ui-control: 38px;
+  --ft-ui-icon: 36px;
+}
+
+html.faw-density-comfortable :where(
+  .fate-aspect-widget,
+  .fate-action-widget,
+  .faw-combat-tracker,
+  .fwc-window,
+  .fms-window,
+  .frr-request-app,
+  .frr-player-requests-app,
+  .frr-sound-settings-app
+) .window-content {
+  padding: 11px;
+}
+
+html.faw-density-comfortable :is(.faw-section-body,.faw-action-grid,.fct-list,.fwc-body,.fms-body) {
+  gap: 10px;
+}
+
+html.faw-density-comfortable :is(.faw-aspect-row,.faw-character-value,.faw-boost-value,.fct-row,.fwc-card,.fms-card) {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+html.faw-density-comfortable :where(
+  .fate-aspect-widget,
+  .fate-action-widget,
+  .faw-combat-tracker,
+  .fwc-window,
+  .fms-window,
+  .frr-request-app,
+  .frr-player-requests-app,
+  .frr-sound-settings-app,
+  .faw-help-window,
+  .fate-toolkit-character-sheet,
+  .faw-toolkit-dialog
+) :is(button,input,select,textarea) {
+  min-height: 36px;
+}
+
+html.faw-text-small :where(
+  .fate-aspect-widget,
+  .fate-action-widget,
+  .faw-combat-tracker,
+  .fwc-window,
+  .fms-window,
+  .frr-request-app,
+  .frr-player-requests-app,
+  .frr-sound-settings-app,
+  .faw-help-window,
+  .fate-toolkit-character-sheet,
+  .faw-toolkit-dialog
+) {
+  font-size: .95em;
+}
+
+html.faw-text-large :where(
+  .fate-aspect-widget,
+  .fate-action-widget,
+  .faw-combat-tracker,
+  .fwc-window,
+  .fms-window,
+  .frr-request-app,
+  .frr-player-requests-app,
+  .frr-sound-settings-app,
+  .faw-help-window,
+  .fate-toolkit-character-sheet,
+  .faw-toolkit-dialog
+) {
+  font-size: 1.08em;
+}
+
+html.faw-text-large :where(.faw-combat-tracker,.frr-request-app,.frr-sound-settings-app,.fms-window) {
+  min-width: 0;
+}
+
+/* v1.40 — input-modality and forced-colors hardening ---------------------- */
+@media (hover: none), (pointer: coarse) {
+  :where(
+    .fate-aspect-widget,
+    .fate-action-widget,
+    .faw-combat-tracker,
+    .fwc-window,
+    .fms-window,
+    .frr-request-app,
+    .frr-player-requests-app,
+    .frr-sound-settings-app,
+    .faw-help-window,
+    .fate-toolkit-character-sheet,
+    .faw-toolkit-dialog
+  ) {
+    --ft-ui-control: 40px;
+    --ft-ui-icon: 40px;
+  }
+
+  .faw-context-secondary,
+  .faw-aspect-row > .faw-row-actions,
+  .faw-boost-value > .faw-row-actions,
+  .faw-character-value > .faw-row-actions,
+  .fate-aspect-widget .faw-action-button,
+  .faw-combat-tracker :is(.fct-row-actions button,.fct-manage-row button) {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+
+  .fate-aspect-widget .faw-action-button,
+  .faw-combat-tracker :is(.fct-row-actions button,.fct-manage-row button),
+  details.faw-context-menu > summary,
+  .fate-toolkit-character-sheet :is(button,[role="button"]) {
+    min-width: 38px;
+    min-height: 38px;
+  }
+
+  .frr-card-actions,
+  .fct-footer,
+  .fms-sticky-footer,
+  .faw-dialog-actions {
+    gap: 8px;
+  }
+}
+
+@media (forced-colors: active) {
+  :where(
+    .fate-aspect-widget,
+    .fate-action-widget,
+    .faw-combat-tracker,
+    .fwc-window,
+    .fms-window,
+    .frr-request-app,
+    .frr-player-requests-app,
+    .frr-sound-settings-app,
+    .faw-help-window,
+    .fate-toolkit-character-sheet,
+    .faw-toolkit-dialog
+  ) {
+    --ft-ui-border: CanvasText;
+    --ft-ui-border-strong: Highlight;
+    --ft-ui-accent: Highlight;
+    --ft-ui-danger: Mark;
+  }
+
+  :where(
+    .fate-aspect-widget,
+    .fate-action-widget,
+    .faw-combat-tracker,
+    .fwc-window,
+    .fms-window,
+    .frr-request-app,
+    .frr-player-requests-app,
+    .frr-sound-settings-app,
+    .faw-help-window,
+    .fate-toolkit-character-sheet,
+    .faw-toolkit-dialog
+  ) :is(button,input,select,textarea,summary,[role="button"]):focus-visible {
+    outline: 2px solid Highlight !important;
+    outline-offset: 2px;
+  }
+
+  :where(
+    .faw-action-choice[aria-pressed="true"],
+    .fts-favorite-chip[aria-pressed="true"],
+    [aria-selected="true"],
+    [aria-current="true"]
+  ) {
+    forced-color-adjust: none;
+    background: Highlight !important;
+    color: HighlightText !important;
+    border-color: Highlight !important;
+  }
+
+  .faw-ui-audit-highlight {
+    outline-color: Mark !important;
+  }
+}

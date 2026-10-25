@@ -1,0 +1,63 @@
+<div class="faw-action-shell">
+  <div class="faw-action-help-row faw-action-visually-hidden">
+    <button type="button" class="faw-context-help" data-faw-help="actions" title="{{localize 'FAW.Help'}}" aria-label="{{localize 'FAW.Help'}}"><i class="fa-solid fa-circle-question" aria-hidden="true"></i></button>
+  </div>
+
+  {{#if hasPendingAction}}
+    <div class="faw-action-pending" role="status" aria-live="polite">
+      <span class="faw-action-pending-icon"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i></span>
+      <span>
+        <strong>{{pendingAction.actionLabel}}</strong> · {{pendingAction.actorName}}{{#if pendingAction.targetName}} → {{pendingAction.targetName}}{{/if}}
+        <small>{{localize "FAW.Action.PendingHint"}}</small>
+      </span>
+    </div>
+  {{/if}}
+
+  <div class="faw-action-selectors" role="group" aria-label="{{localize 'FAW.Action.Context'}}">
+    <label>
+      <span class="faw-action-label-row"><span>{{localize "FAW.Action.Actor"}}</span><span class="faw-action-label-spacer" aria-hidden="true"></span></span>
+      <input type="search" class="faw-action-search" data-action-actor-search placeholder="{{localize 'FAW.Action.SearchActor'}}" aria-label="{{localize 'FAW.Action.SearchActor'}}" autocomplete="off" {{#unless hasActors}}disabled{{/unless}} {{#if hasPendingAction}}disabled{{/if}}>
+      <select name="actionActor" aria-label="{{localize 'FAW.Action.Actor'}}" {{#unless hasActors}}disabled{{/unless}} {{#if hasPendingAction}}disabled{{/if}}>
+        {{#each actors}}
+          <option value="{{ref}}" {{#if selected}}selected{{/if}}>{{name}}</option>
+        {{else}}
+          <option value="">{{localize "FAW.Action.NoActor"}}</option>
+        {{/each}}
+      </select>
+    </label>
+
+    <label>
+      <span class="faw-action-label-row">
+        <span>{{localize "FAW.Action.Target"}}</span>
+        <button type="button" class="faw-action-inline" data-action="use-canvas-target" title="{{localize 'FAW.Action.UseCanvasTarget'}}" aria-label="{{localize 'FAW.Action.UseCanvasTarget'}}" {{#if hasPendingAction}}disabled{{/if}}>
+          <i class="fa-solid fa-bullseye" aria-hidden="true"></i>
+        </button>
+      </span>
+      <input type="search" class="faw-action-search" data-action-target-search placeholder="{{localize 'FAW.Action.SearchTarget'}}" aria-label="{{localize 'FAW.Action.SearchTarget'}}" autocomplete="off" {{#if hasPendingAction}}disabled{{/if}}>
+      <select name="actionTarget" aria-label="{{localize 'FAW.Action.Target'}}" {{#if hasPendingAction}}disabled{{/if}}>
+        <option value="" {{#unless targetSelected}}selected{{/unless}}>{{localize "FAW.Action.NoTarget"}}</option>
+        {{#each targets}}
+          <option value="{{ref}}" {{#if selected}}selected{{/if}}>{{name}}</option>
+        {{/each}}
+      </select>
+    </label>
+  </div>
+
+  {{#if favoriteSkills.length}}
+  <div class="faw-action-favorites" role="group" aria-label="{{localize 'FAW.Action.Favorites'}}" title="{{localize 'FAW.Action.FavoritesHint'}}">
+    <span class="faw-action-favorites-label"><i class="fa-solid fa-star" aria-hidden="true"></i> {{localize "FAW.Action.Favorites"}}</span>
+    <div class="faw-action-favorite-list">
+      {{#each favoriteSkills}}
+      <span class="faw-action-favorite-pill">{{name}} <b>{{rank}}</b></span>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  <div class="faw-action-grid" role="group" aria-label="{{localize 'FAW.Action.ChooseAction'}}">
+    <button type="button" class="faw-action-choice faw-action-attack" data-fate-action="attack" title="{{localize 'FAW.Action.Attack'}}" aria-label="{{localize 'FAW.Action.Attack'}}" {{#unless hasActors}}disabled{{/unless}} {{#if hasPendingAction}}disabled{{/if}}><span class="faw-action-choice-icon"><i class="fa-solid fa-burst" aria-hidden="true"></i></span></button>
+    <button type="button" class="faw-action-choice faw-action-overcome" data-fate-action="overcome" title="{{localize 'FAW.Action.Overcome'}}" aria-label="{{localize 'FAW.Action.Overcome'}}" {{#unless hasActors}}disabled{{/unless}} {{#if hasPendingAction}}disabled{{/if}}><span class="faw-action-choice-icon"><i class="fa-solid fa-person-running" aria-hidden="true"></i></span></button>
+    <button type="button" class="faw-action-choice faw-action-create" data-fate-action="create" title="{{localize 'FAW.Action.Create'}}" aria-label="{{localize 'FAW.Action.Create'}}" {{#unless hasActors}}disabled{{/unless}} {{#if hasPendingAction}}disabled{{/if}}><span class="faw-action-choice-icon"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></span></button>
+    <button type="button" class="faw-action-choice faw-action-defend" data-fate-action="defend" title="{{localize 'FAW.Action.Defend'}}" aria-label="{{localize 'FAW.Action.Defend'}}" {{#unless hasActors}}disabled{{/unless}} {{#if hasPendingAction}}disabled{{/if}}><span class="faw-action-choice-icon"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span></button>
+  </div>
+</div>

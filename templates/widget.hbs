@@ -1,0 +1,289 @@
+<div class="faw-shell">
+  <div class="faw-toolbar">
+    <span class="faw-scene-name">
+      {{#if sceneName}}{{localize "FAW.SceneName" name=sceneName}}{{else}}{{localize "FAW.NoScene"}}{{/if}}
+    </span>
+
+    <div class="faw-toolbar-tools" role="toolbar" aria-label="{{localize 'FAW.Filters'}}">
+      <button type="button" class="faw-mini-button" data-section-filter="global" title="{{localize 'FAW.Global'}}" aria-label="{{localize 'FAW.Global'}}"><i class="fa-solid fa-globe" aria-hidden="true"></i></button>
+      <button type="button" class="faw-mini-button" data-section-filter="scene" title="{{localize 'FAW.Scene'}}" aria-label="{{localize 'FAW.Scene'}}"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></button>
+      <button type="button" class="faw-mini-button" data-section-filter="travelling" title="{{localize 'FAW.Travelling'}}" aria-label="{{localize 'FAW.Travelling'}}"><i class="fa-solid fa-route" aria-hidden="true"></i></button>
+      <button type="button" class="faw-mini-button" data-section-filter="boosts" title="{{localize 'FAW.Boosts'}}" aria-label="{{localize 'FAW.Boosts'}}"><i class="fa-solid fa-bolt" aria-hidden="true"></i></button>
+      <button type="button" class="faw-mini-button" data-section-filter="consequences" title="{{localize 'FAW.Consequences'}}" aria-label="{{localize 'FAW.Consequences'}}"><i class="fa-solid fa-heart-crack" aria-hidden="true"></i></button>
+      <button type="button" class="faw-mini-button" data-section-filter="characters" title="{{localize 'FAW.Characters'}}" aria-label="{{localize 'FAW.Characters'}}"><i class="fa-solid fa-users" aria-hidden="true"></i></button>
+      <span class="faw-toolbar-separator"></span>
+      <button type="button" class="faw-mini-button" data-action="collapse-all" title="{{localize 'FAW.CollapseAll'}}" aria-label="{{localize 'FAW.CollapseAll'}}"><i class="fa-solid fa-angles-up" aria-hidden="true"></i></button>
+      <button type="button" class="faw-mini-button" data-action="expand-all" title="{{localize 'FAW.ExpandAll'}}" aria-label="{{localize 'FAW.ExpandAll'}}"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></button>
+      <button type="button" class="faw-mini-button" data-action="refresh" title="{{localize 'FAW.Refresh'}}" aria-label="{{localize 'FAW.Refresh'}}"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i></button>
+      <button type="button" class="faw-mini-button" data-faw-help="aspects" title="{{localize 'FAW.Help'}}" aria-label="{{localize 'FAW.Help'}}"><i class="fa-solid fa-circle-question" aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <div class="faw-scroll">
+    <details class="faw-section" data-section="global" data-block-key="section:global" data-aspect-drop-target="global">
+      <summary>
+        <span>{{localize "FAW.Global"}}</span>
+        <span class="faw-count">{{globalAspects.length}}</span>
+      </summary>
+      <div class="faw-section-body">
+        {{#each globalAspects as |aspect|}}
+          <div class="faw-aspect-row {{#if aspect.hidden}}faw-hidden-row{{/if}}">
+            <span class="faw-drag-handle" data-faw-drag="aspect" data-drag-text="{{aspect.name}}" data-drag-meta="{{localize 'FAW.Global'}}" data-drag-hidden="{{aspect.hidden}}" data-drag-source="game" data-drag-index="{{aspect.index}}" data-drag-invokes="{{aspect.freeInvokes}}" title="{{localize 'FAW.DragToScene'}}"><i class="fa-solid fa-grip-vertical" aria-hidden="true"></i></span>
+            <div class="faw-aspect-main">
+              {{#if ../canEditGlobal}}
+                <input class="faw-aspect-input" type="text" value="{{aspect.name}}" data-source="game" data-field="name" data-index="{{aspect.index}}" aria-label="{{localize 'FAW.Aspect'}}">
+              {{else}}
+                <span class="faw-aspect-text">{{aspect.name}}</span>
+              {{/if}}
+              {{#if aspect.hidden}}<span class="faw-hidden-note">{{localize "FAW.HiddenInWidget"}}</span>{{/if}}
+            </div>
+            <div class="faw-invokes" title="{{localize 'FAW.FreeInvokesEditable'}}">
+              <i class="fa-regular fa-circle-dot" aria-hidden="true"></i>
+              {{#if ../canEditGlobal}}
+                <input class="faw-invoke-input" type="number" min="0" step="1" value="{{aspect.freeInvokes}}" data-source="game" data-field="free_invokes" data-index="{{aspect.index}}" aria-label="{{localize 'FAW.FreeInvokes'}}">
+              {{else}}
+                <span class="faw-counter-value">{{aspect.freeInvokes}}</span>
+              {{/if}}
+            </div>
+            <button type="button" class="faw-action-button faw-favorite {{#if aspect.favorite}}is-active{{/if}}" data-action="toggle-aspect-favorite" aria-pressed="{{#if aspect.favorite}}true{{else}}false{{/if}}" data-favorite-key="{{aspect.favoriteKey}}" title="{{#if aspect.favorite}}{{localize 'FAW.UnpinAspect'}}{{else}}{{localize 'FAW.PinAspect'}}{{/if}}" aria-label="{{#if aspect.favorite}}{{localize 'FAW.UnpinAspect'}}{{else}}{{localize 'FAW.PinAspect'}}{{/if}}"><i class="{{#if aspect.favorite}}fa-solid{{else}}fa-regular{{/if}} fa-star" aria-hidden="true"></i></button>
+            {{#if ../isGM}}
+              <div class="faw-row-actions">
+                <button type="button" class="faw-action-button" data-action="toggle-game-hidden" aria-pressed="{{#if aspect.hidden}}true{{else}}false{{/if}}" data-index="{{aspect.index}}" title="{{#if aspect.hidden}}{{localize 'FAW.Show'}}{{else}}{{localize 'FAW.Hide'}}{{/if}}" aria-label="{{#if aspect.hidden}}{{localize 'FAW.Show'}}{{else}}{{localize 'FAW.Hide'}}{{/if}}"><i class="fa-solid {{#if aspect.hidden}}fa-eye-slash{{else}}fa-eye{{/if}}" aria-hidden="true"></i></button>
+                <button type="button" class="faw-action-button faw-delete" data-action="delete-game" data-index="{{aspect.index}}" title="{{localize 'FAW.Delete'}}" aria-label="{{localize 'FAW.Delete'}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+              </div>
+            {{/if}}
+          </div>
+        {{else}}
+          <div class="faw-empty faw-empty-state"><i class="fa-regular fa-circle" aria-hidden="true"></i><span>{{localize "FAW.Empty"}}</span></div>
+        {{/each}}
+        {{#if canEditGlobal}}
+          <button type="button" class="faw-add" data-action="add-global"><i class="fa-solid fa-plus" aria-hidden="true"></i> {{localize "FAW.Add"}}</button>
+        {{/if}}
+      </div>
+    </details>
+
+    <details class="faw-section" data-section="scene" data-block-key="section:scene" data-aspect-drop-target="scene">
+      <summary>
+        <span>{{localize "FAW.Scene"}}</span>
+        <span class="faw-count">{{sceneAspects.length}}</span>
+      </summary>
+      <div class="faw-section-body">
+        {{#each sceneAspects as |aspect|}}
+          <div class="faw-aspect-row {{#if aspect.hidden}}faw-hidden-row{{/if}}">
+            <span class="faw-drag-handle" data-faw-drag="aspect" data-drag-text="{{aspect.name}}" data-drag-meta="{{localize 'FAW.Scene'}}" data-drag-hidden="{{aspect.hidden}}" data-drag-source="scene" data-drag-index="{{aspect.index}}" data-drag-invokes="{{aspect.freeInvokes}}" title="{{localize 'FAW.DragToScene'}}"><i class="fa-solid fa-grip-vertical" aria-hidden="true"></i></span>
+            <div class="faw-aspect-main">
+              {{#if ../canEditScene}}
+                <input class="faw-aspect-input" type="text" value="{{aspect.name}}" data-source="scene" data-field="name" data-index="{{aspect.index}}" aria-label="{{localize 'FAW.Aspect'}}">
+              {{else}}
+                <span class="faw-aspect-text">{{aspect.name}}</span>
+              {{/if}}
+              {{#if aspect.hidden}}<span class="faw-hidden-note">{{localize "FAW.HiddenInWidget"}}</span>{{/if}}
+            </div>
+            <div class="faw-invokes" title="{{localize 'FAW.FreeInvokesEditable'}}">
+              <i class="fa-regular fa-circle-dot" aria-hidden="true"></i>
+              {{#if ../canEditScene}}
+                <input class="faw-invoke-input" type="number" min="0" step="1" value="{{aspect.freeInvokes}}" data-source="scene" data-field="free_invokes" data-index="{{aspect.index}}" aria-label="{{localize 'FAW.FreeInvokes'}}">
+              {{else}}
+                <span class="faw-counter-value">{{aspect.freeInvokes}}</span>
+              {{/if}}
+            </div>
+            <button type="button" class="faw-action-button faw-favorite {{#if aspect.favorite}}is-active{{/if}}" data-action="toggle-aspect-favorite" aria-pressed="{{#if aspect.favorite}}true{{else}}false{{/if}}" data-favorite-key="{{aspect.favoriteKey}}" title="{{#if aspect.favorite}}{{localize 'FAW.UnpinAspect'}}{{else}}{{localize 'FAW.PinAspect'}}{{/if}}" aria-label="{{#if aspect.favorite}}{{localize 'FAW.UnpinAspect'}}{{else}}{{localize 'FAW.PinAspect'}}{{/if}}"><i class="{{#if aspect.favorite}}fa-solid{{else}}fa-regular{{/if}} fa-star" aria-hidden="true"></i></button>
+            {{#if ../isGM}}
+              <div class="faw-row-actions">
+                <button type="button" class="faw-action-button" data-action="toggle-scene-hidden" aria-pressed="{{#if aspect.hidden}}true{{else}}false{{/if}}" data-index="{{aspect.index}}" title="{{#if aspect.hidden}}{{localize 'FAW.Show'}}{{else}}{{localize 'FAW.Hide'}}{{/if}}" aria-label="{{#if aspect.hidden}}{{localize 'FAW.Show'}}{{else}}{{localize 'FAW.Hide'}}{{/if}}"><i class="fa-solid {{#if aspect.hidden}}fa-eye-slash{{else}}fa-eye{{/if}}" aria-hidden="true"></i></button>
+                <button type="button" class="faw-action-button faw-delete" data-action="delete-scene" data-index="{{aspect.index}}" title="{{localize 'FAW.Delete'}}" aria-label="{{localize 'FAW.Delete'}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+              </div>
+            {{/if}}
+          </div>
+        {{else}}
+          <div class="faw-empty faw-empty-state"><i class="fa-regular fa-circle" aria-hidden="true"></i><span>{{localize "FAW.Empty"}}</span></div>
+        {{/each}}
+        {{#if canEditScene}}
+          <button type="button" class="faw-add" data-action="add-scene"><i class="fa-solid fa-plus" aria-hidden="true"></i> {{localize "FAW.Add"}}</button>
+        {{/if}}
+      </div>
+    </details>
+
+    <details class="faw-section faw-travelling-section" data-section="travelling" data-block-key="section:travelling">
+      <summary title="{{localize 'FAW.TravellingHint'}}">
+        <span>{{localize "FAW.Travelling"}}</span>
+        <span class="faw-count">{{travellingAspects.length}}</span>
+      </summary>
+      <div class="faw-section-body">
+        {{#each travellingAspects as |aspect|}}
+          <div class="faw-aspect-row {{#if aspect.hidden}}faw-hidden-row{{/if}}">
+            <span class="faw-drag-handle" data-faw-drag="aspect" data-drag-text="{{aspect.name}}" data-drag-meta="{{localize 'FAW.Travelling'}}" data-drag-hidden="{{aspect.hidden}}" data-drag-source="game" data-drag-index="{{aspect.index}}" data-drag-invokes="{{aspect.freeInvokes}}" title="{{localize 'FAW.DragToScene'}}"><i class="fa-solid fa-grip-vertical" aria-hidden="true"></i></span>
+            <div class="faw-aspect-main">
+              {{#if ../canEditGlobal}}
+                <input class="faw-aspect-input" type="text" value="{{aspect.name}}" data-source="game" data-field="name" data-index="{{aspect.index}}" aria-label="{{localize 'FAW.Aspect'}}">
+              {{else}}
+                <span class="faw-aspect-text">{{aspect.name}}</span>
+              {{/if}}
+              {{#if aspect.hidden}}<span class="faw-hidden-note">{{localize "FAW.HiddenInWidget"}}</span>{{/if}}
+            </div>
+            <div class="faw-invokes" title="{{localize 'FAW.FreeInvokesEditable'}}">
+              <i class="fa-regular fa-circle-dot" aria-hidden="true"></i>
+              {{#if ../canEditGlobal}}
+                <input class="faw-invoke-input" type="number" min="0" step="1" value="{{aspect.freeInvokes}}" data-source="game" data-field="free_invokes" data-index="{{aspect.index}}" aria-label="{{localize 'FAW.FreeInvokes'}}">
+              {{else}}
+                <span class="faw-counter-value">{{aspect.freeInvokes}}</span>
+              {{/if}}
+            </div>
+            <button type="button" class="faw-action-button faw-favorite {{#if aspect.favorite}}is-active{{/if}}" data-action="toggle-aspect-favorite" aria-pressed="{{#if aspect.favorite}}true{{else}}false{{/if}}" data-favorite-key="{{aspect.favoriteKey}}" title="{{#if aspect.favorite}}{{localize 'FAW.UnpinAspect'}}{{else}}{{localize 'FAW.PinAspect'}}{{/if}}" aria-label="{{#if aspect.favorite}}{{localize 'FAW.UnpinAspect'}}{{else}}{{localize 'FAW.PinAspect'}}{{/if}}"><i class="{{#if aspect.favorite}}fa-solid{{else}}fa-regular{{/if}} fa-star" aria-hidden="true"></i></button>
+            {{#if ../isGM}}
+              <div class="faw-row-actions">
+                <button type="button" class="faw-action-button" data-action="toggle-game-hidden" aria-pressed="{{#if aspect.hidden}}true{{else}}false{{/if}}" data-index="{{aspect.index}}" title="{{#if aspect.hidden}}{{localize 'FAW.Show'}}{{else}}{{localize 'FAW.Hide'}}{{/if}}" aria-label="{{#if aspect.hidden}}{{localize 'FAW.Show'}}{{else}}{{localize 'FAW.Hide'}}{{/if}}"><i class="fa-solid {{#if aspect.hidden}}fa-eye-slash{{else}}fa-eye{{/if}}" aria-hidden="true"></i></button>
+                <button type="button" class="faw-action-button faw-delete" data-action="delete-game" data-index="{{aspect.index}}" title="{{localize 'FAW.Delete'}}" aria-label="{{localize 'FAW.Delete'}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+              </div>
+            {{/if}}
+          </div>
+        {{else}}
+          <div class="faw-empty faw-empty-state"><i class="fa-regular fa-circle" aria-hidden="true"></i><span>{{localize "FAW.Empty"}}</span></div>
+        {{/each}}
+        {{#if canEditGlobal}}
+          <button type="button" class="faw-add" data-action="add-travelling"><i class="fa-solid fa-plus" aria-hidden="true"></i> {{localize "FAW.Add"}}</button>
+        {{/if}}
+      </div>
+    </details>
+
+    <details class="faw-section faw-boost-section" data-section="boosts" data-block-key="section:boosts">
+      <summary>
+        <span>{{localize "FAW.Boosts"}}</span>
+        <span class="faw-count">{{boostCount}}</span>
+      </summary>
+      <div class="faw-section-body faw-actors">
+        {{#each boostActors as |actor|}}
+          <details class="faw-actor-card faw-subsection" data-block-key="boost:{{actor.actorUuid}}">
+            <summary class="faw-actor-header">
+              <img src="{{actor.img}}" alt="{{actor.name}}">
+              <span>{{actor.name}}</span>
+              <span class="faw-subcount">{{actor.boosts.length}}</span>
+              {{#if actor.canEdit}}<button type="button" class="faw-header-action" data-action="add-boost" data-token-id="{{actor.tokenId}}" title="{{localize 'FAW.AddBoost'}}" aria-label="{{localize 'FAW.AddBoost'}}"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>{{/if}}
+            </summary>
+            <div class="faw-actor-aspects">
+              {{#each actor.boosts as |boost|}}
+                <div class="faw-boost-item {{#if boost.hidden}}faw-hidden-row{{/if}}">
+                  <div class="faw-character-value faw-boost-value">
+                    <span class="faw-drag-handle" data-faw-drag="aspect" data-drag-text="{{boost.name}}" data-drag-meta="{{../name}} · {{localize 'FAW.Boost'}}" data-drag-hidden="{{boost.hidden}}" data-drag-source="boost" data-token-id="{{../tokenId}}" data-drag-boost-id="{{boost.id}}" data-drag-invokes="1" title="{{localize 'FAW.DragToScene'}}"><i class="fa-solid fa-grip-vertical" aria-hidden="true"></i></span>
+                    {{#if ../canEdit}}
+                      <input class="faw-aspect-input" type="text" value="{{boost.name}}" data-source="boost-name" data-token-id="{{../tokenId}}" data-index="{{boost.index}}" aria-label="{{localize 'FAW.Boost'}}">
+                    {{else}}
+                      <span class="faw-aspect-text">{{boost.name}}</span>
+                    {{/if}}
+                    <span class="faw-single-invoke" title="{{localize 'FAW.BoostInvokeFixed'}}"><i class="fa-regular fa-circle-dot" aria-hidden="true"></i> 1</span>
+                    <div class="faw-row-actions">
+                      {{#if ../canManage}}<button type="button" class="faw-action-button" data-action="toggle-boost-hidden" aria-pressed="{{#if boost.hidden}}true{{else}}false{{/if}}" data-token-id="{{../tokenId}}" data-index="{{boost.index}}" title="{{#if boost.hidden}}{{localize 'FAW.Show'}}{{else}}{{localize 'FAW.Hide'}}{{/if}}" aria-label="{{#if boost.hidden}}{{localize 'FAW.Show'}}{{else}}{{localize 'FAW.Hide'}}{{/if}}"><i class="fa-solid {{#if boost.hidden}}fa-eye-slash{{else}}fa-eye{{/if}}" aria-hidden="true"></i></button>{{/if}}
+                      {{#if ../canEdit}}<button type="button" class="faw-action-button faw-delete" data-action="delete-boost" data-token-id="{{../tokenId}}" data-index="{{boost.index}}" title="{{localize 'FAW.ConsumeBoost'}}" aria-label="{{localize 'FAW.ConsumeBoost'}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>{{/if}}
+                    </div>
+                  </div>
+                  {{#if boost.hidden}}<span class="faw-hidden-note">{{localize "FAW.HiddenInWidget"}}</span>{{/if}}
+                </div>
+              {{else}}
+                <div class="faw-empty faw-empty-state"><i class="fa-solid fa-bolt" aria-hidden="true"></i><span>{{localize "FAW.NoBoosts"}}</span></div>
+              {{/each}}
+            </div>
+          </details>
+        {{else}}
+          <div class="faw-empty faw-empty-state"><i class="fa-solid fa-bolt" aria-hidden="true"></i><span>{{localize "FAW.NoBoosts"}}</span></div>
+        {{/each}}
+      </div>
+    </details>
+
+    <details class="faw-section faw-consequence-section" data-section="consequences" data-block-key="section:consequences">
+      <summary>
+        <span>{{localize "FAW.Consequences"}}</span>
+        <span class="faw-count">{{consequenceCount}}</span>
+      </summary>
+      <div class="faw-section-body faw-actors">
+        {{#each consequenceActors as |actor|}}
+          <details class="faw-actor-card faw-subsection" data-block-key="consequence:{{actor.actorUuid}}">
+            <summary class="faw-actor-header">
+              <img src="{{actor.img}}" alt="{{actor.name}}">
+              <span>{{actor.name}}</span>
+              <span class="faw-subcount">{{actor.consequences.length}}</span>
+              {{#if actor.canEdit}}{{#if actor.availableConsequences.length}}<button type="button" class="faw-header-action" data-action="add-consequence" data-token-id="{{actor.tokenId}}" title="{{localize 'FAW.AddConsequence'}}" aria-label="{{localize 'FAW.AddConsequence'}}"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>{{/if}}{{/if}}
+            </summary>
+            <div class="faw-actor-aspects">
+              {{#each actor.consequences as |consequence|}}
+                <div class="faw-consequence-item {{#if consequence.hidden}}faw-hidden-row{{/if}}">
+                  <span class="faw-drag-handle" data-faw-drag="aspect" data-drag-text="{{consequence.value}}" data-drag-meta="{{../name}} · {{consequence.label}}" data-drag-hidden="{{consequence.hidden}}" data-drag-source="consequence" data-token-id="{{../tokenId}}" data-drag-key="{{consequence.key}}" data-drag-invokes="0" title="{{localize 'FAW.DragToScene'}}"><i class="fa-solid fa-grip-vertical" aria-hidden="true"></i></span>
+                  <div class="faw-character-meta">
+                    <span class="faw-slot">{{consequence.label}}</span>
+                    <span class="faw-harm">{{localize "FAW.Harm"}}: {{consequence.harm}}</span>
+                  </div>
+                  <div class="faw-character-value">
+                    {{#if ../canEdit}}
+                      {{#if consequence.editable}}
+                        <input class="faw-aspect-input" type="text" value="{{consequence.value}}" data-source="consequence" data-token-id="{{../tokenId}}" data-key="{{consequence.key}}" aria-label="{{consequence.label}}">
+                      {{else}}
+                        <span class="faw-aspect-text">{{consequence.value}}</span>
+                      {{/if}}
+                    {{else}}
+                      <span class="faw-aspect-text">{{consequence.value}}</span>
+                    {{/if}}
+                    <button type="button" class="faw-action-button faw-favorite {{#if consequence.favorite}}is-active{{/if}}" data-action="toggle-aspect-favorite" aria-pressed="{{#if consequence.favorite}}true{{else}}false{{/if}}" data-favorite-key="{{consequence.favoriteKey}}" title="{{#if consequence.favorite}}{{localize 'FAW.UnpinAspect'}}{{else}}{{localize 'FAW.PinAspect'}}{{/if}}" aria-label="{{#if consequence.favorite}}{{localize 'FAW.UnpinAspect'}}{{else}}{{localize 'FAW.PinAspect'}}{{/if}}"><i class="{{#if consequence.favorite}}fa-solid{{else}}fa-regular{{/if}} fa-star" aria-hidden="true"></i></button>
+                    {{#if ../canManage}}
+                      <div class="faw-row-actions">
+                        <button type="button" class="faw-action-button" data-action="toggle-consequence-hidden" aria-pressed="{{#if consequence.hidden}}true{{else}}false{{/if}}" data-token-id="{{../tokenId}}" data-key="{{consequence.key}}" title="{{#if consequence.hidden}}{{localize 'FAW.Show'}}{{else}}{{localize 'FAW.Hide'}}{{/if}}" aria-label="{{#if consequence.hidden}}{{localize 'FAW.Show'}}{{else}}{{localize 'FAW.Hide'}}{{/if}}"><i class="fa-solid {{#if consequence.hidden}}fa-eye-slash{{else}}fa-eye{{/if}}" aria-hidden="true"></i></button>
+                      </div>
+                    {{/if}}
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+          </details>
+        {{else}}
+          <div class="faw-empty faw-empty-state"><i class="fa-solid fa-heart-crack" aria-hidden="true"></i><span>{{localize "FAW.NoConsequences"}}</span></div>
+        {{/each}}
+      </div>
+    </details>
+
+    <details class="faw-section" data-section="characters" data-block-key="section:characters">
+      <summary>
+        <span>{{localize "FAW.Characters"}}</span>
+        <span class="faw-count">{{actors.length}}</span>
+      </summary>
+      <div class="faw-section-body faw-actors">
+        {{#each actors as |actor|}}
+          <details class="faw-actor-card faw-subsection" data-block-key="character:{{actor.actorUuid}}">
+            <summary class="faw-actor-header">
+              <img src="{{actor.img}}" alt="{{actor.name}}">
+              <span>{{actor.name}}</span>
+              <span class="faw-subcount">{{actor.aspects.length}}</span>
+              {{#if actor.canEdit}}<button type="button" class="faw-header-action" data-action="add-character-aspect" data-token-id="{{actor.tokenId}}" title="{{localize 'FAW.AddCharacterAspect'}}" aria-label="{{localize 'FAW.AddCharacterAspect'}}"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>{{/if}}
+            </summary>
+            <div class="faw-actor-aspects">
+              {{#each actor.aspects as |aspect|}}
+                <div class="faw-character-aspect {{#if aspect.hidden}}faw-hidden-row{{/if}}">
+                  <span class="faw-drag-handle" data-faw-drag="aspect" data-drag-text="{{aspect.value}}" data-drag-meta="{{../name}} · {{aspect.label}}" data-drag-hidden="{{aspect.hidden}}" data-drag-source="actor" data-token-id="{{../tokenId}}" data-drag-key="{{aspect.key}}" data-drag-invokes="0" title="{{localize 'FAW.DragToScene'}}"><i class="fa-solid fa-grip-vertical" aria-hidden="true"></i></span>
+                  <div class="faw-character-meta">
+                    <span class="faw-slot">{{aspect.label}}</span>
+                    {{#if aspect.hidden}}<span class="faw-hidden-note">{{localize "FAW.HiddenInWidget"}}</span>{{/if}}
+                  </div>
+                  <div class="faw-character-value">
+                    {{#if ../canEdit}}
+                      <input class="faw-aspect-input" type="text" value="{{aspect.value}}" data-source="actor" data-token-id="{{../tokenId}}" data-key="{{aspect.key}}" aria-label="{{aspect.label}}">
+                    {{else}}
+                      <span class="faw-aspect-text">{{aspect.value}}</span>
+                    {{/if}}
+                    <button type="button" class="faw-action-button faw-favorite {{#if aspect.favorite}}is-active{{/if}}" data-action="toggle-aspect-favorite" aria-pressed="{{#if aspect.favorite}}true{{else}}false{{/if}}" data-favorite-key="{{aspect.favoriteKey}}" title="{{#if aspect.favorite}}{{localize 'FAW.UnpinAspect'}}{{else}}{{localize 'FAW.PinAspect'}}{{/if}}" aria-label="{{#if aspect.favorite}}{{localize 'FAW.UnpinAspect'}}{{else}}{{localize 'FAW.PinAspect'}}{{/if}}"><i class="{{#if aspect.favorite}}fa-solid{{else}}fa-regular{{/if}} fa-star" aria-hidden="true"></i></button>
+                    {{#if ../canManage}}
+                      <div class="faw-row-actions">
+                        <button type="button" class="faw-action-button" data-action="toggle-actor-hidden" aria-pressed="{{#if aspect.hidden}}true{{else}}false{{/if}}" data-token-id="{{../tokenId}}" data-key="{{aspect.key}}" title="{{#if aspect.hidden}}{{localize 'FAW.Show'}}{{else}}{{localize 'FAW.Hide'}}{{/if}}" aria-label="{{#if aspect.hidden}}{{localize 'FAW.Show'}}{{else}}{{localize 'FAW.Hide'}}{{/if}}"><i class="fa-solid {{#if aspect.hidden}}fa-eye-slash{{else}}fa-eye{{/if}}" aria-hidden="true"></i></button>
+                        <button type="button" class="faw-action-button faw-delete" data-action="delete-actor" data-token-id="{{../tokenId}}" data-key="{{aspect.key}}" title="{{localize 'FAW.Delete'}}" aria-label="{{localize 'FAW.Delete'}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+                      </div>
+                    {{/if}}
+                  </div>
+                </div>
+              {{else}}
+                <div class="faw-empty faw-empty-state"><i class="fa-regular fa-circle" aria-hidden="true"></i><span>{{localize "FAW.Empty"}}</span></div>
+              {{/each}}
+            </div>
+          </details>
+        {{else}}
+          <div class="faw-empty">{{#if isGM}}{{localize "FAW.NoSceneCharacters"}}{{else}}{{localize "FAW.NoOwnedCharacters"}}{{/if}}</div>
+        {{/each}}
+      </div>
+    </details>
+  </div>
+</div>

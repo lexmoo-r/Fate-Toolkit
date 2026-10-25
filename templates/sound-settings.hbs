@@ -1,0 +1,63 @@
+<div class="frr-sound-settings">
+  <section class="frr-section frr-sound-master">
+    <label class="frr-check-row frr-sound-master-toggle">
+      <input type="checkbox" name="soundsEnabled" {{#if enabled}}checked{{/if}}>
+      <span><strong>{{localize "FRR.SoundsEnabled"}}</strong><small>{{localize "FRR.SoundsEnabledHint"}}</small></span>
+    </label>
+  </section>
+
+  <section class="frr-section">
+    <div class="frr-section-heading"><i class="fa-solid fa-wave-square" aria-hidden="true"></i><h2>{{localize "FRR.OutcomeSounds"}}</h2></div>
+
+    <div class="frr-sound-row is-failure">
+      <div class="frr-sound-label"><span class="frr-outcome-dot"></span><span><strong>{{localize "FRR.Failure"}}</strong><small>{{localize "FRR.FailureHint"}}</small></span></div>
+      <input type="text" name="soundFailure" value="{{failure}}" placeholder="sounds/..." aria-label="{{localize 'FRR.Failure'}}">
+      <button type="button" data-action="browse-sound" data-target="soundFailure" data-type="audio" title="{{localize 'FRR.BrowseAudio'}}" aria-label="{{localize 'FRR.BrowseAudio'}}"><i class="fa-solid fa-folder-open" aria-hidden="true"></i></button>
+      <button type="button" data-action="preview-sound" data-target="soundFailure" title="{{localize 'FRR.PreviewAudio'}}" aria-label="{{localize 'FRR.PreviewAudio'}}"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+    </div>
+
+    <div class="frr-sound-row is-tie">
+      <div class="frr-sound-label"><span class="frr-outcome-dot"></span><span><strong>{{localize "FRR.Tie"}}</strong><small>{{localize "FRR.TieHint"}}</small></span></div>
+      <input type="text" name="soundTie" value="{{tie}}" placeholder="sounds/..." aria-label="{{localize 'FRR.Tie'}}">
+      <button type="button" data-action="browse-sound" data-target="soundTie" data-type="audio" title="{{localize 'FRR.BrowseAudio'}}" aria-label="{{localize 'FRR.BrowseAudio'}}"><i class="fa-solid fa-folder-open" aria-hidden="true"></i></button>
+      <button type="button" data-action="preview-sound" data-target="soundTie" title="{{localize 'FRR.PreviewAudio'}}" aria-label="{{localize 'FRR.PreviewAudio'}}"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+    </div>
+
+    <div class="frr-sound-row is-success">
+      <div class="frr-sound-label"><span class="frr-outcome-dot"></span><span><strong>{{localize "FRR.Success"}}</strong><small>{{localize "FRR.SuccessHint"}}</small></span></div>
+      <input type="text" name="soundSuccess" value="{{success}}" placeholder="sounds/..." aria-label="{{localize 'FRR.Success'}}">
+      <button type="button" data-action="browse-sound" data-target="soundSuccess" data-type="audio" title="{{localize 'FRR.BrowseAudio'}}" aria-label="{{localize 'FRR.BrowseAudio'}}"><i class="fa-solid fa-folder-open" aria-hidden="true"></i></button>
+      <button type="button" data-action="preview-sound" data-target="soundSuccess" title="{{localize 'FRR.PreviewAudio'}}" aria-label="{{localize 'FRR.PreviewAudio'}}"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+    </div>
+
+    <div class="frr-sound-row is-style">
+      <div class="frr-sound-label"><span class="frr-outcome-dot"></span><span><strong>{{localize "FRR.SuccessWithStyle"}}</strong><small>{{localize "FRR.SuccessWithStyleHint"}}</small></span></div>
+      <input type="text" name="soundStyle" value="{{style}}" placeholder="sounds/..." aria-label="{{localize 'FRR.SuccessWithStyle'}}">
+      <button type="button" data-action="browse-sound" data-target="soundStyle" data-type="audio" title="{{localize 'FRR.BrowseAudio'}}" aria-label="{{localize 'FRR.BrowseAudio'}}"><i class="fa-solid fa-folder-open" aria-hidden="true"></i></button>
+      <button type="button" data-action="preview-sound" data-target="soundStyle" title="{{localize 'FRR.PreviewAudio'}}" aria-label="{{localize 'FRR.PreviewAudio'}}"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+    </div>
+
+    <p class="frr-hint">{{localize "FRR.SoundPathHint"}}</p>
+  </section>
+
+  <section class="frr-section frr-grid-2">
+    <label>
+      <span>{{localize "FRR.Volume"}}</span>
+      <input type="range" name="soundVolume" min="0" max="1" step="0.05" value="{{volume}}">
+    </label>
+    <label>
+      <span>{{localize "FRR.SoundAudience"}}</span>
+      <select name="soundAudience">
+        <option value="all" {{#if audienceAll}}selected{{/if}}>{{localize "FRR.AudienceAll"}}</option>
+        <option value="roller-gm" {{#if audienceRollerGm}}selected{{/if}}>{{localize "FRR.AudienceRollerGm"}}</option>
+        <option value="roller" {{#if audienceRoller}}selected{{/if}}>{{localize "FRR.AudienceRoller"}}</option>
+        <option value="gm" {{#if audienceGm}}selected{{/if}}>{{localize "FRR.AudienceGm"}}</option>
+      </select>
+    </label>
+  </section>
+
+  <footer class="frr-actions frr-sound-actions">
+    <button type="button" data-action="close-sounds"><i class="fa-solid fa-xmark" aria-hidden="true"></i> {{localize "FRR.Close"}}</button>
+    <button type="button" data-action="save-sounds" class="frr-primary"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> {{localize "FRR.Save"}}</button>
+  </footer>
+</div>

@@ -1,0 +1,620 @@
+/* Fate Toolkit v0.13 — explicit aspect invokes and damage resolution in chat. */
+
+.frr-chat-result .frr-invoke-panel,
+.frr-chat-result .frr-damage-panel {
+  margin-top: .55rem;
+  border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--color-bg, #fff) 88%, currentColor 2%);
+  overflow: clip;
+}
+
+
+.frr-invoke-panel.is-collapsed {
+  background: transparent;
+  border-color: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.frr-invoke-toggle {
+  width: 100%;
+  min-height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .55rem;
+  padding: .38rem .5rem;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.frr-invoke-toggle > span:first-child {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: .38rem;
+  font-size: .84em;
+  font-weight: 800;
+}
+
+.frr-invoke-toggle:hover,
+.frr-invoke-toggle:focus-visible {
+  background: color-mix(in srgb, currentColor 7%, transparent);
+}
+
+.frr-invoke-toggle[aria-expanded="true"] {
+  border-radius: 6px 6px 0 0;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.frr-invoke-details[hidden] {
+  display: none !important;
+}
+
+.frr-chat-tool-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .6rem;
+  padding: .45rem .55rem;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+  font-size: .88em;
+  font-weight: 800;
+}
+
+.frr-chat-tool-heading > span:first-child {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: .38rem;
+}
+
+.frr-tool-resource,
+.frr-damage-counter,
+.frr-mini-badge {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  border-radius: 999px;
+  padding: .14rem .42rem;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  font-size: .78em;
+  font-weight: 800;
+}
+
+.frr-mini-badge.is-free,
+.frr-damage-counter.is-done {
+  background: color-mix(in srgb, #3c8f59 16%, transparent);
+}
+
+.frr-tool-note,
+.frr-tool-warning,
+.frr-tool-success,
+.frr-empty-tool {
+  margin: 0;
+  padding: .42rem .55rem;
+  font-size: .78em;
+  line-height: 1.35;
+  color: var(--color-text-secondary, currentColor);
+}
+
+.frr-tool-warning {
+  color: #a34c1e;
+  font-weight: 650;
+}
+
+.frr-tool-success {
+  color: #2f7a49;
+  font-weight: 750;
+}
+
+.frr-invoke-search {
+  display: block;
+  width: calc(100% - 1rem);
+  min-width: 0;
+  margin: .15rem .5rem .42rem;
+  height: 2rem;
+}
+
+.frr-invoke-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.frr-invoke-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  grid-template-areas:
+    "name badges"
+    "buttons buttons";
+  align-items: center;
+  gap: .3rem .45rem;
+  padding: .48rem .55rem;
+  border-top: 1px solid color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.frr-invoke-row[hidden] { display: none !important; }
+
+.frr-invoke-name {
+  grid-area: name;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .08rem;
+}
+
+.frr-invoke-name strong {
+  min-width: 0;
+  font-size: .88em;
+  line-height: 1.2;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.frr-invoke-name span {
+  min-width: 0;
+  font-size: .72em;
+  opacity: .68;
+  overflow-wrap: break-word;
+}
+
+.frr-invoke-badges {
+  grid-area: badges;
+  display: flex;
+  gap: .25rem;
+  justify-content: end;
+}
+
+.frr-invoke-buttons {
+  grid-area: buttons;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .28rem;
+}
+
+.frr-invoke-buttons button {
+  min-width: 0;
+  min-height: 1.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .28rem;
+  padding: .25rem .38rem;
+  font-size: .78em;
+}
+
+.frr-invoke-buttons button b {
+  font-size: 1.05em;
+  line-height: 1;
+}
+
+.frr-invoke-buttons button small {
+  font-size: .8em;
+  opacity: .72;
+  white-space: nowrap;
+}
+
+.frr-damage-panel.is-resolved {
+  border-color: color-mix(in srgb, #3c8f59 38%, transparent);
+}
+
+.frr-damage-meter {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.frr-damage-meter span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .08rem;
+  padding: .42rem .25rem;
+  font-size: .7em;
+  text-transform: uppercase;
+  letter-spacing: .025em;
+  opacity: .76;
+}
+
+.frr-damage-meter span + span {
+  border-left: 1px solid color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.frr-damage-meter strong {
+  font-size: 1.45em;
+  line-height: 1;
+  opacity: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.frr-damage-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .35rem;
+  padding: .5rem;
+}
+
+.frr-damage-options button {
+  min-width: 0;
+  min-height: 2rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  gap: .45rem;
+  align-items: center;
+  text-align: left;
+  padding: .36rem .46rem;
+}
+
+.frr-damage-options button span {
+  min-width: 0;
+  font-size: .8em;
+  overflow-wrap: break-word;
+}
+
+.frr-damage-options button strong {
+  min-width: 1.5rem;
+  min-height: 1.5rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  font-size: .86em;
+}
+
+.frr-damage-selections {
+  list-style: none;
+  margin: 0;
+  padding: .38rem .55rem;
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.frr-damage-selections li {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  gap: .5rem;
+  align-items: baseline;
+  font-size: .78em;
+}
+
+.frr-damage-selections li span {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.frr-damage-undo {
+  width: calc(100% - 1rem);
+  margin: .45rem .5rem .5rem;
+  min-height: 1.85rem;
+  font-size: .78em;
+}
+
+.frr-system-audit[hidden] { display: none !important; }
+
+@media (max-width: 420px) {
+  .frr-invoke-buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .frr-damage-options {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* v0.15 — one visible flow from roll to end of turn. */
+.frr-chat-result .frr-flow-panel {
+  margin-top: .55rem;
+  border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--color-bg, #fff) 88%, currentColor 2%);
+  overflow: clip;
+}
+.frr-flow-open-tracker {
+  flex: 0 0 auto;
+  min-width: 1.75rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  display: grid;
+  place-items: center;
+}
+.frr-flow-steps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  background: color-mix(in srgb, currentColor 9%, transparent);
+}
+.frr-flow-step {
+  min-width: 0;
+  min-height: 58px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 4px;
+  text-align: center;
+  background: color-mix(in srgb, var(--color-bg, #fff) 96%, currentColor 1%);
+}
+.frr-flow-step > i { font-size: .9em; opacity: .75; }
+.frr-flow-step > span { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.frr-flow-step b { font-size: .72em; line-height: 1.1; }
+.frr-flow-step small { font-size: .62em; line-height: 1.15; opacity: .62; overflow-wrap: break-word; }
+.frr-flow-step.is-done > i { color: #3d8557; opacity: 1; }
+.frr-flow-step.is-current > i { color: #4a6fa5; opacity: 1; }
+.frr-flow-step.is-pending > i { color: #b66a2b; opacity: 1; }
+.frr-flow-step.is-muted { opacity: .52; }
+.frr-flow-step.is-waiting { opacity: .68; }
+.frr-flow-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+}
+.frr-flow-actions:empty { display: none; }
+.frr-flow-actions .frr-tool-warning { padding: 0; }
+.frr-flow-finish { width: 100%; min-height: 2rem; font-weight: 800; }
+
+.frr-damage-panel.is-taken-out {
+  border-color: color-mix(in srgb, #a23f35 42%, transparent);
+}
+.frr-damage-takeout {
+  width: calc(100% - 1rem);
+  margin: .45rem .5rem .1rem;
+  min-height: 1.85rem;
+  font-size: .78em;
+}
+.frr-damage-takeout:not(.is-undo) { color: #8b3029; }
+
+.faw-chat-highlight {
+  animation: faw-chat-highlight 1.2s ease-out;
+}
+@keyframes faw-chat-highlight {
+  0%, 35% { box-shadow: inset 0 0 0 2px rgba(196, 143, 46, .85), 0 0 12px rgba(196, 143, 46, .45); }
+  100% { box-shadow: none; }
+}
+
+@media (max-width: 520px) {
+  .frr-flow-steps { grid-template-columns: 1fr; }
+  .frr-flow-step {
+    min-height: 0;
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 6px 8px;
+  }
+  .frr-flow-step > span { flex: 1; }
+}
+
+/* v0.17.1 — aspect source filters */
+.frr-invoke-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .28rem;
+  padding: .12rem .5rem .42rem;
+}
+
+.frr-invoke-filter {
+  min-height: 1.65rem;
+  padding: .15rem .42rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  background: transparent;
+  font-size: .72em;
+  opacity: .52;
+}
+
+.frr-invoke-filter.is-active {
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  opacity: 1;
+}
+
+.frr-invoke-filter b {
+  margin-left: .25rem;
+  opacity: .65;
+}
+
+/* v1.42 — component-audited invoke/damage chat tools. */
+.frr-invoke-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .4rem;
+  padding: .12rem .5rem .34rem;
+}
+
+.frr-invoke-toolbar .frr-invoke-filters {
+  flex: 1 1 auto;
+  padding: 0;
+}
+
+.frr-invoke-count {
+  flex: 0 0 auto;
+  min-width: 3.4rem;
+  text-align: right;
+  font-size: max(.72rem, 11px);
+  font-variant-numeric: tabular-nums;
+  opacity: .7;
+}
+
+.frr-invoke-search-wrap {
+  display: block;
+  margin: .1rem .5rem .42rem;
+}
+
+.frr-invoke-search-wrap .frr-invoke-search {
+  width: 100%;
+  margin: 0;
+}
+
+.frr-invoke-filter-empty[hidden] { display: none !important; }
+
+.frr-invoke-row:focus-within {
+  background: color-mix(in srgb, currentColor 4%, transparent);
+}
+
+.frr-invoke-buttons button,
+.frr-damage-options button,
+.frr-damage-undo,
+.frr-damage-takeout,
+.frr-invoke-filter {
+  min-height: 32px;
+}
+
+.frr-invoke-buttons button:disabled {
+  opacity: .42;
+  cursor: not-allowed;
+}
+
+.frr-damage-takeout.is-danger {
+  color: var(--color-level-error, #8b3029);
+  border-color: color-mix(in srgb, var(--color-level-error, #8b3029) 42%, transparent);
+  background: color-mix(in srgb, var(--color-level-error, #8b3029) 7%, transparent);
+}
+
+.frr-damage-meter[role="group"] strong {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .frr-invoke-buttons button,
+  .frr-damage-options button,
+  .frr-damage-undo,
+  .frr-damage-takeout,
+  .frr-invoke-filter {
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 420px) {
+  .frr-invoke-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .frr-invoke-count { align-self: flex-end; }
+  .frr-chat-tool-heading {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+
+/* v1.46.1 — damage choices stay legible in the narrow Foundry chat sidebar. */
+.frr-chat-result .frr-damage-panel,
+.frr-chat-result .frr-invoke-panel,
+.frr-invoke-toggle,
+.frr-invoke-toggle[aria-expanded="true"],
+.frr-tool-resource,
+.frr-damage-counter,
+.frr-mini-badge {
+  border-radius: 3px !important;
+}
+.frr-damage-instruction {
+  margin: 0;
+  padding: .6rem .65rem;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 8%, transparent);
+  font-size: .86rem;
+  line-height: 1.4;
+  color: var(--color-text-secondary, currentColor);
+}
+.frr-damage-options {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: .42rem !important;
+  padding: .55rem !important;
+}
+.frr-damage-options button {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 54px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 36px !important;
+  gap: .65rem !important;
+  align-items: center !important;
+  padding: .55rem .65rem !important;
+  overflow: visible !important;
+  white-space: normal !important;
+}
+.frr-damage-option-copy {
+  min-width: 0;
+  display: grid;
+  gap: .14rem;
+}
+.frr-damage-option-copy b {
+  min-width: 0;
+  font-size: .9rem;
+  line-height: 1.25;
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+.frr-damage-option-copy small {
+  min-width: 0;
+  font-size: .78rem;
+  line-height: 1.25;
+  opacity: .7;
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+.frr-damage-options button > strong {
+  width: 36px;
+  min-width: 36px;
+  height: 32px;
+  min-height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 3px !important;
+  font-size: .9rem;
+}
+.frr-damage-meter span {
+  padding: .5rem .2rem !important;
+  font-size: .72rem !important;
+}
+.frr-damage-meter strong { font-size: 1.15rem !important; }
+.frr-damage-takeout,
+.frr-damage-undo {
+  width: calc(100% - 1.1rem) !important;
+  height: auto !important;
+  min-height: 42px !important;
+  margin-inline: .55rem !important;
+  white-space: normal !important;
+  line-height: 1.25 !important;
+  font-size: .84rem !important;
+}
+
+/* Fate Core Official injects its own post-roll controls. For Toolkit rolls we
+   keep their behavior, but relabel and resize them with Toolkit-owned Russian UI. */
+.faw-owned-roll-message tr.faw-native-roll-actions > td > div {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 4px 0 !important;
+}
+.faw-owned-roll-message tr.faw-native-roll-actions > td > div > div:first-child {
+  flex: 0 0 100% !important;
+  width: auto !important;
+  margin: 0 !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+.faw-owned-roll-message button[name="fco_chat_roll_button"] {
+  width: 40px !important;
+  min-width: 40px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 3px !important;
+  font-size: 13px !important;
+}
+.faw-owned-roll-message .dice-total {
+  font-size: 1rem !important;
+}

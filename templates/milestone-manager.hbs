@@ -1,0 +1,130 @@
+<div class="fms-root fms-manager">
+  <div class="fms-help-row"><button type="button" class="faw-context-help" data-faw-help="milestones" title="{{localize 'FAW.Help'}}" aria-label="{{localize 'FAW.Help'}}"><i class="fa-solid fa-circle-question" aria-hidden="true"></i></button></div>
+  <div class="fms-scroll">
+    {{#if active}}
+      <header class="fms-hero">
+        <div class="fms-hero-icon"><i class="fa-solid fa-road" aria-hidden="true"></i></div>
+        <div>
+          <h2>{{session.title}}</h2>
+          <div class="fms-kicker">{{typeLabel}} {{#if session.sessionNumber}}· {{localize "FMS.Timeline.Session"}} {{session.sessionNumber}}{{/if}} {{#if session.gameDate}}· {{session.gameDate}}{{/if}}</div>
+          {{#if session.note}}<p>{{session.note}}</p>{{/if}}
+        </div>
+      </header>
+
+      <section class="fms-rule-card">
+        <strong>{{localize "FMS.WhatItGives"}}</strong>
+        <p>{{ruleText}}</p>
+        <div class="fms-inline-stats">
+          <span><i class="fa-solid fa-check" aria-hidden="true"></i> {{completedCount}} / {{totalCount}}</span>
+          <span><i class="fa-solid fa-arrow-up-right-dots" aria-hidden="true"></i> {{localize "FMS.SkillCap"}} {{session.baseSkillCap}}</span>
+        </div>
+      </section>
+
+      <section class="fms-manager-list">
+        {{#each rows}}
+          <article class="fms-manager-actor {{#if completed}}is-complete{{/if}}">
+            <img src="{{img}}" alt="{{name}}">
+            <div class="fms-manager-identity">
+              <strong>{{name}}</strong>
+              <small>{{owners}}</small>
+              <div class="fms-inline-stats">
+                <span>{{localize "FMS.Refresh"}} {{refresh}} / {{allowedRefresh}}</span>
+                <span>{{localize "FMS.AllowedSkillTotalShort"}} {{allowedSkillTotal}}</span>
+                <span>{{localize "FMS.SkillPointsShort"}} {{bank}}</span>
+                {{#if completed}}<span class="fms-status done"><i class="fa-solid fa-check" aria-hidden="true"></i> {{localize "FMS.Completed"}}</span>{{else}}<span class="fms-status"><i class="fa-regular fa-clock" aria-hidden="true"></i> {{localize "FMS.Pending"}}</span>{{/if}}
+              </div>
+              {{#if hasSummary}}
+                <details class="fms-mini-summary">
+                  <summary>{{localize "FMS.Changes"}}</summary>
+                  <ul>{{#each summary}}<li>{{this}}</li>{{/each}}</ul>
+                </details>
+              {{/if}}
+            </div>
+            <div class="fms-manager-actions faw-context-actions">
+              <button type="button" class="faw-context-primary" data-fms-open-actor="{{actorId}}" title="{{localize 'FMS.OpenForActor'}}" aria-label="{{localize 'FMS.OpenForActor'}}"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></button>
+              {{#if pending}}<button type="button" class="faw-context-secondary" data-fms-remind="{{actorId}}" title="{{localize 'FMS.Remind'}}" aria-label="{{localize 'FMS.Remind'}}"><i class="fa-solid fa-bell" aria-hidden="true"></i></button>{{/if}}
+            </div>
+          </article>
+        {{/each}}
+      </section>
+    {{else}}
+      <header class="fms-hero">
+        <div class="fms-hero-icon"><i class="fa-solid fa-road" aria-hidden="true"></i></div>
+        <div>
+          <h2>{{localize "FMS.NewMilestone"}}</h2>
+          <p>{{localize "FMS.ManagerIntro"}}</p>
+        </div>
+      </header>
+
+      <section class="fms-card">
+        <div class="fms-field">
+          <span>{{localize "FMS.MilestoneType"}}</span>
+          <input type="hidden" name="type" value="{{type}}">
+          <div class="fms-type-buttons" role="group" aria-label="{{localize 'FMS.MilestoneType'}}">
+            <button type="button" data-fms-type="minor" class="{{#if minorSelected}}is-active{{/if}}" aria-pressed="{{#if minorSelected}}true{{else}}false{{/if}}">{{localize "FMS.Type.minor"}}</button>
+            <button type="button" data-fms-type="significant" class="{{#if significantSelected}}is-active{{/if}}" aria-pressed="{{#if significantSelected}}true{{else}}false{{/if}}">{{localize "FMS.Type.significant"}}</button>
+            <button type="button" data-fms-type="major" class="{{#if majorSelected}}is-active{{/if}}" aria-pressed="{{#if majorSelected}}true{{else}}false{{/if}}">{{localize "FMS.Type.major"}}</button>
+          </div>
+        </div>
+        <div class="fms-rule-card compact">
+          <p>{{ruleText}}</p>
+        </div>
+        <div class="fms-two-fields">
+          <label class="fms-field">
+            <span>{{localize "FMS.Title"}}</span>
+            <input type="text" name="title" value="{{draftTitle}}" placeholder="{{localize 'FMS.TitlePlaceholder'}}">
+          </label>
+          <label class="fms-field small">
+            <span>{{localize "FMS.SkillCap"}}</span>
+            <input type="number" min="1" max="12" step="1" name="cap" value="{{cap}}">
+          </label>
+        </div>
+        <div class="fms-two-fields">
+          <label class="fms-field"><span>{{localize "FMS.Timeline.Session"}}</span><input type="number" name="sessionNumber" value="{{sessionNumber}}" min="1" max="10000" step="1"></label>
+          <label class="fms-field"><span>{{localize "FMS.Timeline.GameDate"}}</span><input type="text" name="gameDate" value="{{gameDate}}" placeholder="{{localize 'FMS.Timeline.DatePlaceholder'}}" inputmode="numeric" pattern="[0-9]{2}\.[0-9]{2}\.[0-9]{4}" maxlength="10" aria-label="{{localize 'FMS.Timeline.WorldDateHint'}}"></label>
+        </div>
+        <label class="fms-field">
+          <span>{{localize "FMS.Note"}}</span>
+          <textarea name="note" rows="2" placeholder="{{localize 'FMS.NotePlaceholder'}}">{{draftNote}}</textarea>
+        </label>
+        <label class="fms-check"><input type="checkbox" name="strictColumns" {{#if strictColumns}}checked{{/if}}> <span>{{localize "FMS.StrictColumns"}}</span></label>
+        <label class="fms-check"><input type="checkbox" name="postToChat" {{#if postToChat}}checked{{/if}}> <span>{{localize "FMS.PostToChat"}}</span></label>
+      </section>
+
+      <section class="fms-card">
+        <div class="fms-section-title-row">
+          <div>
+            <h3>{{localize "FMS.Characters"}}</h3>
+            <small>{{localize "FMS.CharacterSelectionHint"}}</small>
+          </div>
+          <div class="fms-small-actions" role="toolbar" aria-label="{{localize 'FMS.Characters'}}">
+            <button type="button" data-fms-select-all>{{localize "FMS.All"}}</button>
+            <button type="button" data-fms-select-none>{{localize "FMS.None"}}</button>
+          </div>
+        </div>
+        {{#if hasActors}}
+          <div class="fms-actor-picker" role="group" aria-label="{{localize 'FMS.Characters'}}">
+            {{#each actors}}
+              <label class="fms-actor-pick">
+                <input type="checkbox" name="actorId" value="{{id}}" {{#if selected}}checked{{/if}}>
+                <img src="{{img}}" alt="{{name}}">
+                <span class="fms-actor-pick-main"><strong>{{name}}</strong><small>{{owners}}</small></span>
+                <span class="fms-actor-pick-meta"><span>{{localize "FMS.RefreshShort"}} {{refresh}}/{{allowedRefresh}}</span><span>{{localize "FMS.AllowedSkillTotalShort"}} {{allowedSkillTotal}}</span><span>{{localize "FMS.SkillPointsShort"}} {{bank}}</span></span>
+              </label>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="fms-empty-state"><i class="fa-solid fa-user-slash" aria-hidden="true"></i><p>{{localize "FMS.NoEligibleActors"}}</p></div>
+        {{/if}}
+      </section>
+    {{/if}}
+  </div>
+
+  <footer class="fms-sticky-footer">
+    {{#if active}}
+      <button type="button" class="fms-danger" data-fms-finish-session><i class="fa-solid fa-flag-checkered" aria-hidden="true"></i> {{localize "FMS.FinishSession"}}</button>
+    {{else}}
+      <button type="button" class="fms-primary" data-fms-start {{#unless hasActors}}disabled{{/unless}}><i class="fa-solid fa-play" aria-hidden="true"></i> {{localize "FMS.Start"}}</button>
+    {{/if}}
+  </footer>
+</div>

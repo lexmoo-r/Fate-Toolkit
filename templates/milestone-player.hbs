@@ -1,0 +1,326 @@
+<div class="fms-root fms-player is-wizard">
+  {{#if missing}}
+    <div class="fms-empty-state"><i class="fa-solid fa-road-circle-xmark" aria-hidden="true"></i><p>{{localize "FMS.NoActiveForActor"}}</p></div>
+  {{else}}
+    <div class="fms-scroll">
+      <header class="fms-hero fms-player-hero">
+        <img class="fms-portrait" src="{{actorImg}}" alt="{{actorName}}">
+        <div>
+          <div class="fms-kicker">{{typeLabel}}</div>
+          <h2>{{actorName}}</h2>
+          <p>{{session.title}}</p>
+        </div>
+      </header>
+
+      {{#if completed}}
+        <section class="fms-rule-card success">
+          <strong><i class="fa-solid fa-circle-check" aria-hidden="true"></i> {{localize "FMS.Completed"}}</strong>
+          <p>{{localize "FMS.CompletedHint"}}</p>
+        </section>
+        {{#if hasSummary}}
+          <section class="fms-card">
+            <h3>{{localize "FMS.Changes"}}</h3>
+            <ul class="fms-summary-list">{{#each summary}}<li>{{this}}</li>{{/each}}</ul>
+            {{#if hasReasons}}
+              <details class="fms-story-details"><summary>{{localize "FMS.StoryExplanation"}}</summary><ul>{{#each reasons}}<li>{{this}}</li>{{/each}}</ul></details>
+            {{/if}}
+          </section>
+        {{/if}}
+      {{else}}
+        <nav class="fms-wizard-progress" aria-label="{{localize 'FMS.WizardProgress'}}">
+          {{#each wizardSteps}}
+            <button type="button" class="fms-wizard-step {{#if active}}is-active{{/if}} {{#if complete}}is-complete{{/if}}" data-fms-goto-step="{{id}}" {{#unless clickable}}disabled{{/unless}} title="{{label}}" aria-label="{{label}}" aria-current="{{#if active}}step{{else}}false{{/if}}">
+              <span class="fms-wizard-step-index">{{#if complete}}<i class="fa-solid fa-check" aria-hidden="true"></i>{{else}}{{number}}{{/if}}</span>
+              <span class="fms-wizard-step-label">{{label}}</span>
+            </button>
+          {{/each}}
+        </nav>
+        <div class="fms-wizard-current">
+          <span>{{wizardProgressText}}</span>
+          <strong>{{currentStepLabel}}</strong>
+          <small><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> {{localize "FMS.DraftAutoSaved"}}</small>
+        </div>
+        <div class="fms-validation bad fms-step-validation" {{#if currentStepValidation.valid}}hidden{{/if}}><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> <span>{{currentStepValidation.message}}</span></div>
+
+        {{#if stepOverview}}
+        <section class="fms-rule-card">
+          <strong>{{localize "FMS.WhatItGives"}}</strong>
+          <p>{{ruleText}}</p>
+          <p class="fms-rule-note">{{localize "FMS.NoSheetNeeded"}}</p>
+        </section>
+
+        <section class="fms-card fms-resource-card">
+          <div class="fms-resource">
+            <span>{{localize "FMS.Refresh"}}</span>
+            <strong>{{refresh}} <em>/ {{allowedRefresh}}</em></strong>
+            {{#if autoRefresh}}<small class="positive">+{{autoRefresh}} {{localize "FMS.AlreadyAwarded"}}</small>{{else}}<small>{{localize "FMS.AllowedRefreshHint"}}</small>{{/if}}
+          </div>
+          <div class="fms-resource">
+            <span>{{localize "FMS.CurrentFatePoints"}}</span>
+            <strong>{{currentFatePoints}}</strong>
+            <small>{{localize "FMS.CurrentPoolNotRefresh"}}</small>
+          </div>
+          {{#if showSkillAdvance}}
+            <div class="fms-resource">
+              <span>{{localize "FMS.SkillPointsBank"}}</span>
+              <strong>{{skillContext.bank}}</strong>
+              {{#if autoSkillPoints}}<small class="positive">+{{autoSkillPoints}} {{localize "FMS.AlreadyAwarded"}}</small>{{/if}}
+            </div>
+            <div class="fms-resource">
+              <span>{{localize "FMS.AllowedSkillTotal"}}</span>
+              <strong>{{allowedSkillTotal}}</strong>
+              <small>{{localize "FMS.AllowedSkillTotalHint"}}</small>
+            </div>
+          {{/if}}
+          <div class="fms-resource">
+            <span>{{localize "FMS.FinalRefresh"}}</span>
+            <strong class="{{#unless refreshOkay}}negative{{/unless}}">{{finalRefresh}}</strong>
+            <small>{{localize "FMS.RefreshFloorHint"}}</small>
+          </div>
+        </section>
+        {{/if}}
+
+        {{#if stepMinor}}
+        <section class="fms-card">
+          <div class="fms-section-heading">
+            <span class="fms-step">1</span>
+            <div><h3>{{localize "FMS.MinorBenefit"}}</h3><p>{{localize "FMS.MinorBenefitHint"}}</p></div>
+          </div>
+          <label class="fms-field">
+            <span>{{localize "FMS.ChooseOne"}}</span>
+            <select name="minorType">
+              <option value="none" {{#if minorNone}}selected{{/if}}>{{localize "FMS.Minor.none"}}</option>
+              <option value="skills" {{#if minorSkills}}selected{{/if}}>{{localize "FMS.Minor.skills"}}</option>
+              <option value="aspect" {{#if minorAspect}}selected{{/if}}>{{localize "FMS.Minor.aspect"}}</option>
+              <option value="stunt" {{#if minorStunt}}selected{{/if}}>{{localize "FMS.Minor.stunt"}}</option>
+              <option value="buy-stunt" {{#if minorBuyStunt}}selected{{/if}}>{{localize "FMS.Minor.buyStunt"}}</option>
+            </select>
+          </label>
+
+          {{#if minorSkills}}
+            <div class="fms-subcard">
+              <h4>{{localize "FMS.SkillSwap"}}</h4>
+              <p>{{localize "FMS.SkillSwapHint"}}</p>
+              <div class="fms-two-fields">
+                <label class="fms-field"><span>{{localize "FMS.SkillA"}}</span><select name="minorSkillA"><option value="">—</option>{{#each skillsForSelect}}<option value="{{key}}" {{#if selectedA}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+                <label class="fms-field"><span>{{localize "FMS.SkillB"}}</span><select name="minorSkillB"><option value="">—</option>{{#each skillsForSelect}}<option value="{{key}}" {{#if selectedB}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+              </div>
+            </div>
+          {{/if}}
+
+          {{#if minorAspect}}
+            <div class="fms-subcard">
+              <h4>{{localize "FMS.RenameAspect"}}</h4>
+              <p>{{localize "FMS.RenameAspectHint"}}</p>
+              <label class="fms-field"><span>{{localize "FMS.Aspect"}}</span><select data-fms-path="minor.aspectKey"><option value="">—</option>{{#each normalAspects}}<option value="{{key}}" {{#if selectedMinor}}selected{{/if}}>{{name}} — {{value}}</option>{{/each}}</select></label>
+              <label class="fms-field"><span>{{localize "FMS.NewWording"}}</span><input type="text" data-fms-path="minor.aspectValue" value="{{draft.minor.aspectValue}}"></label>
+            </div>
+          {{/if}}
+
+          {{#if minorStunt}}
+            <div class="fms-subcard">
+              <h4>{{localize "FMS.ExchangeStunt"}}</h4>
+              <p>{{localize "FMS.ExchangeStuntHint"}}</p>
+              <label class="fms-field"><span>{{localize "FMS.OldStunt"}}</span><select data-fms-path="minor.stuntOldKey"><option value="">—</option>{{#each stunts}}<option value="{{key}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}</select></label>
+              <div class="fms-stunt-editor">
+                <label class="fms-field"><span>{{localize "FMS.StuntTemplate"}}</span><select data-fms-stunt-library="minor.stunt"><option value="">{{localize "FMS.CustomStunt"}}</option>{{#each stuntLibraryMinorStunt}}<option value="{{key}}" {{#if selected}}selected{{/if}}>{{name}} (R{{cost}})</option>{{/each}}</select></label>
+                <div class="fms-two-fields">
+                  <label class="fms-field"><span>{{localize "FMS.StuntName"}}</span><input type="text" data-fms-path="minor.stunt.name" value="{{draft.minor.stunt.name}}"></label>
+                  <label class="fms-field small"><span>{{localize "FMS.RefreshCost"}}</span><input type="number" data-fms-path="minor.stunt.refresh_cost" value="{{draft.minor.stunt.refresh_cost}}" min="0" step="1" readonly></label>
+                </div>
+                <label class="fms-field"><span>{{localize "FMS.Description"}}</span><textarea rows="3" data-fms-path="minor.stunt.description">{{draft.minor.stunt.description}}</textarea></label>
+                <div class="fms-two-fields">
+                  <label class="fms-field"><span>{{localize "FMS.LinkedSkill"}}</span><input type="text" data-fms-path="minor.stunt.linked_skill" value="{{minorStuntLinkedSkill}}" placeholder="{{localize 'FMS.NoLinkedSkill'}}"></label>
+                  <label class="fms-field small"><span>{{localize "FMS.Bonus"}}</span><input type="number" data-fms-path="minor.stunt.bonus" value="{{draft.minor.stunt.bonus}}" step="1"></label>
+                </div>
+                <div class="fms-action-checks">
+                  <label><input type="checkbox" data-fms-path="minor.stunt.overcome" {{#if draft.minor.stunt.overcome}}checked{{/if}}> {{localize "FMS.Action.overcome"}}</label>
+                  <label><input type="checkbox" data-fms-path="minor.stunt.caa" {{#if draft.minor.stunt.caa}}checked{{/if}}> {{localize "FMS.Action.caa"}}</label>
+                  <label><input type="checkbox" data-fms-path="minor.stunt.attack" {{#if draft.minor.stunt.attack}}checked{{/if}}> {{localize "FMS.Action.attack"}}</label>
+                  <label><input type="checkbox" data-fms-path="minor.stunt.defend" {{#if draft.minor.stunt.defend}}checked{{/if}}> {{localize "FMS.Action.defend"}}</label>
+                </div>
+              </div>
+            </div>
+          {{/if}}
+
+          {{#if minorBuyStunt}}
+            <div class="fms-subcard">
+              <h4>{{localize "FMS.BuyStunt"}}</h4>
+              <p>{{localize "FMS.BuyStuntHint"}}</p>
+              <div class="fms-cost-note"><i class="fa-solid fa-coins" aria-hidden="true"></i> {{localize "FMS.ActualRefreshCost"}}: <strong>{{refreshPlan.minorCost}}</strong>{{#if refreshPlan.minorNative}} <span>({{localize "FMS.NativeStuntCost"}} {{refreshPlan.minorNative}})</span>{{/if}}</div>
+              <div class="fms-stunt-editor">
+                <label class="fms-field"><span>{{localize "FMS.StuntTemplate"}}</span><select data-fms-stunt-library="minor.buyStunt"><option value="">{{localize "FMS.CustomStunt"}}</option>{{#each stuntLibraryMinorBuy}}<option value="{{key}}" {{#if selected}}selected{{/if}}>{{name}} (R{{cost}})</option>{{/each}}</select></label>
+                <div class="fms-two-fields">
+                  <label class="fms-field"><span>{{localize "FMS.StuntName"}}</span><input type="text" data-fms-path="minor.buyStunt.name" value="{{draft.minor.buyStunt.name}}"></label>
+                  <label class="fms-field small"><span>{{localize "FMS.RefreshCost"}}</span><input type="number" data-fms-path="minor.buyStunt.refresh_cost" value="{{draft.minor.buyStunt.refresh_cost}}" min="0" step="1" readonly></label>
+                </div>
+                <label class="fms-field"><span>{{localize "FMS.Description"}}</span><textarea rows="3" data-fms-path="minor.buyStunt.description">{{draft.minor.buyStunt.description}}</textarea></label>
+                <div class="fms-two-fields">
+                  <label class="fms-field"><span>{{localize "FMS.LinkedSkill"}}</span><input type="text" data-fms-path="minor.buyStunt.linked_skill" value="{{minorBuyStuntLinkedSkill}}" placeholder="{{localize 'FMS.NoLinkedSkill'}}"></label>
+                  <label class="fms-field small"><span>{{localize "FMS.Bonus"}}</span><input type="number" data-fms-path="minor.buyStunt.bonus" value="{{draft.minor.buyStunt.bonus}}" step="1"></label>
+                </div>
+                <div class="fms-action-checks">
+                  <label><input type="checkbox" data-fms-path="minor.buyStunt.overcome" {{#if draft.minor.buyStunt.overcome}}checked{{/if}}> {{localize "FMS.Action.overcome"}}</label>
+                  <label><input type="checkbox" data-fms-path="minor.buyStunt.caa" {{#if draft.minor.buyStunt.caa}}checked{{/if}}> {{localize "FMS.Action.caa"}}</label>
+                  <label><input type="checkbox" data-fms-path="minor.buyStunt.attack" {{#if draft.minor.buyStunt.attack}}checked{{/if}}> {{localize "FMS.Action.attack"}}</label>
+                  <label><input type="checkbox" data-fms-path="minor.buyStunt.defend" {{#if draft.minor.buyStunt.defend}}checked{{/if}}> {{localize "FMS.Action.defend"}}</label>
+                </div>
+              </div>
+            </div>
+          {{/if}}
+
+          {{#unless minorNone}}
+            <details class="fms-story-details"><summary>{{localize "FMS.WhyChanged"}}</summary><textarea rows="2" data-fms-path="minorReason" placeholder="{{localize 'FMS.WhyChangedPlaceholder'}}">{{draft.minorReason}}</textarea></details>
+          {{/unless}}
+        </section>
+        {{/if}}
+
+        {{#if stepSkills}}
+        {{#if showSkillAdvance}}
+          <section class="fms-card">
+            <div class="fms-section-heading">
+              <span class="fms-step">2</span>
+              <div><h3>{{localize "FMS.SkillGrowth"}}</h3><p>{{localize "FMS.SkillGrowthHint"}}</p></div>
+            </div>
+            <div class="fms-skill-budget">
+              <span>{{localize "FMS.Available"}} <strong>{{skillContext.bank}}</strong></span>
+              <span>{{localize "FMS.Spent"}} <strong>{{skillContext.spent}}</strong></span>
+              <span>{{localize "FMS.Remaining"}} <strong>{{skillContext.remaining}}</strong></span>
+              <span>{{localize "FMS.SkillCap"}} <strong>+{{maxCap}}</strong></span>
+              <span>{{localize "FMS.CanRaiseNow"}} <strong>{{skillContext.raiseableCount}}</strong></span>
+            </div>
+            {{#if strictColumns}}
+              {{#if skillContext.finalColumns.valid}}<div class="fms-validation good"><i class="fa-solid fa-check" aria-hidden="true"></i> {{localize "FMS.ColumnsValid"}}</div>{{else}}<div class="fms-validation bad"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> {{skillContext.finalColumns.message}}</div>{{/if}}
+            {{else}}
+              <div class="fms-validation warn"><i class="fa-solid fa-scale-unbalanced" aria-hidden="true"></i> {{localize "FMS.ColumnsNotStrict"}}</div>
+            {{/if}}
+            <div class="fms-skill-list">
+              {{#each skillContext.rows}}
+                <div class="fms-skill-row {{#if changed}}is-changed{{/if}} {{#if canRaise}}can-raise{{/if}} {{#if inactive}}is-zero{{/if}}">
+                  <div class="fms-skill-name"><strong>{{name}}</strong>{{#if changed}}<small>{{localize "FMS.Was"}} {{baseRank}}</small>{{/if}}{{#if canRaise}}<small class="fms-can-raise"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i> {{localize "FMS.CanRaise"}}</small>{{else}}{{#if ../skillContext.remaining}}<small class="fms-cant-raise" title="{{raiseReason}}">{{raiseReason}}</small>{{/if}}{{/if}}</div>
+                  <div class="fms-skill-rank">{{targetLabel}}</div>
+                  <div class="fms-skill-actions">
+                    <button type="button" data-fms-undo-skill="{{key}}" {{#unless canUndo}}disabled{{/unless}} title="{{localize 'FMS.UndoRaise'}}" aria-label="{{localize 'FMS.UndoRaise'}}"><i class="fa-solid fa-minus" aria-hidden="true"></i></button>
+                    <button type="button" data-fms-raise="{{key}}" {{#unless canRaise}}disabled{{/unless}} title="{{#if canRaise}}{{localize 'FMS.RaiseSkill'}}{{else}}{{raiseReason}}{{/if}}" aria-label="{{#if canRaise}}{{localize 'FMS.RaiseSkill'}}{{else}}{{raiseReason}}{{/if}}"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+            <p class="fms-footnote">{{localize "FMS.BankHint"}}</p>
+            <details class="fms-story-details"><summary>{{localize "FMS.WhySkillGrowth"}}</summary><textarea rows="2" data-fms-path="skillReason" placeholder="{{localize 'FMS.SkillReasonPlaceholder'}}">{{draft.skillReason}}</textarea></details>
+          </section>
+        {{/if}}
+        {{/if}}
+
+        {{#if stepMajor}}
+        {{#if isMajor}}
+          <section class="fms-card">
+            <div class="fms-section-heading"><span class="fms-step">3</span><div><h3>{{localize "FMS.MajorBenefits"}}</h3><p>{{localize "FMS.MajorBenefitsHint"}}</p></div></div>
+
+            {{#if highConcept}}
+              <div class="fms-subcard">
+                <label class="fms-check"><input type="checkbox" data-fms-path="highConceptChanged" {{#if draft.highConceptChanged}}checked{{/if}}> <strong>{{localize "FMS.ChangeHighConcept"}}</strong></label>
+                <p>{{localize "FMS.HighConceptHint"}}</p>
+                {{#if draft.highConceptChanged}}
+                  <label class="fms-field"><span>{{highConcept.name}}</span><input type="text" data-fms-path="highConceptValue" value="{{draft.highConceptValue}}"></label>
+                  <details class="fms-story-details"><summary>{{localize "FMS.WhyChanged"}}</summary><textarea rows="2" data-fms-path="highConceptReason" aria-label="{{localize 'FMS.WhyChanged'}}">{{draft.highConceptReason}}</textarea></details>
+                {{/if}}
+              </div>
+            {{/if}}
+
+            <div class="fms-subcard">
+              <label class="fms-check"><input type="checkbox" data-fms-path="majorStuntEnabled" {{#if draft.majorStuntEnabled}}checked{{/if}}> <strong>{{localize "FMS.SpendMajorRefreshOnStunt"}}</strong></label>
+              <p>{{localize "FMS.MajorRefreshHint"}}</p>
+              {{#if draft.majorStuntEnabled}}<div class="fms-cost-note"><i class="fa-solid fa-coins" aria-hidden="true"></i> {{localize "FMS.ActualRefreshCost"}}: <strong>{{refreshPlan.majorCost}}</strong>{{#if refreshPlan.majorNative}} <span>({{localize "FMS.NativeStuntCost"}} {{refreshPlan.majorNative}})</span>{{/if}}</div>{{/if}}
+              {{#if draft.majorStuntEnabled}}
+                <div class="fms-stunt-editor">
+                <label class="fms-field"><span>{{localize "FMS.StuntTemplate"}}</span><select data-fms-stunt-library="majorStunt"><option value="">{{localize "FMS.CustomStunt"}}</option>{{#each stuntLibraryMajor}}<option value="{{key}}" {{#if selected}}selected{{/if}}>{{name}} (R{{cost}})</option>{{/each}}</select></label>
+                <div class="fms-two-fields">
+                  <label class="fms-field"><span>{{localize "FMS.StuntName"}}</span><input type="text" data-fms-path="majorStunt.name" value="{{draft.majorStunt.name}}"></label>
+                  <label class="fms-field small"><span>{{localize "FMS.RefreshCost"}}</span><input type="number" data-fms-path="majorStunt.refresh_cost" value="{{draft.majorStunt.refresh_cost}}" min="0" step="1" readonly></label>
+                </div>
+                <label class="fms-field"><span>{{localize "FMS.Description"}}</span><textarea rows="3" data-fms-path="majorStunt.description">{{draft.majorStunt.description}}</textarea></label>
+                <div class="fms-two-fields">
+                  <label class="fms-field"><span>{{localize "FMS.LinkedSkill"}}</span><input type="text" data-fms-path="majorStunt.linked_skill" value="{{majorStuntLinkedSkill}}" placeholder="{{localize 'FMS.NoLinkedSkill'}}"></label>
+                  <label class="fms-field small"><span>{{localize "FMS.Bonus"}}</span><input type="number" data-fms-path="majorStunt.bonus" value="{{draft.majorStunt.bonus}}" step="1"></label>
+                </div>
+                <div class="fms-action-checks">
+                  <label><input type="checkbox" data-fms-path="majorStunt.overcome" {{#if draft.majorStunt.overcome}}checked{{/if}}> {{localize "FMS.Action.overcome"}}</label>
+                  <label><input type="checkbox" data-fms-path="majorStunt.caa" {{#if draft.majorStunt.caa}}checked{{/if}}> {{localize "FMS.Action.caa"}}</label>
+                  <label><input type="checkbox" data-fms-path="majorStunt.attack" {{#if draft.majorStunt.attack}}checked{{/if}}> {{localize "FMS.Action.attack"}}</label>
+                  <label><input type="checkbox" data-fms-path="majorStunt.defend" {{#if draft.majorStunt.defend}}checked{{/if}}> {{localize "FMS.Action.defend"}}</label>
+                </div>
+              </div>
+              {{/if}}
+            </div>
+
+            <div class="fms-subcard">
+              <h4>{{localize "FMS.ExtremeRecovery"}}</h4>
+              <p>{{localize "FMS.ExtremeRecoveryHint"}}</p>
+              <label class="fms-field"><span>{{localize "FMS.ExtremeAspect"}}</span><select data-fms-path="extremeAspectKey"><option value="">{{localize "FMS.NoExtreme"}}</option>{{#each normalAspects}}<option value="{{key}}" {{#if selectedExtreme}}selected{{/if}}>{{name}} — {{value}}</option>{{/each}}</select></label>
+              {{#if draft.extremeAspectKey}}
+                <label class="fms-field"><span>{{localize "FMS.NewWording"}}</span><input type="text" data-fms-path="extremeAspectValue" value="{{draft.extremeAspectValue}}"></label>
+                <details class="fms-story-details"><summary>{{localize "FMS.WhyChanged"}}</summary><textarea rows="2" data-fms-path="extremeReason" aria-label="{{localize 'FMS.WhyChanged'}}">{{draft.extremeReason}}</textarea></details>
+              {{/if}}
+            </div>
+          </section>
+        {{/if}}
+        {{/if}}
+
+        {{#if stepRecovery}}
+        {{#if hasRecoveries}}
+          <section class="fms-card">
+            <div class="fms-section-heading"><span class="fms-step">{{#if isMajor}}4{{else}}3{{/if}}</span><div><h3>{{localize "FMS.Recovery"}}</h3><p>{{localize "FMS.RecoveryHint"}}</p></div></div>
+            <div class="fms-recovery-list">
+              {{#each recoveries}}
+                {{#if allowed}}
+                  <div class="fms-recovery-row">
+                    <label class="fms-check"><input type="checkbox" data-fms-recovery-toggle="{{key}}" {{#if checked}}checked{{/if}}> <span><strong>{{label}}</strong> · {{severity}} ({{harm}})</span></label>
+                    {{#if checked}}<input type="text" data-fms-recovery-name="{{key}}" value="{{draftName}}" placeholder="{{localize 'FMS.RecoveryNamePlaceholder'}}">{{/if}}
+                  </div>
+                {{/if}}
+              {{/each}}
+            </div>
+            <details class="fms-story-details"><summary>{{localize "FMS.WhyRecovery"}}</summary><textarea rows="2" data-fms-path="recoveryReason" aria-label="{{localize 'FMS.WhyRecovery'}}">{{draft.recoveryReason}}</textarea></details>
+          </section>
+        {{/if}}
+        {{/if}}
+
+        {{#if stepReview}}
+        <section class="fms-card">
+          <h3>{{localize "FMS.StoryNote"}}</h3>
+          <p>{{localize "FMS.StoryNoteHint"}}</p>
+          <textarea rows="3" data-fms-path="storyNote" placeholder="{{localize 'FMS.StoryNotePlaceholder'}}">{{draft.storyNote}}</textarea>
+        </section>
+
+        <section class="fms-validation {{#if validation.valid}}good{{else}}bad{{/if}} fms-submit-validation">
+          {{#if validation.valid}}<i class="fa-solid fa-circle-check" aria-hidden="true"></i>{{else}}<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>{{/if}}
+          <span>{{validation.message}}</span>
+        </section>
+
+        <section class="fms-card fms-preview-card">
+          <h3>{{localize "FMS.Preview"}}</h3>
+          {{#if hasPreview}}<ul class="fms-summary-list">{{#each preview}}<li>{{this}}</li>{{/each}}</ul>{{else}}<div class="fms-empty-state fms-empty-state-compact"><i class="fa-regular fa-circle-check" aria-hidden="true"></i><p>{{localize "FMS.NoOptionalChanges"}}</p></div>{{/if}}
+          <div class="fms-preview-resources"><span>{{localize "FMS.Refresh"}}: <strong>{{refresh}} → {{finalRefresh}}</strong></span>{{#if showSkillAdvance}}<span>{{localize "FMS.SkillPointsBank"}}: <strong>{{skillContext.bank}} → {{skillContext.remaining}}</strong></span>{{/if}}</div>
+        </section>
+        {{/if}}
+      {{/if}}
+    </div>
+
+    {{#unless completed}}
+      <footer class="fms-sticky-footer fms-wizard-footer">
+        <button type="button" class="fms-secondary" data-fms-restart title="{{localize 'FMS.RestartWizard'}}" aria-label="{{localize 'FMS.RestartWizard'}}"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> {{localize "FMS.RestartWizard"}}</button>
+        <span class="fms-submit-hint">{{localize "FMS.SubmitHint"}}</span>
+        {{#if hasPreviousStep}}
+          <button type="button" data-fms-previous><i class="fa-solid fa-angle-left" aria-hidden="true"></i> {{localize "FMS.PreviousStep"}}</button>
+        {{/if}}
+        {{#if hasNextStep}}
+          <button type="button" class="fms-primary" data-fms-next {{#unless canAdvanceStep}}disabled{{/unless}}>{{localize "FMS.NextStep"}} <i class="fa-solid fa-angle-right" aria-hidden="true"></i></button>
+        {{else}}
+          <button type="button" class="fms-primary" data-fms-submit {{#unless canSubmit}}disabled{{/unless}}>{{#if submitting}}<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> {{localize "FMS.Saving"}}{{else}}<i class="fa-solid fa-check" aria-hidden="true"></i> {{localize "FMS.ApplyMilestone"}}{{/if}}</button>
+        {{/if}}
+      </footer>
+    {{/unless}}
+  {{/if}}
+</div>
+

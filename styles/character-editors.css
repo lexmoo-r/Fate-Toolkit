@@ -1,0 +1,49 @@
+/* Fate Toolkit editors – a self-contained, resize-safe UI.
+   This is also injected by character-editors.js when the dialogs open. Foundry
+   and the Fate Core system can otherwise override dialog form layouts. */
+.application:has(.fte-editor){min-width:min(600px,calc(100vw - 28px))!important;max-width:calc(100vw - 20px)!important;}
+.application:has(.fte-editor) .window-content{display:flex!important;flex-direction:column!important;min-height:0!important;overflow:hidden!important;padding:0!important;}
+.application:has(.fte-editor) .dialog-content{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;min-height:0!important;overflow:hidden!important;padding:0!important;}
+.application:has(.fte-editor) .dialog-content>form{display:flex!important;flex-direction:column!important;min-height:0!important;flex:1 1 auto!important;overflow:hidden!important;margin:0!important;}
+.application:has(.fte-editor) .dialog-buttons{display:flex!important;gap:10px!important;flex:0 0 auto!important;padding:12px 18px!important;border-top:1px solid rgba(215,180,157,.19)!important;}
+.application:has(.fte-editor) .dialog-buttons button{flex:1 1 0!important;min-height:38px!important;}
+.fte-editor{--fte-line:rgba(220,203,194,.18);--fte-subtle:rgba(255,255,255,.035);--fte-accent:#cf7455;--fte-ink:#eae2dc;--fte-dim:#b5aaa5;display:flex!important;flex-direction:column!important;gap:0!important;box-sizing:border-box!important;width:100%!important;min-width:0!important;height:clamp(370px,68vh,690px)!important;max-height:calc(100vh - 165px)!important;padding:0!important;margin:0!important;overflow:hidden!important;color:var(--fte-ink);font-size:13px;line-height:1.45;}
+.fte-editor,.fte-editor *, .fte-editor *:before,.fte-editor *:after{box-sizing:border-box!important;}
+.fte-editor-intro{flex:none;padding:12px 18px 9px;font-size:12px;line-height:1.45;color:var(--fte-dim);border-bottom:1px solid var(--fte-line);}
+.fte-editor-tools{display:grid!important;grid-template-columns:minmax(100px,1fr) minmax(180px,270px)!important;align-items:center!important;gap:12px!important;flex:none!important;padding:12px 18px!important;min-width:0!important;}
+.fte-editor-tools strong{font-weight:700;font-size:14px;}
+.fte-count{display:inline-block;padding:1px 8px;margin-left:6px;border:1px solid var(--fte-line);border-radius:99px;font-weight:500;font-size:11px;color:var(--fte-dim);}
+.fte-editor :is(input,select,textarea){display:block!important;box-sizing:border-box!important;margin:0!important;min-width:0!important;width:100%!important;max-width:100%!important;color:var(--fte-ink)!important;background:#302a30!important;border:1px solid rgba(205,179,168,.26)!important;border-radius:6px!important;box-shadow:none!important;font:inherit!important;line-height:1.4!important;}
+.fte-editor input:not([type=checkbox]){height:34px!important;min-height:34px!important;padding:6px 9px!important;}
+.fte-editor input[type=search]{padding-inline:12px!important;}
+.fte-editor textarea{min-height:104px!important;resize:vertical!important;padding:9px 11px!important;line-height:1.48!important;}
+.fte-editor :is(input,textarea):focus-visible{outline:2px solid var(--fte-accent)!important;outline-offset:1px!important;}
+.fte-editor :is(input,textarea):disabled,.fte-editor input[readonly]{opacity:.64;cursor:not-allowed;}
+.fte-editor .fte-list{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:10px!important;flex:1 1 auto!important;min-height:100px!important;max-height:none!important;margin:0!important;padding:2px 18px 16px!important;overflow-y:scroll!important;overflow-x:hidden!important;overscroll-behavior:contain!important;scrollbar-gutter:stable!important;scrollbar-width:thin!important;scrollbar-color:var(--fte-accent) rgba(255,255,255,.055);}
+.fte-editor .fte-list::-webkit-scrollbar{width:10px;}
+.fte-editor .fte-list::-webkit-scrollbar-track{background:rgba(255,255,255,.04);border-radius:10px;}
+.fte-editor .fte-list::-webkit-scrollbar-thumb{background:#91604e;border-radius:10px;border:2px solid #211d23;}
+.fte-editor .fte-trait{display:block!important;flex:0 0 auto!important;width:100%!important;min-width:0!important;min-height:0!important;margin:0!important;padding:13px 15px!important;border:1px solid var(--fte-line)!important;border-radius:9px!important;background:var(--fte-subtle)!important;}
+.fte-editor .fte-trait-head{display:grid!important;grid-template-columns:minmax(0,1fr) 34px!important;align-items:center!important;gap:10px!important;margin-bottom:12px!important;min-width:0!important;}
+.fte-editor .fte-trait-head:has(.fte-owned-badge){grid-template-columns:minmax(0,1fr) auto 34px!important;}
+.fte-editor .fte-trait-head>input{font-weight:650!important;font-size:14px!important;}
+.fte-editor button.fte-remove{display:grid!important;place-items:center!important;flex:none!important;width:34px!important;max-width:34px!important;min-width:34px!important;height:34px!important;min-height:34px!important;max-height:34px!important;margin:0!important;padding:0!important;border:1px solid var(--fte-line)!important;border-radius:6px!important;background:rgba(0,0,0,.10)!important;color:var(--fte-dim)!important;cursor:pointer;}
+.fte-editor button.fte-remove:hover:not(:disabled){color:#ffa99a!important;border-color:#ac645c!important;}
+.fte-editor .fte-trait-fields{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;align-items:start!important;gap:12px!important;min-width:0!important;}
+.fte-editor .fte-field{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:6px!important;width:100%!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;}
+.fte-editor .fte-field-full{grid-column:auto!important;}
+.fte-editor .fte-field-label{display:block!important;flex:none!important;position:static!important;width:100%!important;padding:0!important;margin:0!important;font-size:12px!important;font-weight:600!important;line-height:1.35!important;text-align:left!important;color:var(--fte-dim)!important;}
+.fte-editor .fte-owned-badge{display:inline-flex!important;align-items:center!important;width:auto!important;white-space:nowrap!important;padding:4px 8px!important;font-size:11px!important;border:1px solid var(--fte-line)!important;border-radius:99px;color:var(--fte-dim);}
+.fte-editor .fte-trait.is-owned{opacity:.70;}
+.fte-editor .fte-toolbar{flex:0 0 auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;min-height:59px!important;margin:0!important;padding:10px 18px!important;border-top:1px solid var(--fte-line)!important;}
+.fte-editor .fte-toolbar>button{display:inline-flex!important;justify-content:center!important;gap:7px!important;width:auto!important;min-width:154px!important;max-width:100%!important;min-height:36px!important;padding:6px 16px!important;border:1px solid var(--fte-accent)!important;border-radius:6px!important;background:rgba(207,116,85,.11)!important;color:var(--fte-ink)!important;}
+.fte-editor .fte-skill-head{display:grid!important;grid-template-columns:minmax(0,1fr) 82px 34px!important;gap:12px!important;flex:0 0 auto!important;align-items:center!important;min-height:28px!important;margin:0!important;padding:4px 30px!important;color:var(--fte-dim)!important;border-bottom:1px solid var(--fte-line)!important;font-size:11px!important;letter-spacing:.02em!important;}
+.fte-editor .fte-skills{gap:0!important;padding:0 18px 8px!important;max-height:none!important;}
+.fte-editor .fte-trait.fte-skill-row{display:grid!important;grid-template-columns:minmax(0,1fr) 82px 34px!important;align-items:center!important;gap:12px!important;flex:0 0 auto!important;min-height:46px!important;max-height:56px!important;width:100%!important;margin:0!important;padding:5px 12px!important;border:0!important;border-bottom:1px solid var(--fte-line)!important;border-radius:0!important;background:transparent!important;}
+.fte-editor .fte-trait.fte-skill-row:nth-child(even){background:rgba(255,255,255,.022)!important;}
+.fte-editor .fte-skill-name{display:flex!important;align-items:center!important;gap:7px!important;min-width:0!important;height:auto!important;}
+.fte-editor .fte-skill-name input{font-size:13px!important;font-weight:500!important;background:transparent!important;}
+.fte-editor .fte-skill-row input.fte-skill-rank{width:82px!important;max-width:82px!important;text-align:center!important;font-size:14px!important;font-weight:650!important;font-variant-numeric:tabular-nums!important;}
+.fte-editor [hidden]{display:none!important;}
+@media(max-width:690px){.application:has(.fte-editor){min-width:0!important;}.fte-editor .fte-trait-fields{grid-template-columns:1fr!important;}.fte-editor .fte-trait-head:has(.fte-owned-badge){grid-template-columns:minmax(0,1fr) 34px!important;}.fte-editor .fte-trait-head .fte-owned-badge{grid-column:1/-1;grid-row:2;}.fte-editor .fte-trait-head button{grid-column:2;grid-row:1;}.fte-editor .fte-editor-tools{grid-template-columns:1fr!important;}.fte-editor .fte-field textarea{min-height:90px!important;}}
+@media(max-width:440px){.fte-editor-intro{padding-inline:12px!important;}.fte-editor .fte-editor-tools{padding-inline:12px!important;}.fte-editor .fte-list{padding-inline:12px!important;}.fte-editor .fte-toolbar{padding-inline:12px!important;}.fte-editor .fte-skill-head{grid-template-columns:minmax(0,1fr) 56px 32px!important;gap:7px!important;padding-inline:19px!important;}.fte-editor .fte-trait.fte-skill-row{grid-template-columns:minmax(0,1fr) 56px 32px!important;gap:7px!important;padding-inline:4px!important;}.fte-editor .fte-skill-row input.fte-skill-rank{width:56px!important;}.fte-editor button.fte-remove{width:32px!important;min-width:32px!important;}}

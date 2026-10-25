@@ -1,0 +1,421 @@
+<div class="fts-shell">
+  <header class="fts-header">
+    <div class="fts-identity">
+      <div class="fts-portrait-button">
+        <img data-uuid="{{actor.uuid}}" class="fts-portrait profile-img fco_popviewable" src="{{actor.img}}" alt="{{actor.name}}" data-edit="img" data-action="editImage" title="{{localize 'FAW.Sheet.EditPortrait'}}">
+      </div>
+      <div class="fts-name-block">
+        {{#if editable}}
+          <input class="fts-name" name="name" type="text" value="{{actor.name}}" autocomplete="off" aria-label="{{localize 'FAW.Sheet.CharacterName'}}">
+          <input class="fts-pronouns" name="system.details.pronouns.value" type="text" value="{{model.pronouns}}" placeholder="{{localize 'FAW.Sheet.Pronouns'}}">
+        {{else}}
+          <div class="fts-name fts-name-static">{{actor.name}}</div>
+          {{#if model.pronouns}}<div class="fts-pronouns fts-pronouns-static">{{model.pronouns}}</div>{{/if}}
+        {{/if}}
+      </div>
+    </div>
+
+    <div class="fts-fate-summary">
+      {{#if campaignMode}}
+      <div class="fts-fate-stat fts-fate-current-stat fts-will-stat">
+        <span class="fts-fate-label">{{localize "FAW.Campaign.Will"}} {{#if campaignWill.configured}}({{#if campaignWill.isPc}}{{localize "FAW.Campaign.PcLabel"}}{{else}}{{localize "FAW.Campaign.NpcLabel"}}{{/if}}){{/if}}</span>
+        <div class="fts-fate-value-row">
+          {{#if campaignWill.configured}}
+            {{#if editable}}<button type="button" data-action="fatePointDown" class="fts-icon-button" title="{{localize "FAW.Campaign.SpendWill"}}">−</button>{{/if}}
+            <output class="fts-fate-number" aria-label="{{localize "FAW.Campaign.CurrentWill"}}">{{campaignWill.current}}</output>
+            <span aria-label="{{localize "FAW.Campaign.MaxWill"}}">/ {{campaignWill.max}}</span>
+            {{#if editable}}<button type="button" data-action="fatePointUp" class="fts-icon-button" title="{{localize "FAW.Campaign.RestoreWill"}}">+</button>{{/if}}
+          {{else}}
+            <span class="fts-will-unset">{{localize "FAW.Campaign.NotConfigured"}}</span>
+          {{/if}}
+        </div>
+        {{#if campaignWill.configured}}
+          <div class="fts-will-boxes" aria-label="{{localize "FAW.Campaign.Will"}}: {{campaignWill.current}} {{localize "FAW.Campaign.Of"}} {{campaignWill.max}}">
+            {{#each campaignWill.boxes}}<span class="fts-will-box {{#if this.filled}}filled{{/if}}" aria-hidden="true"></span>{{/each}}
+          </div>
+        {{/if}}
+      </div>
+      {{#if campaignWill.complication.pending}}<span class="fts-will-warning" title="{{localize 'FAW.Campaign.ComplicationPending'}}"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i></span>{{/if}}
+      {{else}}
+      <div class="fts-fate-stat fts-fate-current-stat">
+        <span class="fts-fate-label">{{localize 'FAW.Sheet.FatePoints'}}</span>
+        <div class="fts-fate-value-row">
+          {{#if editable}}<button type="button" data-action="fatePointDown" class="fts-icon-button" title="{{localize 'FAW.Sheet.FatePointDown'}}" aria-label="{{localize 'FAW.Sheet.FatePointDown'}}"><i class="fa-solid fa-minus" aria-hidden="true"></i></button>{{/if}}
+          {{#if editable}}<input name="system.details.fatePoints.current" class="fts-fate-number" type="number" min="0" value="{{model.fatePoints.current}}" aria-label="{{localize 'FAW.Sheet.FatePoints'}}">{{else}}<output class="fts-fate-number">{{model.fatePoints.current}}</output>{{/if}}
+          {{#if editable}}<button type="button" data-action="fatePointUp" class="fts-icon-button" title="{{localize 'FAW.Sheet.FatePointUp'}}" aria-label="{{localize 'FAW.Sheet.FatePointUp'}}"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>{{/if}}
+        </div>
+      </div>
+      <label class="fts-fate-stat">
+        <span class="fts-fate-label">{{localize 'FAW.Sheet.Refresh'}}</span>
+        {{#if editable}}<input name="system.details.fatePoints.refresh" class="fts-fate-number" type="number" min="0" value="{{model.fatePoints.refresh}}">{{else}}<output class="fts-fate-number">{{model.fatePoints.refresh}}</output>{{/if}}
+      </label>
+      <label class="fts-fate-stat">
+        <span class="fts-fate-label">{{localize 'FAW.Sheet.Boosts'}}</span>
+        {{#if editable}}<input name="system.details.fatePoints.boosts" class="fts-fate-number" type="number" min="0" value="{{model.fatePoints.boosts}}">{{else}}<output class="fts-fate-number">{{model.fatePoints.boosts}}</output>{{/if}}
+      </label>
+      {{/if}}
+      {{#if isGM}}<button type="button" class="fts-header-button" data-action="saveFramework" title="{{localize 'FAW.Sheet.SaveFramework'}}" aria-label="{{localize 'FAW.Sheet.SaveFramework'}}"><i class="fa-solid fa-user-plus" aria-hidden="true"></i><span>{{localize 'FAW.Sheet.SaveFramework'}}</span></button><button type="button" class="fts-header-button" data-action="applyFramework" title="{{localize 'FAW.Sheet.ApplyFramework'}}" aria-label="{{localize 'FAW.Sheet.ApplyFramework'}}"><i class="fa-solid fa-user-pen" aria-hidden="true"></i><span>{{localize 'FAW.Sheet.ApplyFramework'}}</span></button>{{/if}}
+      {{#if editable}}<button type="button" class="fts-header-button" data-action="syncTokenName" title="{{localize 'FAW.Sheet.SyncTokenName'}}" aria-label="{{localize 'FAW.Sheet.SyncTokenName'}}"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i><span>{{localize 'FAW.Sheet.SyncTokenName'}}</span></button>{{/if}}
+      <button type="button" class="fts-header-button {{#if customizing}}active{{/if}}" data-action="toggleCustomize" title="{{localize 'FAW.Sheet.Customize'}}" aria-pressed="{{#if customizing}}true{{else}}false{{/if}}"><i class="fa-solid fa-sliders" aria-hidden="true"></i><span>{{localize 'FAW.Sheet.Customize'}}</span></button>
+    </div>
+  </header>
+
+  {{#if campaignMode}}
+    <div class="fts-campaign-tools" aria-label="{{localize 'FAW.Campaign.CharacterRoleWill'}}">
+      {{#if campaignWill.configured}}
+        <div class="fts-campaign-play-actions">
+          {{#if editable}}<button type="button" class="fts-campaign-action" data-action="spendSpecialWill"><i class="fa-solid fa-bolt" aria-hidden="true"></i> {{localize "FAW.Campaign.SpecialSpend"}}</button>{{/if}}
+          {{#if campaignWill.isPc}}{{#if editable}}<button type="button" class="fts-campaign-action" data-action="recoverWillVice"><i class="fa-solid fa-heart-pulse" aria-hidden="true"></i> {{localize "FAW.Campaign.ViceRecovery"}}</button>{{/if}}{{/if}}
+          {{#if isGM}}<button type="button" class="fts-campaign-action" data-action="gainCompelWill"><i class="fa-solid fa-plus" aria-hidden="true"></i> {{localize "FAW.Campaign.Compel"}}</button>{{/if}}
+          {{#if campaignWill.complication.pending}}{{#if isGM}}<button type="button" class="fts-campaign-action" data-action="resolveWillComplication">{{localize "FAW.Campaign.ResolveComplication"}}</button>{{/if}}{{/if}}
+        </div>
+      {{else}}
+        <span class="fts-campaign-unset">{{localize 'FAW.Campaign.NotConfigured'}}</span>
+        {{#if isGM}}<button type="button" class="fts-campaign-action" data-action="configureWillPc">{{localize 'FAW.Campaign.PcSetup'}}</button>{{/if}}
+      {{/if}}
+      {{#if isGM}}
+      <details class="fts-campaign-settings" {{#if campaignSettingsOpen}}open{{/if}}>
+        <summary><i class="fa-solid fa-gear" aria-hidden="true"></i> {{localize 'FAW.Campaign.GmSettings'}} <i class="fa-solid fa-angle-down fts-campaign-chevron" aria-hidden="true"></i></summary>
+        <div class="fts-campaign-settings-grid">
+          <fieldset class="fts-campaign-role"><legend>{{localize 'FAW.Campaign.PcLabel'}} / {{localize 'FAW.Campaign.NpcLabel'}}</legend>
+            <button type="button" data-action="configureWillPc" class="fts-campaign-action {{#if campaignWill.configured}}{{#if campaignWill.isPc}}is-current{{/if}}{{/if}}" {{#if campaignWill.configured}}{{#if campaignWill.isPc}}disabled{{/if}}{{/if}}>{{localize 'FAW.Campaign.PcSetup'}}</button>
+            <label class="fts-campaign-tier"><span>{{localize 'FAW.Campaign.NpcTier'}}</span>
+              <select data-campaign-npc-tier aria-label="{{localize 'FAW.Campaign.NpcTier'}}">
+                <option value="rank" {{#if campaignNpcTierRank}}selected{{/if}}>{{localize 'FAW.Campaign.RankNpc'}}</option>
+                <option value="ordinary" {{#if campaignNpcTierOrdinary}}selected{{/if}}>{{localize 'FAW.Campaign.OrdinaryNpc'}}</option>
+                <option value="powerful" {{#if campaignNpcTierPowerful}}selected{{/if}}>{{localize 'FAW.Campaign.PowerfulNpc'}}</option>
+                <option value="legendary" {{#if campaignNpcTierLegendary}}selected{{/if}}>{{localize 'FAW.Campaign.LegendaryNpc'}}</option>
+              </select>
+            </label>
+            <button type="button" data-action="configureWillNpc" class="fts-campaign-action {{#if campaignWill.configured}}{{#if campaignWill.isNpc}}is-current{{/if}}{{/if}}">{{localize 'FAW.Campaign.ConfigureNpc'}}</button>
+          </fieldset>
+
+        </div>
+        <details class="fts-gm-advanced"><summary>{{localize 'FAW.Campaign.TechnicalSettings'}}</summary>        <section class="fts-card fts-system-audit-card">
+          <header class="fts-card-header"><div><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i><strong>{{localize 'FAW.Sheet.SystemAudit'}}</strong></div></header>
+          <div class="fts-card-body fts-system-audit">
+            <label title="{{localize 'FAW.Campaign.StuntRefreshHint'}}"><span>{{localize 'FAW.Campaign.StuntRefresh'}}</span><input name="system.details.fatePoints.refresh" type="number" min="0" value="{{model.fatePoints.refresh}}"></label>
+            <div class="fts-audit-stat"><span>{{localize 'FAW.Sheet.GameRefresh'}}</span><strong>{{model.systemRules.gameRefresh}}</strong></div>
+            <div class="fts-audit-stat"><span>{{localize 'FAW.Sheet.RefreshSpent'}}</span><strong>{{model.systemRules.refreshSpent}}</strong></div>
+            <div class="fts-audit-stat"><span>{{localize 'FAW.Sheet.SkillPointsSpent'}}</span><strong>{{model.systemRules.skillPointsSpent}}</strong></div>
+            <div class="fts-audit-stat"><span>{{localize 'FAW.Sheet.SkillPointsAllowed'}}</span><strong>{{model.systemRules.skillPointsAllowed}}</strong></div>
+            <label class="fts-audit-toggle"><input type="checkbox" name="system.override.active" {{#if model.systemRules.overrideActive}}checked{{/if}}> <span>{{localize 'FAW.Sheet.OverrideWorldSettings'}}</span></label>
+            <label><span>{{localize 'FAW.Sheet.OverrideRefresh'}}</span><input type="number" min="0" name="system.override.refresh" value="{{model.systemRules.overrideRefresh}}"></label>
+            <label><span>{{localize 'FAW.Sheet.OverrideSkillPoints'}}</span><input type="number" min="0" name="system.override.skillPoints" value="{{model.systemRules.overrideSkillPoints}}"></label>
+          </div>
+        </section>
+</details>
+      </details>
+      {{/if}}
+    </div>
+  {{/if}}
+
+  {{#unless campaignMode}}{{#if isGM}}<details class="fts-standard-gm-settings"><summary>{{localize 'FAW.Sheet.SystemAudit'}}</summary>        <section class="fts-card fts-system-audit-card">
+          <header class="fts-card-header"><div><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i><strong>{{localize 'FAW.Sheet.SystemAudit'}}</strong></div></header>
+          <div class="fts-card-body fts-system-audit">
+            <label title="{{localize 'FAW.Campaign.StuntRefreshHint'}}"><span>{{localize 'FAW.Campaign.StuntRefresh'}}</span><input name="system.details.fatePoints.refresh" type="number" min="0" value="{{model.fatePoints.refresh}}"></label>
+            <div class="fts-audit-stat"><span>{{localize 'FAW.Sheet.GameRefresh'}}</span><strong>{{model.systemRules.gameRefresh}}</strong></div>
+            <div class="fts-audit-stat"><span>{{localize 'FAW.Sheet.RefreshSpent'}}</span><strong>{{model.systemRules.refreshSpent}}</strong></div>
+            <div class="fts-audit-stat"><span>{{localize 'FAW.Sheet.SkillPointsSpent'}}</span><strong>{{model.systemRules.skillPointsSpent}}</strong></div>
+            <div class="fts-audit-stat"><span>{{localize 'FAW.Sheet.SkillPointsAllowed'}}</span><strong>{{model.systemRules.skillPointsAllowed}}</strong></div>
+            <label class="fts-audit-toggle"><input type="checkbox" name="system.override.active" {{#if model.systemRules.overrideActive}}checked{{/if}}> <span>{{localize 'FAW.Sheet.OverrideWorldSettings'}}</span></label>
+            <label><span>{{localize 'FAW.Sheet.OverrideRefresh'}}</span><input type="number" min="0" name="system.override.refresh" value="{{model.systemRules.overrideRefresh}}"></label>
+            <label><span>{{localize 'FAW.Sheet.OverrideSkillPoints'}}</span><input type="number" min="0" name="system.override.skillPoints" value="{{model.systemRules.overrideSkillPoints}}"></label>
+          </div>
+        </section>
+</details>{{/if}}{{/unless}}
+  <nav class="fts-tabs" aria-label="{{localize 'FAW.Sheet.Navigation'}}">
+    <div class="fts-tab-set" role="tablist" aria-label="{{localize 'FAW.Sheet.Navigation'}}">
+      <button type="button" role="tab" tabindex="{{#if playActive}}0{{else}}-1{{/if}}" aria-selected="{{#if playActive}}true{{else}}false{{/if}}" aria-controls="fts-panel-play" id="fts-tab-play" data-action="changeTab" data-tab="play" class="fts-tab-button {{#if playActive}}active{{/if}}"><i class="fa-solid fa-bolt" aria-hidden="true"></i><span>{{localize 'FAW.Sheet.Play'}}</span></button>
+      <button type="button" role="tab" tabindex="{{#if storyActive}}0{{else}}-1{{/if}}" aria-selected="{{#if storyActive}}true{{else}}false{{/if}}" aria-controls="fts-panel-story" id="fts-tab-story" data-action="changeTab" data-tab="story" class="fts-tab-button {{#if storyActive}}active{{/if}}"><i class="fa-solid fa-book-open" aria-hidden="true"></i><span>{{localize 'FAW.Sheet.Story'}}</span></button>
+      <button type="button" role="tab" tabindex="{{#if developmentActive}}0{{else}}-1{{/if}}" aria-selected="{{#if developmentActive}}true{{else}}false{{/if}}" aria-controls="fts-panel-development" id="fts-tab-development" data-action="changeTab" data-tab="development" class="fts-tab-button {{#if developmentActive}}active{{/if}}"><i class="fa-solid fa-timeline" aria-hidden="true"></i><span>{{localize 'FMS.Timeline.Development'}}</span></button>
+    </div>
+    <button type="button" data-action="openActionWidget" class="fts-tab-button fts-open-action"><i class="fa-solid fa-dice" aria-hidden="true"></i><span>{{localize 'FAW.Sheet.ActionCenter'}}</span></button>
+  </nav>
+
+  {{#if customizing}}
+  <aside class="fts-customizer">
+    <div class="fts-customizer-head">
+      <div><strong>{{localize 'FAW.Sheet.PersonalLayout'}}</strong><small>{{localize 'FAW.Sheet.PersonalLayoutHint'}}</small></div>
+      <button type="button" data-action="resetLayout" class="fts-subtle-button"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> {{localize 'FAW.Sheet.Reset'}}</button>
+    </div>
+    <div class="fts-customizer-options">
+      <div class="fts-option-group" role="group" aria-label="{{localize 'FAW.Sheet.Density'}}">
+        <span>{{localize 'FAW.Sheet.Density'}}</span>
+        <button type="button" data-action="setDensity" data-density="standard" class="{{#if densityStandard}}active{{/if}}" aria-pressed="{{#if densityStandard}}true{{else}}false{{/if}}">{{localize 'FAW.Sheet.Standard'}}</button>
+        <button type="button" data-action="setDensity" data-density="compact" class="{{#if densityCompact}}active{{/if}}" aria-pressed="{{#if densityCompact}}true{{else}}false{{/if}}">{{localize 'FAW.Sheet.Compact'}}</button>
+        <button type="button" data-action="setDensity" data-density="comfortable" class="{{#if densityComfortable}}active{{/if}}" aria-pressed="{{#if densityComfortable}}true{{else}}false{{/if}}">{{localize 'FAW.Sheet.Comfortable'}}</button>
+      </div>
+      <div class="fts-option-group" role="group" aria-label="{{localize 'FAW.Sheet.Theme'}}">
+        <span>{{localize 'FAW.Sheet.Theme'}}</span>
+        <button type="button" data-action="setTheme" data-theme="foundry" class="{{#if themeFoundry}}active{{/if}}" aria-pressed="{{#if themeFoundry}}true{{else}}false{{/if}}">{{localize 'FAW.Sheet.ThemeFoundry'}}</button>
+        <button type="button" data-action="setTheme" data-theme="paper" class="{{#if themePaper}}active{{/if}}" aria-pressed="{{#if themePaper}}true{{else}}false{{/if}}">{{localize 'FAW.Sheet.ThemePaper'}}</button>
+        <button type="button" data-action="setTheme" data-theme="midnight" class="{{#if themeMidnight}}active{{/if}}" aria-pressed="{{#if themeMidnight}}true{{else}}false{{/if}}">{{localize 'FAW.Sheet.ThemeMidnight'}}</button>
+      </div>
+      <label class="fts-option-group fts-accent-option">
+        <span>{{localize 'FAW.Sheet.Accent'}}</span>
+        <input type="color" value="{{accent}}" data-sheet-accent aria-label="{{localize 'FAW.Sheet.Accent'}}">
+      </label>
+    </div>
+    <div class="fts-layout-list">
+      {{#each customizerSections}}
+      <div class="fts-layout-row {{#if this.hidden}}is-hidden{{/if}}" draggable="true" data-layout-section="{{this.key}}">
+        <span class="fts-layout-name"><i class="fa-solid fa-grip-vertical fts-drag-grip" aria-hidden="true"></i>{{this.name}}</span>
+        <span class="fts-layout-tab">{{this.tab}}</span>
+        <div class="fts-layout-actions">
+          <button type="button" data-action="moveSectionUp" data-section="{{this.key}}" title="{{localize 'FAW.Sheet.MoveUp'}}" aria-label="{{localize 'FAW.Sheet.MoveUp'}}"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></button>
+          <button type="button" data-action="moveSectionDown" data-section="{{this.key}}" title="{{localize 'FAW.Sheet.MoveDown'}}" aria-label="{{localize 'FAW.Sheet.MoveDown'}}"><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></button>
+          {{#if this.canToggleWide}}<button type="button" data-action="toggleSectionWide" data-section="{{this.key}}" class="{{#if this.wide}}active{{/if}}" title="{{localize 'FAW.Sheet.ToggleWide'}}" aria-label="{{localize 'FAW.Sheet.ToggleWide'}}" aria-pressed="{{#if this.wide}}true{{else}}false{{/if}}"><i class="fa-solid fa-arrows-left-right" aria-hidden="true"></i></button>{{/if}}
+          <button type="button" data-action="toggleSectionHidden" data-section="{{this.key}}" class="{{#if this.hidden}}active{{/if}}" title="{{localize 'FAW.Sheet.ToggleSection'}}" aria-label="{{localize 'FAW.Sheet.ToggleSection'}}" aria-pressed="{{#if this.hidden}}true{{else}}false{{/if}}"><i class="fa-solid {{#if this.hidden}}fa-eye-slash{{else}}fa-eye{{/if}}" aria-hidden="true"></i></button>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </aside>
+  {{/if}}
+
+  <main class="fts-body">
+    <section class="fts-tab-panel {{#unless playActive}}fts-tab-hidden{{/unless}}" id="fts-panel-play" role="tabpanel" aria-labelledby="fts-tab-play" data-sheet-tab="play">
+      {{#if model.favorites.length}}
+      <div class="fts-favorites">
+        <span class="fts-favorites-label"><i class="fa-solid fa-star" aria-hidden="true"></i> {{localize 'FAW.Sheet.Favorites'}}</span>
+        <div class="fts-favorite-chips" role="group" aria-label="{{localize 'FAW.Sheet.Favorites'}}">
+          {{#each model.favorites}}
+          <button type="button" class="fts-favorite-chip" data-action="scrollFavorite" data-kind="{{this.kind}}" data-key="{{this.key}}">
+            <span>{{this.label}}</span>{{#if this.meta}}<small>{{this.meta}}</small>{{/if}}
+          </button>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
+
+      <div class="fts-section-grid {{#if smartPlayLayout}}fts-smart-play-grid{{/if}}">
+        {{#unless sections.aspects.hidden}}
+        <section class="fts-card {{#if sections.aspects.wide}}fts-section-wide{{/if}}" style="order:{{sections.aspects.order}}" data-section="aspects">
+          <header class="fts-card-header"><div class="fts-card-heading"><i class="fa-solid fa-quote-left" aria-hidden="true"></i><strong>{{localize 'FAW.Sheet.Aspects'}}</strong><span class="fts-count">{{model.aspects.length}}</span>{{#if isGM}}<button type="button" class="fts-card-tool" data-action="manageAspects" title="{{localize 'FAW.Sheet.ManageAspects'}}"><i class="fa-solid fa-gear" aria-hidden="true"></i><span>{{localize 'FAW.Sheet.ManageAspects'}}</span></button>{{/if}}</div><span class="fts-search-control"><input data-sheet-search="aspects" type="search" placeholder="{{localize 'FAW.Sheet.Search'}}" aria-label="{{localize 'FAW.Sheet.Search'}}" aria-controls="fts-list-aspects" aria-describedby="fts-search-status-aspects"><span class="fts-search-count" id="fts-search-status-aspects" data-sheet-search-status="aspects" aria-live="polite"></span></span></header>
+          <div class="fts-card-body fts-list" id="fts-list-aspects" data-search-group="aspects">
+            {{#each model.aspects}}
+            <article class="fts-aspect-row" data-search-text="{{this.search}}" data-favorite-anchor="aspects:{{this.key}}" {{#if ../isGM}}draggable="true" data-fco-drag-type="aspect" data-fco-drag-key="{{this.key}}"{{/if}}>
+              <div class="fts-row-title">
+                <button type="button" class="fts-star {{#if this.favorite}}active{{/if}}" data-action="toggleFavorite" title="{{localize 'FAW.Sheet.Favorite'}}" aria-label="{{localize 'FAW.Sheet.Favorite'}}" aria-pressed="{{#if this.favorite}}true{{else}}false{{/if}}" data-kind="aspects" data-key="{{this.key}}"><i class="fa-solid fa-star" aria-hidden="true"></i></button>
+                <strong>{{this.name}}</strong>
+              </div>
+              {{#if ../editable}}
+                <textarea class="fts-multiline-value" name="system.aspects.{{this.key}}.value" rows="3" placeholder="{{this.name}}">{{this.value}}</textarea>
+              {{else}}<div class="fts-aspect-value">{{this.value}}</div>{{/if}}
+              {{#if this.hasDetails}}
+              <details class="fts-native-details">
+                <summary>{{localize 'FAW.Sheet.Details'}}</summary>
+                {{#if this.description}}<div class="fts-native-rich-block"><strong>{{localize 'FAW.Sheet.AspectDescription'}}</strong><div class="fts-prose editor-content">{{{this.descriptionEnriched}}}</div></div>{{/if}}
+                {{#if ../editable}}{{#unless this.extraOwned}}<div class="fts-native-rich-block"><strong>{{localize 'FAW.Sheet.AspectNotes'}}</strong><prose-mirror toggled="true" name="system.aspects.{{this.key}}.notes" value="{{this.notes}}" data-document-u-u-i-d="{{../actor.uuid}}" collaborate="true" class="fts-rich-editor fts-inline-rich-editor">{{{this.notesEnriched}}}</prose-mirror></div>{{else}}{{#if this.notes}}<div class="fts-native-rich-block"><strong>{{localize 'FAW.Sheet.AspectNotes'}}</strong><div class="fts-prose editor-content">{{{this.notesEnriched}}}</div></div>{{/if}}{{/unless}}{{else}}{{#if this.notes}}<div class="fts-native-rich-block"><strong>{{localize 'FAW.Sheet.AspectNotes'}}</strong><div class="fts-prose editor-content">{{{this.notesEnriched}}}</div></div>{{/if}}{{/if}}
+              </details>
+              {{/if}}
+            </article>
+            {{/each}}
+            {{#unless model.aspects.length}}<div class="fts-empty-state"><i class="fa-regular fa-comment-dots" aria-hidden="true"></i><strong>{{localize 'FAW.Sheet.NoAspects'}}</strong><span>{{localize 'FAW.Sheet.NoAspectsHint'}}</span></div>{{/unless}}
+          </div>
+        </section>
+        {{/unless}}
+
+        {{#unless sections.skills.hidden}}
+        <section class="fts-card {{#if sections.skills.wide}}fts-section-wide{{/if}}" style="order:{{sections.skills.order}}" data-section="skills">
+          <header class="fts-card-header"><div><i class="fa-solid fa-chart-simple" aria-hidden="true"></i><strong>{{localize 'FAW.Sheet.Skills'}}</strong><span class="fts-count">{{model.skills.length}}</span>{{#if editable}}<button type="button" class="fts-card-tool" data-action="editSkills" title="{{localize 'FAW.Sheet.EditSkills'}}" aria-label="{{localize 'FAW.Sheet.EditSkills'}}"><i class="fa-solid fa-gear" aria-hidden="true"></i><span>{{localize 'FAW.Sheet.EditSkills'}}</span></button>{{/if}}</div><span class="fts-search-control"><input data-sheet-search="skills" type="search" placeholder="{{localize 'FAW.Sheet.Search'}}" aria-label="{{localize 'FAW.Sheet.Search'}}" aria-controls="fts-list-skills" aria-describedby="fts-search-status-skills"><span class="fts-search-count" id="fts-search-status-skills" data-sheet-search-status="skills" aria-live="polite"></span></span></header>
+          <div class="fts-card-body fts-skill-grid" id="fts-list-skills" data-search-group="skills">
+            {{#each model.skills}}
+            <div class="fts-skill-row" data-search-text="{{this.search}}" data-favorite-anchor="skills:{{this.key}}" data-skill-info data-skill-key="{{this.key}}" {{#if ../isGM}}draggable="true" data-fco-drag-type="skill" data-fco-drag-key="{{this.key}}"{{/if}}>
+              <button type="button" class="fts-star {{#if this.favorite}}active{{/if}}" data-action="toggleFavorite" title="{{localize 'FAW.Sheet.Favorite'}}" aria-label="{{localize 'FAW.Sheet.Favorite'}}" aria-pressed="{{#if this.favorite}}true{{else}}false{{/if}}" data-kind="skills" data-key="{{this.key}}"><i class="fa-solid fa-star" aria-hidden="true"></i></button>
+              <button type="button" class="fts-skill-main" data-action="rollSkill" data-skill-key="{{this.key}}" title="{{localize 'FAW.Sheet.RollSkill'}}"><span class="fts-skill-name">{{this.name}}</span><strong class="fts-skill-rank">{{this.rank}}</strong></button>
+            </div>
+            {{/each}}
+            {{#unless model.skills.length}}<div class="fts-empty-state"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i><strong>{{localize 'FAW.Sheet.NoSkills'}}</strong><span>{{localize 'FAW.Sheet.NoSkillsHint'}}</span></div>{{/unless}}
+          </div>
+        </section>
+        {{/unless}}
+
+        {{#unless sections.stunts.hidden}}
+        <section class="fts-card {{#if sections.stunts.wide}}fts-section-wide{{/if}}" style="order:{{sections.stunts.order}}" data-section="stunts">
+          <header class="fts-card-header"><div class="fts-card-heading"><i class="fa-solid fa-wand-sparkles" aria-hidden="true"></i><strong>{{localize 'FAW.Sheet.Stunts'}}</strong><span class="fts-count">{{model.stunts.length}}</span>{{#if editable}}<button type="button" class="fts-card-tool" data-action="addStunt" title="{{localize 'FAW.Sheet.AddStunt'}}"><i class="fa-solid fa-plus" aria-hidden="true"></i><span>{{localize 'FAW.Sheet.AddStunt'}}</span></button>{{/if}}<button type="button" class="fts-card-tool" data-action="openStuntDatabase" title="{{localize 'FAW.Sheet.StuntDatabase'}}"><i class="fa-solid fa-book" aria-hidden="true"></i><span>{{localize 'FAW.Sheet.StuntDatabase'}}</span></button>{{#if isGM}}<button type="button" class="fts-card-tool" data-action="uploadAllStunts" title="{{localize 'FAW.Sheet.UploadAllStunts'}}"><i class="fa-solid fa-upload" aria-hidden="true"></i><span>{{localize 'FAW.Sheet.UploadAllStunts'}}</span></button>{{/if}}</div><span class="fts-search-control"><input data-sheet-search="stunts" type="search" placeholder="{{localize 'FAW.Sheet.Search'}}" aria-label="{{localize 'FAW.Sheet.Search'}}" aria-controls="fts-list-stunts" aria-describedby="fts-search-status-stunts"><span class="fts-search-count" id="fts-search-status-stunts" data-sheet-search-status="stunts" aria-live="polite"></span></span></header>
+          <div class="fts-card-body fts-list" id="fts-list-stunts" data-search-group="stunts">
+            {{#each model.stunts}}
+            <article class="fts-stunt-row" data-search-text="{{this.search}}" data-favorite-anchor="stunts:{{this.key}}" {{#if ../isGM}}draggable="true" data-fco-drag-type="stunt" data-fco-drag-key="{{this.key}}"{{/if}}>
+              <div class="fts-row-title fts-row-title-with-tools">
+                <div class="fts-row-title-main">
+                  <button type="button" class="fts-star {{#if this.favorite}}active{{/if}}" data-action="toggleFavorite" title="{{localize 'FAW.Sheet.Favorite'}}" aria-label="{{localize 'FAW.Sheet.Favorite'}}" aria-pressed="{{#if this.favorite}}true{{else}}false{{/if}}" data-kind="stunts" data-key="{{this.key}}"><i class="fa-solid fa-star" aria-hidden="true"></i></button>
+                  <strong>{{this.name}}</strong>
+                  {{#if this.linkedSkill}}<span class="fts-pill">{{this.linkedSkill}}</span>{{/if}}
+                  {{#each this.actions}}<span class="fts-action-code" title="{{this.label}}" aria-label="{{this.label}}"><i class="fa-solid {{this.icon}}" aria-hidden="true"></i></span>{{/each}}
+                </div>
+                <div class="fts-row-tools">
+                  {{#if this.rollable}}<button type="button" data-action="rollStunt" data-stunt-key="{{this.key}}" data-stunt-name="{{this.rawName}}" title="{{localize 'FAW.Sheet.RollStunt'}}"><i class="fa-solid fa-dice" aria-hidden="true"></i></button>{{/if}}
+                  {{#if this.macro}}<button type="button" data-action="runStuntMacro" data-stunt-key="{{this.key}}" title="{{localize 'FAW.Sheet.RunMacro'}}"><i class="fa-solid fa-bolt" aria-hidden="true"></i></button><button type="button" data-action="openStuntMacro" data-stunt-key="{{this.key}}" title="{{localize 'FAW.Sheet.OpenMacro'}}"><i class="fa-solid fa-code" aria-hidden="true"></i></button>{{/if}}
+                  {{#if ../editable}}{{#unless this.extraOwned}}<button type="button" data-action="editStunt" data-stunt-key="{{this.key}}" data-stunt-name="{{this.rawName}}" title="{{localize 'FAW.Sheet.EditStunt'}}"><i class="fa-solid fa-pen" aria-hidden="true"></i></button><button type="button" class="is-danger" data-action="deleteStunt" data-stunt-key="{{this.key}}" title="{{localize 'FAW.Sheet.DeleteStunt'}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>{{/unless}}{{/if}}
+                  {{#if ../isGM}}{{#unless this.extraOwned}}<button type="button" data-action="addStuntToDatabase" data-stunt-key="{{this.key}}" title="{{localize 'FAW.Sheet.AddStuntToDatabase'}}"><i class="fa-solid fa-upload" aria-hidden="true"></i></button>{{/unless}}{{/if}}
+                </div>
+              </div>
+              {{#if this.boxes.length}}<div class="fts-stunt-boxes">{{#each this.boxes}}<button type="button" class="fts-track-box {{#if this.checked}}checked{{/if}}" data-action="toggleStuntBox" data-stunt-key="{{../key}}" data-index="{{this.index}}" aria-pressed="{{#if this.checked}}true{{else}}false{{/if}}" {{#unless ../../editable}}disabled{{/unless}}>{{this.label}}</button>{{/each}}</div>{{/if}}
+              {{#if this.description}}<div class="fts-stunt-description fts-prose editor-content">{{{this.descriptionEnriched}}}</div>{{/if}}
+              <div class="fts-stunt-meta">
+                {{#if this.refreshCost}}<span><strong>{{localize 'FAW.Sheet.RefreshCost'}}:</strong> {{this.refreshCost}}</span>{{/if}}
+                {{#if this.bonus}}<span><strong>{{localize 'FAW.Sheet.Bonus'}}:</strong> {{this.bonus}}</span>{{/if}}
+              </div>
+              {{#if this.notes}}
+              <details class="fts-native-details"><summary>{{localize 'FAW.Sheet.StuntNotes'}}</summary><div class="fts-prose editor-content">{{{this.notesEnriched}}}</div></details>
+              {{/if}}
+            </article>
+            {{/each}}
+            {{#unless model.stunts.length}}<div class="fts-empty-state"><i class="fa-solid fa-wand-sparkles" aria-hidden="true"></i><strong>{{localize 'FAW.Sheet.NoStunts'}}</strong><span>{{localize 'FAW.Sheet.NoStuntsHint'}}</span></div>{{/unless}}
+          </div>
+        </section>
+        {{/unless}}
+
+        {{#unless sections.tracks.hidden}}
+        <section class="fts-card {{#if sections.tracks.wide}}fts-section-wide{{/if}}" style="order:{{sections.tracks.order}}" data-section="tracks">
+          <header class="fts-card-header"><div class="fts-card-heading"><i class="fa-solid fa-heart-pulse" aria-hidden="true"></i><strong>{{localize 'FAW.Sheet.Tracks'}}</strong><span class="fts-count">{{model.tracks.length}}</span>{{#if editable}}<button type="button" class="fts-card-tool" data-action="manageTracks" title="{{localize 'FAW.Sheet.ManageTracks'}}"><i class="fa-solid fa-gear" aria-hidden="true"></i><span>{{localize 'FAW.Sheet.ManageTracks'}}</span></button>{{/if}}</div></header>
+          <div class="fts-card-body fts-track-groups">
+            {{#unless campaignMode}}{{#if model.stressTracks.length}}
+            <div class="fts-track-group"><h4>{{localize 'FAW.Sheet.Stress'}}</h4>
+              {{#each model.stressTracks}}
+              <div class="fts-track-row" {{#if ../isGM}}draggable="true" data-fco-drag-type="track" data-fco-drag-key="{{this.key}}"{{/if}}><div class="fts-track-name"><span><strong>{{this.name}}</strong>{{#if this.category}}<small>{{this.category}}</small>{{/if}}</span>{{#if this.rollable}}<button type="button" class="fts-inline-roll" data-action="rollTrack" data-track-key="{{this.key}}" title="{{localize 'FAW.Sheet.RollTrack'}}"><i class="fa-solid fa-dice" aria-hidden="true"></i></button>{{/if}}</div><div class="fts-track-boxes">
+                {{#each this.boxes}}<button type="button" class="fts-track-box {{#if this.checked}}checked{{/if}}" data-action="toggleTrackBox" aria-pressed="{{#if this.checked}}true{{else}}false{{/if}}" data-track-key="{{../key}}" data-index="{{this.index}}" {{#unless ../../editable}}disabled{{/unless}}>{{this.label}}</button>{{/each}}
+              </div>
+              {{#if this.hasDetails}}<details class="fts-native-details fts-track-details"><summary>{{localize 'FAW.Sheet.Details'}}</summary>
+                {{#if this.recoveryType}}<div class="fts-native-meta-line"><strong>{{localize 'FAW.Sheet.RecoveryType'}}:</strong> {{this.recoveryType}}</div>{{/if}}
+                {{#if this.description}}<div class="fts-native-rich-block"><strong>{{localize 'FAW.Sheet.TrackDescription'}}</strong><div class="fts-prose editor-content">{{{this.descriptionEnriched}}}</div></div>{{/if}}
+                {{#if this.whenMarked}}<div class="fts-native-rich-block"><strong>{{localize 'FAW.Sheet.WhenMarked'}}</strong><div class="fts-prose editor-content">{{{this.whenMarkedEnriched}}}</div></div>{{/if}}
+                {{#if this.recoveryConditions}}<div class="fts-native-rich-block"><strong>{{localize 'FAW.Sheet.RecoveryConditions'}}</strong><div class="fts-prose editor-content">{{{this.recoveryConditionsEnriched}}}</div></div>{{/if}}
+                {{#if ../editable}}{{#unless this.extraOwned}}<div class="fts-native-rich-block"><strong>{{localize 'FAW.Sheet.TrackNotes'}}</strong><prose-mirror toggled="true" name="system.tracks.{{this.key}}.notes" value="{{this.notes}}" data-document-u-u-i-d="{{../actor.uuid}}" collaborate="true" class="fts-rich-editor fts-inline-rich-editor">{{{this.notesEnriched}}}</prose-mirror></div>{{else}}{{#if this.notes}}<div class="fts-native-rich-block"><strong>{{localize 'FAW.Sheet.TrackNotes'}}</strong><div class="fts-prose editor-content">{{{this.notesEnriched}}}</div></div>{{/if}}{{/unless}}{{else}}{{#if this.notes}}<div class="fts-native-rich-block"><strong>{{localize 'FAW.Sheet.TrackNotes'}}</strong><div class="fts-prose editor-content">{{{this.notesEnriched}}}</div></div>{{/if}}{{/if}}
+              </details>{{/if}}
+              </div>
+              {{/each}}
+            </div>
+            {{/if}}{{/unless}}
+            {{#if model.consequenceTracks.length}}
+            <div class="fts-track-group"><h4>{{localize 'FAW.Sheet.Consequences'}}</h4>
+              {{#each model.consequenceTracks}}
+              <div class="fts-track-row fts-consequence-row" {{#if ../isGM}}draggable="true" data-fco-drag-type="track" data-fco-drag-key="{{this.key}}"{{/if}}><div class="fts-track-name"><span><strong>{{this.name}}</strong></span>{{#if this.rollable}}<button type="button" class="fts-inline-roll" data-action="rollTrack" data-track-key="{{this.key}}" title="{{localize 'FAW.Sheet.RollTrack'}}"><i class="fa-solid fa-dice" aria-hidden="true"></i></button>{{/if}}</div><div class="fts-track-boxes">
+                {{#each this.boxes}}<button type="button" class="fts-track-box {{#if this.checked}}checked{{/if}}" data-action="toggleTrackBox" aria-pressed="{{#if this.checked}}true{{else}}false{{/if}}" data-track-key="{{../key}}" data-index="{{this.index}}" {{#unless ../../editable}}disabled{{/unless}}>{{this.label}}</button>{{/each}}
+              </div>
+              {{#if ../editable}}<input name="system.tracks.{{this.key}}.aspect.name" class="fts-consequence-name" type="text" value="{{this.aspectName}}" placeholder="{{localize 'FAW.Sheet.ConsequenceAspect'}}">{{else}}{{#if this.aspectName}}<div class="fts-consequence-name fts-static-field">{{this.aspectName}}</div>{{/if}}{{/if}}
+              {{#if this.hasDetails}}<details class="fts-native-details fts-track-details"><summary>{{localize 'FAW.Sheet.Details'}}</summary>
+                {{#if this.recoveryType}}<div class="fts-native-meta-line"><strong>{{localize 'FAW.Sheet.RecoveryType'}}:</strong> {{this.recoveryType}}</div>{{/if}}
+                {{#if this.description}}<div class="fts-native-rich-block"><strong>{{localize 'FAW.Sheet.TrackDescription'}}</strong><div class="fts-prose editor-content">{{{this.descriptionEnriched}}}</div></div>{{/if}}
+                {{#if this.whenMarked}}<div class="fts-native-rich-block"><strong>{{localize 'FAW.Sheet.WhenMarked'}}</strong><div class="fts-prose editor-content">{{{this.whenMarkedEnriched}}}</div></div>{{/if}}
+                {{#if this.recoveryConditions}}<div class="fts-native-rich-block"><strong>{{localize 'FAW.Sheet.RecoveryConditions'}}</strong><div class="fts-prose editor-content">{{{this.recoveryConditionsEnriched}}}</div></div>{{/if}}
+                {{#if ../editable}}{{#unless this.extraOwned}}<div class="fts-native-rich-block"><strong>{{localize 'FAW.Sheet.TrackNotes'}}</strong><prose-mirror toggled="true" name="system.tracks.{{this.key}}.notes" value="{{this.notes}}" data-document-u-u-i-d="{{../actor.uuid}}" collaborate="true" class="fts-rich-editor fts-inline-rich-editor">{{{this.notesEnriched}}}</prose-mirror></div>{{else}}{{#if this.notes}}<div class="fts-native-rich-block"><strong>{{localize 'FAW.Sheet.TrackNotes'}}</strong><div class="fts-prose editor-content">{{{this.notesEnriched}}}</div></div>{{/if}}{{/unless}}{{else}}{{#if this.notes}}<div class="fts-native-rich-block"><strong>{{localize 'FAW.Sheet.TrackNotes'}}</strong><div class="fts-prose editor-content">{{{this.notesEnriched}}}</div></div>{{/if}}{{/if}}
+              </details>{{/if}}
+              </div>
+              {{/each}}
+            </div>
+            {{/if}}
+            {{#unless model.tracks.length}}<div class="fts-empty-state"><i class="fa-solid fa-heart-pulse" aria-hidden="true"></i><strong>{{localize 'FAW.Sheet.NoTracks'}}</strong><span>{{localize 'FAW.Sheet.NoTracksHint'}}</span></div>{{/unless}}
+          </div>
+        </section>
+        {{/unless}}
+
+        {{#unless sections.extras.hidden}}
+        <section class="fts-card {{#if sections.extras.wide}}fts-section-wide{{/if}}" style="order:{{sections.extras.order}}" data-section="extras">
+          <header class="fts-card-header"><div class="fts-card-heading"><i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i><strong>{{localize 'FAW.Sheet.Extras'}}</strong><span class="fts-count">{{model.extras.length}}</span>{{#if isGM}}<button type="button" class="fts-card-tool" data-action="addExtra" title="{{localize 'FAW.Extras.Create'}}"><i class="fa-solid fa-plus" aria-hidden="true"></i><span>{{localize 'FAW.Extras.Create'}}</span></button><button type="button" class="fts-card-tool" data-action="openExtraLibrary" title="{{localize 'FAW.Extras.LibraryHint'}}"><i class="fa-solid fa-book" aria-hidden="true"></i><span>{{localize 'FAW.Extras.Library'}}</span></button><button type="button" class="fts-card-tool" data-action="importExtraMechanics" title="{{localize 'FAW.Extras.ImportTitle'}}"><i class="fa-solid fa-paste" aria-hidden="true"></i><span>{{localize 'FAW.Extras.Import'}}</span></button>{{/if}}<button type="button" class="fts-card-tool" data-action="exportAllExtraMechanics" title="{{localize 'FAW.Extras.ExportTitle'}}"><i class="fa-solid fa-copy" aria-hidden="true"></i><span>{{localize 'FAW.Extras.Export'}}</span></button></div></header>
+          <div class="fts-card-body fts-list">
+            {{#each model.extras}}
+            <article class="fts-extra-row" draggable="true" data-extra-drag="{{this.id}}">
+              <img src="{{this.img}}" alt="" class="fts-extra-img">
+              <button type="button" class="fts-extra-main" data-action="openExtra" data-item-id="{{this.id}}"><strong>{{this.name}}</strong>{{#if this.descriptionText}}<small>{{this.descriptionText}}</small>{{/if}}</button>
+              {{#if ../editable}}<div class="fts-row-tools">{{#if ../isGM}}<button type="button" data-action="editExtraMechanics" data-item-id="{{this.id}}" title="{{localize 'FAW.Extras.Edit'}}"><i class="fa-solid fa-sliders" aria-hidden="true"></i></button>{{/if}}{{#if this.builderUsable}}<button type="button" data-action="useExtraMechanics" data-item-id="{{this.id}}" title="{{localize 'FAW.Extras.Use'}}"><i class="fa-solid fa-play" aria-hidden="true"></i></button><span draggable="true" data-faw-hotbar="{{this.id}}" class="fts-extra-hotbar" title="{{localize 'FAW.Extras.Hotbar'}}"><i class="fa-solid fa-grip-vertical" aria-hidden="true"></i></span>{{/if}}{{#if ../isGM}}<button type="button" data-action="saveExtraToLibrary" data-item-id="{{this.id}}" title="{{localize 'FAW.Extras.SaveToLibrary'}}"><i class="fa-solid fa-bookmark" aria-hidden="true"></i></button>{{/if}}<button type="button" data-action="exportExtraMechanics" data-item-id="{{this.id}}" title="{{localize 'FAW.Extras.ExportOne'}}"><i class="fa-solid fa-file-export" aria-hidden="true"></i></button><button type="button" class="fts-toggle {{#if this.active}}active{{/if}}" data-action="toggleExtra" data-item-id="{{this.id}}" title="{{localize 'FAW.Sheet.ToggleExtra'}}" aria-label="{{localize 'FAW.Sheet.ToggleExtra'}}" aria-pressed="{{#if this.active}}true{{else}}false{{/if}}"><i class="fa-solid {{#if this.active}}fa-toggle-on{{else}}fa-toggle-off{{/if}}" aria-hidden="true"></i></button><button type="button" class="is-danger" data-action="deleteExtra" data-item-id="{{this.id}}" title="{{localize 'FAW.Sheet.DeleteExtra'}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button></div>{{/if}}
+            </article>
+            {{/each}}
+            {{#if model.extraStatuses.length}}<div class="fts-extra-statuses">{{#each model.extraStatuses}}<span class="fts-pill" title="{{localize 'FAW.Extras.Status'}}">{{this.name}}</span>{{/each}}</div>{{/if}}
+            {{#unless model.extras.length}}<div class="fts-empty-state"><i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i><strong>{{localize 'FAW.Sheet.NoExtras'}}</strong><span>{{localize 'FAW.Sheet.NoExtrasHint'}}</span></div>{{/unless}}
+          </div>
+        </section>
+        {{/unless}}
+      </div>
+    </section>
+
+    <section class="fts-tab-panel {{#unless developmentActive}}fts-tab-hidden{{/unless}}" id="fts-panel-development" role="tabpanel" aria-labelledby="fts-tab-development" data-sheet-tab="development">
+      <div class="fts-story-stack fts-development-stack">
+        <section class="fts-card">
+          <header class="fts-card-header"><div class="fts-card-heading"><i class="fa-solid fa-chart-line" aria-hidden="true"></i><strong>{{localize 'FMS.Timeline.Development'}}</strong></div></header>
+          <div class="fts-card-body">
+            <div class="fts-development-overview">
+              <div><small>{{localize 'FMS.Timeline.Stage'}}</small><strong>{{development.stage}}</strong></div>
+              <div><small>{{localize 'FMS.Type.minor'}}</small><strong>{{development.counts.minor}}</strong></div>
+              <div><small>{{localize 'FMS.Type.significant'}}</small><strong>{{development.counts.significant}}</strong></div>
+              <div><small>{{localize 'FMS.Type.major'}}</small><strong>{{development.counts.major}}</strong></div>
+              <div><small>{{localize 'FMS.SkillPointsBank'}}</small><strong>{{development.bank}}</strong></div>
+            </div>
+            <div class="fts-development-actions">
+              <button type="button" data-action="openCampaignTimeline"><i class="fa-solid fa-timeline" aria-hidden="true"></i> {{localize 'FMS.Timeline.OpenTimeline'}}</button>
+              {{#if development.active}}{{#unless development.active.completed}}<button type="button" data-action="openMilestoneDevelopment"><i class="fa-solid fa-arrow-up-right-dots" aria-hidden="true"></i> {{localize 'FMS.Timeline.WorkOn'}}</button>{{/unless}}{{/if}}
+            </div>
+            {{#if development.active}}
+              <div class="fts-development-active"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> {{development.active.title}} — {{development.active.typeLabel}} ({{#if development.active.completed}}{{localize 'FMS.Completed'}}{{else}}{{localize 'FMS.Pending'}}{{/if}})</div>
+            {{/if}}
+          </div>
+        </section>
+        <section class="fts-card">
+          <header class="fts-card-header"><div class="fts-card-heading"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><strong>{{localize 'FMS.Timeline.PersonalHistory'}}</strong></div></header>
+          <div class="fts-card-body fts-development-history">
+            {{#each development.entries}}
+              <article class="fts-development-entry">
+                <header><strong>{{title}}</strong><small>{{typeLabel}} · {{dateLabel}} {{sessionLabel}}</small></header>
+                {{#if hasChanges}}<ul>{{#each changes}}<li>{{this}}</li>{{/each}}</ul>{{else}}<small>{{localize 'FMS.Timeline.NoChanges'}}</small>{{/if}}
+                {{#if reasons.length}}<details><summary>{{localize 'FMS.StoryExplanation'}}</summary><ul>{{#each reasons}}<li>{{this}}</li>{{/each}}</ul></details>{{/if}}
+              </article>
+            {{/each}}
+            {{#unless development.hasHistory}}<div class="fts-empty-state">{{localize 'FMS.Timeline.EmptyPersonal'}}</div>{{/unless}}
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="fts-tab-panel {{#unless storyActive}}fts-tab-hidden{{/unless}}" id="fts-panel-story" role="tabpanel" aria-labelledby="fts-tab-story" data-sheet-tab="story">
+      <div class="fts-story-stack">
+
+        {{#unless sections.description.hidden}}
+        <section class="fts-card fts-story-text-card fts-story-description" style="order:{{sections.description.order}}" data-section="description">
+          <header class="fts-card-header"><div><i class="fa-solid fa-id-card" aria-hidden="true"></i><strong>{{localize 'FAW.Sheet.Description'}}</strong></div></header>
+          <div class="fts-card-body fts-story-editor-body">{{#if editable}}<prose-mirror toggled="true" name="system.details.description.value" value="{{model.description}}" data-document-u-u-i-d="{{actor.uuid}}" collaborate="true" class="fts-rich-editor" placeholder="{{localize 'FAW.Sheet.DescriptionHint'}}">{{{model.descriptionEnriched}}}</prose-mirror>{{else}}<div class="fts-prose editor-content">{{{model.descriptionEnriched}}}</div>{{/if}}</div>
+        </section>
+        {{/unless}}
+
+        {{#unless sections.biography.hidden}}
+        <section class="fts-card fts-story-text-card fts-story-biography" style="order:{{sections.biography.order}}" data-section="biography">
+          <header class="fts-card-header"><div><i class="fa-solid fa-book" aria-hidden="true"></i><strong>{{localize 'FAW.Sheet.Biography'}}</strong></div></header>
+          <div class="fts-card-body fts-story-editor-body">{{#if editable}}<prose-mirror toggled="true" name="system.details.biography.value" value="{{model.biography}}" data-document-u-u-i-d="{{actor.uuid}}" collaborate="true" class="fts-rich-editor" placeholder="{{localize 'FAW.Sheet.BiographyHint'}}">{{{model.biographyEnriched}}}</prose-mirror>{{else}}<div class="fts-prose editor-content">{{{model.biographyEnriched}}}</div>{{/if}}</div>
+        </section>
+        {{/unless}}
+
+        {{#unless sections.notes.hidden}}
+        <section class="fts-card fts-story-text-card fts-story-notes" style="order:{{sections.notes.order}}" data-section="notes">
+          <header class="fts-card-header"><div><i class="fa-solid fa-note-sticky" aria-hidden="true"></i><strong>{{localize 'FAW.Sheet.Notes'}}</strong>{{#if model.notesPrivate}}<span class="fts-pill"><i class="fa-solid fa-lock" aria-hidden="true"></i> {{localize 'FAW.Sheet.GmOnlyShort'}}</span>{{/if}}</div>{{#if isGM}}<button type="button" class="fts-subtle-button {{#if model.notesPrivate}}active{{/if}}" data-action="toggleGmNotes"><i class="fa-solid {{#if model.notesPrivate}}fa-lock{{else}}fa-lock-open{{/if}}" aria-hidden="true"></i> {{localize 'FAW.Sheet.GmOnlyShort'}}</button>{{/if}}</header>
+          <div class="fts-card-body fts-story-editor-body">{{#if model.notesVisible}}{{#if editable}}<prose-mirror toggled="true" name="system.details.notes.value" value="{{model.notes}}" data-document-u-u-i-d="{{actor.uuid}}" collaborate="true" class="fts-rich-editor" placeholder="{{localize 'FAW.Sheet.NotesHint'}}">{{{model.notesEnriched}}}</prose-mirror>{{else}}<div class="fts-prose editor-content">{{{model.notesEnriched}}}</div>{{/if}}{{else}}<div class="fts-private-note"><i class="fa-solid fa-lock" aria-hidden="true"></i> {{localize 'FAW.Sheet.GmNotesHidden'}}</div>{{/if}}</div>
+        </section>
+        {{/unless}}
+
+        {{#unless sections.custom.hidden}}
+        <section class="fts-card {{#if sections.custom.wide}}fts-section-wide{{/if}}" style="order:{{sections.custom.order}}" data-section="custom"><header class="fts-card-header"><div><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><strong>{{localize 'FAW.Sheet.Custom'}}</strong><span class="fts-count">{{model.customFields.length}}</span></div>{{#if editable}}<button type="button" class="fts-subtle-button" data-action="addCustomField"><i class="fa-solid fa-plus" aria-hidden="true"></i> {{localize 'FAW.Sheet.AddField'}}</button>{{/if}}</header><div class="fts-card-body fts-custom-fields">
+          {{#each model.customFields}}
+          <div class="fts-custom-field {{#if this.isWide}}is-wide{{/if}}">
+            <div class="fts-custom-field-head"><strong>{{this.label}}</strong>{{#if ../editable}}<div class="fts-mini-actions"><button type="button" data-action="editCustomField" data-field-id="{{this.id}}" title="{{localize 'FAW.Sheet.EditField'}}" aria-label="{{localize 'FAW.Sheet.EditField'}}"><i class="fa-solid fa-pen" aria-hidden="true"></i></button><button type="button" data-action="moveCustomFieldUp" data-field-id="{{this.id}}" title="{{localize 'FAW.Sheet.MoveUp'}}" aria-label="{{localize 'FAW.Sheet.MoveUp'}}"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></button><button type="button" data-action="moveCustomFieldDown" data-field-id="{{this.id}}" title="{{localize 'FAW.Sheet.MoveDown'}}" aria-label="{{localize 'FAW.Sheet.MoveDown'}}"><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></button><button type="button" class="is-danger" data-action="deleteCustomField" data-field-id="{{this.id}}" title="{{localize 'FAW.Sheet.DeleteField'}}" aria-label="{{localize 'FAW.Sheet.DeleteField'}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button></div>{{/if}}</div>
+            {{#if this.isCounter}}
+              <div class="fts-counter"><input data-custom-field-input="{{this.id}}" data-custom-field-prop="value" type="number" value="{{this.value}}" aria-label="{{this.label}}" {{#unless ../editable}}disabled{{/unless}}><span>/</span><input data-custom-field-input="{{this.id}}" data-custom-field-prop="max" type="number" value="{{this.max}}" aria-label="{{this.label}} — {{localize 'FAW.Sheet.FieldMaximum'}}" {{#unless ../editable}}disabled{{/unless}}></div>
+            {{else}}
+              {{#if this.isToggle}}
+                <label class="fts-custom-toggle"><input data-custom-field-input="{{this.id}}" data-custom-field-prop="value" type="checkbox" {{#if this.value}}checked{{/if}} {{#unless ../editable}}disabled{{/unless}}><span>{{#if this.value}}{{localize 'FAW.Sheet.On'}}{{else}}{{localize 'FAW.Sheet.Off'}}{{/if}}</span></label>
+              {{else}}
+                {{#if ../editable}}
+                  {{#if this.isNumber}}<input data-custom-field-input="{{this.id}}" data-custom-field-prop="value" type="number" value="{{this.value}}" aria-label="{{this.label}}">{{else}}
+                    {{#if this.placeholder}}<input data-custom-field-input="{{this.id}}" data-custom-field-prop="value" type="text" value="{{this.value}}" placeholder="{{this.placeholder}}" aria-label="{{this.label}}">{{else}}<input data-custom-field-input="{{this.id}}" data-custom-field-prop="value" type="text" value="{{this.value}}" aria-label="{{this.label}}">{{/if}}
+                  {{/if}}
+                {{else}}<div class="fts-static-field">{{this.value}}</div>{{/if}}
+              {{/if}}
+            {{/if}}
+          </div>
+          {{/each}}
+          {{#unless model.customFields.length}}<div class="fts-empty-state"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><strong>{{localize 'FAW.Sheet.NoCustomFields'}}</strong><span>{{localize 'FAW.Sheet.NoCustomFieldsHint'}}</span></div>{{/unless}}
+        </div></section>
+        {{/unless}}
+      </div>
+    </section>
+  </main>
+</div>

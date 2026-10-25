@@ -1,0 +1,214 @@
+.faw-combat-tracker {
+  --fct-gap: 7px;
+  min-width: 320px;
+  max-width: min(540px, calc(100vw - 24px));
+}
+
+.faw-combat-tracker .window-content {
+  padding: 8px;
+  overflow: auto;
+}
+
+.faw-combat-tracker button,
+.faw-combat-tracker input,
+.faw-combat-tracker select {
+  font: inherit;
+}
+
+.fct-shell { display: flex; flex-direction: column; gap: var(--fct-gap); min-width: 0; }
+.fct-empty { min-height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; }
+.fct-empty > i { font-size: 2rem; opacity: .55; }
+.fct-empty small { opacity: .7; max-width: 32em; }
+
+.fct-header { display: flex; flex-direction: column; gap: 5px; }
+.fct-title-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.fct-title-row input { flex: 1 1 auto; min-width: 0; font-weight: 700; }
+.fct-title-row > strong { flex: 1 1 auto; min-width: 0; overflow-wrap: break-word; }
+.fct-round { flex: 0 0 auto; padding: 3px 7px; border: 1px solid var(--color-border-light-2, #777); border-radius: 999px; font-weight: 700; white-space: nowrap; }
+.fct-round.fct-prep { opacity: .7; }
+.fct-summary { display: flex; flex-wrap: wrap; gap: 5px 10px; font-size: .88em; opacity: .82; }
+.fct-current-summary { font-weight: 700; opacity: 1; }
+
+.fct-gm-tools { display: flex; align-items: end; gap: 5px; padding: 6px; border: 1px solid var(--color-border-light-2, #777); border-radius: 6px; }
+.fct-order-tools { display: flex; align-items: end; gap: 4px; flex: 1 1 auto; min-width: 0; }
+.fct-order-tools label { display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto; min-width: 0; font-size: .78em; }
+.fct-order-tools select { width: 100%; min-width: 0; }
+.fct-gm-tools button,
+.fct-row-actions button,
+.fct-manage-row button { min-width: 28px; width: 28px; height: 28px; padding: 0; display: inline-grid; place-items: center; }
+
+.fct-list { list-style: none; display: flex; flex-direction: column; gap: 5px; margin: 0; padding: 0; }
+.fct-row { border: 1px solid var(--color-border-light-2, #777); border-radius: 7px; padding: 5px; min-width: 0; }
+.fct-row.fct-current { border-width: 2px; }
+.fct-row.fct-acted:not(.fct-current) { opacity: .72; }
+.fct-row.fct-defeated { opacity: .48; }
+.fct-main-row { display: grid; grid-template-columns: 24px 38px minmax(0, 1fr) auto; gap: 6px; align-items: center; min-width: 0; }
+.fct-order-number { text-align: center; font-weight: 800; opacity: .65; }
+.fct-avatar { width: 38px; height: 38px; padding: 0; border: 0; overflow: hidden; border-radius: 50%; }
+.fct-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fct-identity { min-width: 0; }
+.fct-name { display: block; width: 100%; min-width: 0; padding: 0; border: 0; background: none; box-shadow: none; text-align: left; font-weight: 800; line-height: 1.15; overflow-wrap: break-word; word-break: normal; }
+.fct-name:hover { text-shadow: 0 0 4px currentColor; }
+.fct-badges { margin-top: 3px; display: flex; flex-wrap: wrap; gap: 3px; }
+.fct-badge { padding: 1px 5px; border-radius: 999px; border: 1px solid currentColor; font-size: .72em; line-height: 1.35; opacity: .78; white-space: nowrap; }
+.fct-badge-current,
+.fct-badge-done { font-weight: 800; opacity: 1; }
+.fct-row-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 3px; max-width: 68px; }
+.fct-finish-mini { font-weight: 900; }
+
+.fct-state { margin: 5px 0 0 68px; font-size: .82em; }
+.fct-state summary { cursor: pointer; opacity: .8; }
+.fct-track-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 2px 0; }
+.fct-track-row > span:first-child { min-width: 0; overflow-wrap: break-word; }
+.fct-boxes { display: inline-flex; gap: 3px; flex: 0 0 auto; }
+.fct-consequence { padding: 2px 0; overflow-wrap: break-word; }
+
+.fct-manage-row { margin: 4px 0 0 68px; display: flex; gap: 3px; justify-content: flex-end; }
+.fct-manage-row button:disabled { opacity: .3; }
+
+.fct-footer { display: flex; flex-wrap: wrap; gap: 5px; border-top: 1px solid var(--color-border-light-2, #777); padding-top: 7px; }
+.fct-footer button { flex: 1 1 auto; min-width: 120px; }
+.fct-primary { font-weight: 800; }
+.fct-danger { opacity: .8; }
+
+.faw-combat-tracker.faw-combat-collapsed { height: auto !important; min-height: 0 !important; }
+.faw-combat-tracker.faw-combat-collapsed .window-content { display: none !important; }
+.faw-combat-tracker.faw-combat-collapsed .window-resize-handle { display: none !important; }
+
+@media (max-width: 430px) {
+  .fct-main-row { grid-template-columns: 20px 34px minmax(0, 1fr) auto; gap: 4px; }
+  .fct-avatar { width: 34px; height: 34px; }
+  .fct-state,
+  .fct-manage-row { margin-left: 58px; }
+  .fct-row-actions { max-width: 60px; }
+}
+
+/* v0.15 — linked conflict flow and timeline */
+.fct-pending-damage {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 1px solid color-mix(in srgb, #b66a2b 42%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, #b66a2b 9%, transparent);
+  font-size: .82em;
+  font-weight: 700;
+}
+.fct-pending-damage strong { margin-left: auto; font-size: 1.15em; }
+
+.fct-last-event {
+  margin-top: 4px;
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  min-width: 0;
+  color: var(--color-text-secondary, currentColor);
+  font-size: .7em;
+  line-height: 1.25;
+  opacity: .8;
+}
+.fct-last-event i { flex: 0 0 auto; margin-top: .08em; }
+.fct-last-event span { min-width: 0; overflow-wrap: break-word; }
+.fct-last-event.is-takenout { color: #9a3d32; opacity: 1; }
+.fct-last-event.is-consequence { color: #8b6232; opacity: 1; }
+
+.fct-journal {
+  border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+  border-radius: 7px;
+  overflow: hidden;
+}
+.fct-journal > summary {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  font-size: .82em;
+  font-weight: 800;
+  background: color-mix(in srgb, currentColor 4%, transparent);
+}
+.fct-journal-list { display: flex; flex-direction: column; }
+.fct-journal-row {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) 26px;
+  gap: 6px;
+  align-items: start;
+  padding: 6px 8px;
+  border-top: 1px solid color-mix(in srgb, currentColor 8%, transparent);
+  font-size: .76em;
+}
+.fct-journal-row > i { text-align: center; margin-top: 2px; opacity: .75; }
+.fct-journal-row > div { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.fct-journal-row span { min-width: 0; overflow-wrap: break-word; }
+.fct-journal-row small { opacity: .55; font-size: .86em; }
+.fct-journal-row button {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+}
+.fct-journal-row.is-roll > i { opacity: 1; }
+.fct-journal-row.is-revision > i { color: #6b63a8; opacity: 1; }
+.fct-journal-row.is-damage > i,
+.fct-journal-row.is-consequence > i,
+.fct-journal-row.is-boost > i { color: #9a6b2f; opacity: 1; }
+.fct-journal-row.is-takenout > i { color: #a23f35; opacity: 1; }
+.fct-journal-row.is-turn > i,
+.fct-journal-row.is-exchange > i { color: #3f7f58; opacity: 1; }
+
+/* v0.17.1 — searchable conflict controls */
+.fct-participant-search {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  padding: 0 7px;
+  border: 1px solid var(--color-border-light-2, #777);
+  border-radius: 5px;
+}
+
+.fct-participant-search > i {
+  opacity: .55;
+  font-size: .75em;
+}
+
+.fct-participant-search input {
+  min-width: 0;
+  width: 100%;
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.fct-order-tools input[type="search"] {
+  width: 100%;
+  min-width: 0;
+  height: 26px;
+  font-size: .92em;
+}
+
+.fct-row[hidden] { display: none !important; }
+
+/* v0.18 — conflict attention and participant quick actions */
+.fct-pending-damage {
+  width: 100%;
+  min-height: 32px;
+  cursor: pointer;
+  text-align: left;
+}
+.fct-pending-damage span { flex: 1 1 auto; }
+.fct-pending-damage > i:last-child { margin-left: auto; opacity: .7; }
+.fct-badge-warning {
+  color: var(--color-level-warning, #b56b16);
+  opacity: 1;
+  font-weight: 800;
+}
+.fct-warning-button {
+  color: var(--color-level-warning, #b56b16);
+  font-weight: 800;
+}
+
+.faw-combat-tracker .window-header .faw-standard-close{display:inline-flex;align-items:center;justify-content:center;font:700 21px/1 Arial,sans-serif!important;min-width:27px;min-height:27px;}

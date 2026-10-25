@@ -1,0 +1,21 @@
+/* Icon-only draggable Fate action widget. Keep select/target semantics. */
+.fate-action-widget {min-width: 240px !important;}
+.fate-action-widget .window-content {padding: 4px !important;}
+.fate-action-widget .faw-action-shell {gap: 4px !important; padding: 4px !important;}
+.fate-action-widget .faw-action-help-row,
+.fate-action-widget .faw-action-favorites,
+.fate-action-widget .faw-action-guide,
+.fate-action-widget .faw-action-search,
+.fate-action-widget .faw-action-selectors .faw-action-label-row > span,
+.fate-action-widget .faw-action-label-spacer {display:none !important;}
+.fate-action-widget .faw-action-selectors {display:grid !important;grid-template-columns:1fr 1fr !important; gap:3px !important; padding:2px !important;}
+.fate-action-widget .faw-action-selectors label {display:block !important;min-width:0;}
+.fate-action-widget .faw-action-selectors select {font-size:11px !important;height:25px !important;width:100% !important;min-width:0 !important;}
+.fate-action-widget .faw-action-label-row {display:none !important;}
+.fate-action-widget .faw-action-grid {display:grid !important;grid-template-columns:repeat(4,minmax(0,1fr)) !important;gap:3px !important;padding:2px !important;}
+.fate-action-widget .faw-action-choice {min-height:44px !important;height:44px !important;padding:3px !important;display:flex !important;align-items:center !important;justify-content:center !important;}
+.fate-action-widget .faw-action-choice-icon {width:36px !important;height:36px !important;margin:0 !important;display:flex !important;align-items:center !important;justify-content:center !important;font-size:21px !important;}
+.fate-action-widget .faw-action-choice > span:not(.faw-action-choice-icon),
+.fate-action-widget .faw-action-choice > small,
+.fate-action-widget .faw-action-choice::before {display:none !important;}
+.fate-action-widget .faw-action-pending {font-size:10px !important; padding:3px !important;}

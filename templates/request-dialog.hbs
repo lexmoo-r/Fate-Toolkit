@@ -1,0 +1,148 @@
+<div class="frr-request-form frr-request-root">
+  <section class="frr-section frr-step-section" data-step="1">
+    <div class="frr-section-heading"><span class="frr-step-badge">1</span><h2>{{localize "FRR.Targets"}}</h2></div>
+    <div class="frr-list-toolbar" role="toolbar" aria-label="{{localize 'FRR.Targets'}}">
+      <label class="frr-list-search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" data-request-target-search placeholder="{{localize 'FRR.SearchTargets'}}" aria-label="{{localize 'FRR.SearchTargets'}}" aria-describedby="frr-target-search-status" autocomplete="off"></label>
+      <button type="button" data-action="select-all"><i class="fa-solid fa-check-double" aria-hidden="true"></i> {{localize "FRR.SelectAll"}}</button>
+      <button type="button" data-action="select-none"><i class="fa-solid fa-xmark" aria-hidden="true"></i> {{localize "FRR.SelectNone"}}</button>
+    <span class="frr-search-status" id="frr-target-search-status" data-request-target-status aria-live="polite"></span>
+    </div>
+    <div class="frr-targets" role="group" aria-label="{{localize 'FRR.Targets'}}">
+      {{#each players}}
+      <label class="frr-target-row {{#unless hasCharacter}}frr-disabled{{/unless}}" data-request-target-row data-search="{{name}} {{characterName}}">
+        <input type="checkbox" name="targets" value="{{id}}" {{#if checked}}checked{{/if}} {{#unless hasCharacter}}disabled{{/unless}}>
+        <span class="frr-target-main"><strong>{{name}}</strong>{{#if characterName}}<small>{{characterName}}</small>{{/if}}</span>
+      </label>
+      {{/each}}
+    </div>
+    <p class="frr-hint">{{localize "FRR.TargetHint"}}</p>
+  </section>
+
+  <section class="frr-section frr-step-section" data-step="2">
+    <div class="frr-section-heading"><span class="frr-step-badge">2</span><h2>{{localize "FRR.ActionSetup"}}</h2></div>
+    <div class="frr-grid-2">
+      <label>
+        <span>{{localize "FRR.CheckTitle"}}</span>
+        <input type="text" name="title" value="{{localize 'FRR.DefaultCheckTitle'}}" maxlength="120">
+      </label>
+      <label>
+        <span>{{localize "FRR.FateAction"}}</span>
+        <select name="actionType">
+          <option value="overcome">{{localize "FRR.ActionOvercome"}}</option>
+          <option value="create">{{localize "FRR.ActionCreate"}}</option>
+          <option value="attack">{{localize "FRR.ActionAttack"}}</option>
+          <option value="defend">{{localize "FRR.ActionDefend"}}</option>
+          <option value="generic">{{localize "FRR.ActionGeneric"}}</option>
+        </select>
+      </label>
+      <label>
+        <span>{{localize "FRR.Skill"}}</span>
+        <input type="search" data-request-skill-search placeholder="{{localize 'FRR.SearchSkill'}}" aria-label="{{localize 'FRR.SearchSkill'}}" aria-describedby="frr-skill-search-status" autocomplete="off">
+        <select name="skillName" aria-describedby="frr-skill-search-status">
+          <option value="">{{localize "FRR.PlayerChoosesSkill"}}</option>
+          {{#each skills}}<option value="{{name}}">{{label}}</option>{{/each}}
+        </select>
+        <span class="frr-search-status" id="frr-skill-search-status" data-select-search-status="skillName" aria-live="polite"></span>
+      </label>
+      <label>
+        <span>{{localize "FRR.Opposition"}}</span>
+        <select name="oppositionMode" data-action="opposition-mode">
+          <option value="fixed">{{localize "FRR.OppositionFixed"}}</option>
+          <option value="opponent">{{localize "FRR.OppositionOpponent"}}</option>
+          <option value="none">{{localize "FRR.OppositionNone"}}</option>
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <section class="frr-section" data-panel="create-mode" hidden>
+    <div class="frr-grid-2">
+      <label>
+        <span>{{localize "FRR.CreateAdvantage"}}</span>
+        <select name="createMode">
+          <option value="new">{{localize "FRR.CreateNewAspect"}}</option>
+          <option value="existing">{{localize "FRR.CreateExistingInvokes"}}</option>
+        </select>
+      </label>
+    </div>
+    <p class="frr-hint">{{localize "FRR.CreateModeHint"}}</p>
+  </section>
+
+  <section class="frr-section" data-panel="fixed">
+    <div class="frr-grid-2">
+      <label>
+        <span>{{localize "FRR.Difficulty"}}</span>
+        <input type="number" name="difficulty" value="2" min="-10" max="20" step="1">
+      </label>
+      <label class="frr-check-row">
+        <input type="checkbox" name="hideOpposition">
+        <span>{{localize "FRR.HideDifficulty"}}</span>
+      </label>
+    </div>
+    <div class="frr-ladder-preview" data-role="difficulty-preview"></div>
+  </section>
+
+  <section class="frr-section" data-panel="opponent" hidden>
+    <div class="frr-grid-2">
+      <label>
+        <span>{{localize "FRR.Opponent"}}</span>
+        <input type="search" data-request-opponent-search placeholder="{{localize 'FRR.SearchOpponent'}}" aria-label="{{localize 'FRR.SearchOpponent'}}" aria-describedby="frr-opponent-search-status" autocomplete="off">
+        <select name="opponentActor" data-action="opponent-actor" aria-describedby="frr-opponent-search-status">
+          {{#each opponents}}
+          <option value="{{ref}}">{{name}}</option>
+          {{/each}}
+        </select>
+        <span class="frr-search-status" id="frr-opponent-search-status" data-select-search-status="opponentActor" aria-live="polite"></span>
+      </label>
+      <label>
+        <span>{{localize "FRR.OpponentSkill"}}</span>
+        <input type="search" data-request-opponent-skill-search placeholder="{{localize 'FRR.SearchSkill'}}" aria-label="{{localize 'FRR.SearchSkill'}}" aria-describedby="frr-opponent-skill-search-status" autocomplete="off">
+        <select name="opponentSkill" data-role="opponent-skill" aria-describedby="frr-opponent-skill-search-status"></select>
+        <span class="frr-search-status" id="frr-opponent-skill-search-status" data-opponent-skill-search-status aria-live="polite"></span>
+      </label>
+      <div class="frr-opponent-stunts" data-role="opponent-stunts" style="grid-column: 1 / -1"></div>
+      <label>
+        <span>{{localize "FRR.OppositionKind"}}</span>
+        <select name="opponentKind">
+          <option value="roll">{{localize "FRR.OppositionActive"}}</option>
+          <option value="rank">{{localize "FRR.OppositionPassive"}}</option>
+        </select>
+      </label>
+      <label class="frr-check-row">
+        <input type="checkbox" name="hideOpponentResult">
+        <span>{{localize "FRR.HideOpponentResult"}}</span>
+      </label>
+    </div>
+    <p class="frr-hint" data-role="opponent-skill-hint">{{localize "FRR.OpponentSkillHint"}}</p>
+    <p class="frr-hint">{{localize "FRR.ActiveOppositionHint"}}</p>
+  </section>
+
+  <section class="frr-section">
+    <label>
+      <span>{{localize "FRR.GmComment"}}</span>
+      <textarea name="description" rows="3" maxlength="1000" placeholder="{{localize 'FRR.GmCommentPlaceholder'}}"></textarea>
+    </label>
+  </section>
+
+  <footer class="frr-actions frr-request-actions">
+    <button type="button" data-action="sound-settings"><i class="fa-solid fa-volume-high" aria-hidden="true"></i> {{localize "FRR.ResultSounds"}}</button>
+    <button type="button" data-action="send" class="frr-primary"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> {{localize "FRR.Send"}}</button>
+  </footer>
+
+  {{#if activeRequests.length}}
+  <section class="frr-section frr-active-section">
+    <div class="frr-section-heading"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><h2>{{localize "FRR.SessionRequests"}}</h2></div>
+    <div class="frr-active-list">
+      {{#each activeRequests}}
+      <div class="frr-active-row">
+        <div>
+          <strong>{{title}}</strong>
+          <div class="frr-small">{{targetsText}} · {{statusText}}</div>
+        </div>
+        <button type="button" data-action="cancel-request" data-request-id="{{id}}" title="{{localize 'FRR.CancelRequest'}}" aria-label="{{localize 'FRR.CancelRequest'}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+      </div>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+</div>

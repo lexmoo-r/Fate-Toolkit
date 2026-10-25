@@ -1,0 +1,638 @@
+/* Fate Toolkit shared UX layer — v0.12.0
+ * Visual-only layer inspired by mature Foundry/D&D5e UI patterns:
+ * common surfaces, stacked names, status pills, primary/secondary actions,
+ * strong current-state hierarchy, progressive disclosure, and responsive forms.
+ */
+
+:is(.fate-aspect-widget,.fate-action-widget,.faw-combat-tracker,.fms-window,.frr-request-app,.frr-player-requests-app,.frr-sound-settings-app) {
+  --ft-surface: color-mix(in srgb, var(--color-bg-option, #24252a) 92%, transparent);
+  --ft-surface-raised: color-mix(in srgb, var(--color-bg-option, #2d2e34) 82%, white 3%);
+  --ft-surface-soft: color-mix(in srgb, var(--color-bg-option, #24252a) 62%, transparent);
+  --ft-border: color-mix(in srgb, var(--color-border-light-primary, #8a8a8a) 52%, transparent);
+  --ft-border-strong: color-mix(in srgb, var(--color-border-highlight, #b79a68) 72%, transparent);
+  --ft-text: var(--color-text-primary, var(--color-text-light-highlight, #eee));
+  --ft-muted: var(--color-text-secondary, #aaa);
+  --ft-accent: var(--color-warm-2, #c49a57);
+  --ft-success: #4f9d69;
+  --ft-danger: #b84c4c;
+  --ft-info: #5d83b3;
+  --ft-radius-sm: 5px;
+  --ft-radius: 8px;
+  --ft-radius-lg: 11px;
+  --ft-shadow: 0 2px 8px rgb(0 0 0 / 18%);
+  --ft-shadow-strong: 0 4px 16px rgb(0 0 0 / 24%);
+  --ft-transition: 120ms ease;
+  color: var(--ft-text);
+}
+
+:is(.fate-aspect-widget,.fate-action-widget,.faw-combat-tracker,.fms-window,.frr-request-app,.frr-player-requests-app,.frr-sound-settings-app) .window-content {
+  background: var(--ft-surface);
+}
+
+/* ---------------------------- Shared controls ---------------------------- */
+:is(.fate-aspect-widget,.fate-action-widget,.faw-combat-tracker,.fms-window,.frr-request-app,.frr-player-requests-app,.frr-sound-settings-app) :is(button,input,select,textarea) {
+  border-radius: var(--ft-radius-sm);
+}
+
+:is(.fate-aspect-widget,.fate-action-widget,.faw-combat-tracker,.fms-window,.frr-request-app,.frr-player-requests-app,.frr-sound-settings-app) button {
+  transition: background-color var(--ft-transition), border-color var(--ft-transition), box-shadow var(--ft-transition), opacity var(--ft-transition), transform var(--ft-transition);
+}
+
+:is(.fate-aspect-widget,.fate-action-widget,.faw-combat-tracker,.fms-window,.frr-request-app,.frr-player-requests-app,.frr-sound-settings-app) button:not(:disabled):active {
+  transform: translateY(1px);
+}
+
+:is(.fate-aspect-widget,.fate-action-widget,.faw-combat-tracker,.fms-window,.frr-request-app,.frr-player-requests-app,.frr-sound-settings-app) :is(button,input,select,textarea):focus-visible {
+  outline: 2px solid var(--ft-accent);
+  outline-offset: 2px;
+}
+
+:is(.fct-primary,.frr-primary,.fms-primary,.fms-sticky-footer button[type="submit"],.frr-card-actions [data-action="roll-request"]) {
+  border-color: color-mix(in srgb, var(--ft-accent) 76%, black 15%) !important;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--ft-accent) 86%, white 10%), color-mix(in srgb, var(--ft-accent) 78%, black 14%)) !important;
+  color: #16120d !important;
+  font-weight: 800 !important;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 20%);
+}
+
+:is(.fct-primary,.frr-primary,.fms-primary,.fms-sticky-footer button[type="submit"],.frr-card-actions [data-action="roll-request"]):not(:disabled):hover {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ft-accent) 65%, white 15%), 0 3px 10px rgb(0 0 0 / 28%);
+}
+
+/* ----------------------------- Aspect widget ----------------------------- */
+.fate-aspect-widget .faw-shell {
+  background: var(--ft-surface);
+  color: var(--ft-text);
+}
+.fate-aspect-widget .faw-toolbar {
+  min-height: 38px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--ft-border);
+  background: linear-gradient(to bottom, rgb(255 255 255 / 4%), transparent);
+}
+.fate-aspect-widget .faw-scroll { padding: 7px; }
+.fate-aspect-widget .faw-section {
+  margin-bottom: 7px;
+  border: 1px solid var(--ft-border);
+  border-radius: var(--ft-radius);
+  background: var(--ft-surface-raised);
+  box-shadow: var(--ft-shadow);
+  overflow: clip;
+}
+.fate-aspect-widget .faw-section > summary {
+  min-height: 38px;
+  padding: 7px 10px;
+  background: linear-gradient(to right, rgb(255 255 255 / 4%), transparent 70%);
+  border-bottom: 1px solid transparent;
+}
+.fate-aspect-widget .faw-section[open] > summary { border-bottom-color: var(--ft-border); }
+.fate-aspect-widget .faw-section > summary:hover { background-color: rgb(255 255 255 / 4%); }
+.fate-aspect-widget .faw-count,
+.fate-aspect-widget .faw-subcount {
+  border: 1px solid var(--ft-border);
+  background: var(--ft-surface-soft);
+  opacity: .95;
+  font-variant-numeric: tabular-nums;
+}
+.fate-aspect-widget .faw-aspect-row,
+.fate-aspect-widget .faw-boost-row,
+.fate-aspect-widget .faw-character-aspect,
+.fate-aspect-widget .faw-consequence-item,
+.fate-aspect-widget .faw-boost-item {
+  border: 1px solid transparent;
+  background: rgb(255 255 255 / 3%);
+  transition: border-color var(--ft-transition), background-color var(--ft-transition);
+}
+.fate-aspect-widget :is(.faw-aspect-row,.faw-boost-row,.faw-character-aspect,.faw-consequence-item,.faw-boost-item):hover {
+  border-color: var(--ft-border);
+  background: rgb(255 255 255 / 5%);
+}
+.fate-aspect-widget .faw-action-button { opacity: .42; border-radius: 50%; }
+.fate-aspect-widget :is(.faw-aspect-row,.faw-character-aspect,.faw-consequence-item,.faw-boost-item):hover .faw-action-button,
+.fate-aspect-widget .faw-action-button:focus-visible { opacity: .9; }
+.fate-aspect-widget .faw-delete:hover { color: var(--ft-danger); }
+.fate-aspect-widget .faw-add {
+  min-height: 32px;
+  border: 1px dashed var(--ft-border-strong);
+  color: var(--ft-muted);
+}
+.fate-aspect-widget .faw-add:hover { color: var(--ft-text); background: rgb(255 255 255 / 5%); }
+.fate-aspect-widget .faw-owner img,
+.fate-aspect-widget .faw-actor-header img { border-radius: 7px; box-shadow: 0 0 0 1px var(--ft-border); }
+
+/* ----------------------------- Action widget ----------------------------- */
+.fate-action-widget .faw-action-shell { gap: 9px; padding: 9px; }
+.fate-action-widget .faw-action-selectors {
+  padding: 9px;
+  border: 1px solid var(--ft-border);
+  border-radius: var(--ft-radius);
+  background: var(--ft-surface-raised);
+  box-shadow: var(--ft-shadow);
+}
+.fate-action-widget .faw-action-selectors label > span { color: var(--ft-muted); opacity: 1; }
+.fate-action-widget .faw-action-grid { gap: 7px; }
+.fate-action-widget .faw-action-choice {
+  min-height: 62px;
+  position: relative;
+  border: 1px solid var(--ft-border);
+  border-radius: var(--ft-radius);
+  background: var(--ft-surface-raised);
+  box-shadow: var(--ft-shadow);
+  overflow: hidden;
+}
+.fate-action-widget .faw-action-choice::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--ft-info);
+  opacity: .72;
+}
+.fate-action-widget .faw-action-choice[data-fate-action="attack"]::before { background: var(--ft-danger); }
+.fate-action-widget .faw-action-choice[data-fate-action="create"]::before { background: var(--ft-accent); }
+.fate-action-widget .faw-action-choice[data-fate-action="overcome"]::before { background: var(--ft-success); }
+.fate-action-widget .faw-action-choice[data-fate-action="defend"]::before { background: var(--ft-info); }
+.fate-action-widget .faw-action-choice:not(:disabled):hover {
+  border-color: var(--ft-border-strong);
+  box-shadow: var(--ft-shadow-strong);
+  background: color-mix(in srgb, var(--ft-surface-raised) 92%, white 5%);
+}
+.fate-action-widget .faw-action-choice i { font-size: 1.2rem; opacity: .9; }
+.fate-action-widget .faw-action-hint {
+  padding: 7px 9px;
+  border-radius: var(--ft-radius-sm);
+  background: rgb(255 255 255 / 3%);
+  color: var(--ft-muted);
+  opacity: 1;
+}
+
+/* ----------------------------- Combat tracker ---------------------------- */
+.faw-combat-tracker .window-content { padding: 9px; }
+.faw-combat-tracker .fct-header {
+  padding: 10px;
+  border: 1px solid var(--ft-border);
+  border-radius: var(--ft-radius);
+  background: var(--ft-surface-raised);
+  box-shadow: var(--ft-shadow);
+}
+.faw-combat-tracker .fct-round,
+.faw-combat-tracker .fct-badge {
+  border: 1px solid var(--ft-border);
+  background: var(--ft-surface-soft);
+  color: var(--ft-muted);
+  opacity: 1;
+}
+.faw-combat-tracker .fct-badge-current {
+  border-color: color-mix(in srgb, var(--ft-accent) 70%, transparent);
+  background: color-mix(in srgb, var(--ft-accent) 15%, transparent);
+  color: var(--ft-text);
+}
+.faw-combat-tracker .fct-badge-done {
+  border-color: color-mix(in srgb, var(--ft-success) 65%, transparent);
+  background: color-mix(in srgb, var(--ft-success) 12%, transparent);
+  color: var(--ft-text);
+}
+.faw-combat-tracker .fct-gm-tools {
+  padding: 8px;
+  background: rgb(255 255 255 / 3%);
+  border-color: var(--ft-border);
+}
+.faw-combat-tracker .fct-row {
+  position: relative;
+  padding: 7px;
+  border: 1px solid var(--ft-border);
+  border-radius: var(--ft-radius);
+  background: var(--ft-surface-raised);
+  box-shadow: var(--ft-shadow);
+  transition: border-color var(--ft-transition), box-shadow var(--ft-transition), background-color var(--ft-transition), opacity var(--ft-transition);
+}
+.faw-combat-tracker .fct-row::before {
+  content: "";
+  position: absolute;
+  inset: 6px auto 6px 0;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: transparent;
+}
+.faw-combat-tracker .fct-row.fct-current {
+  border-color: var(--ft-border-strong);
+  background: color-mix(in srgb, var(--ft-surface-raised) 91%, var(--ft-accent) 9%);
+  box-shadow: var(--ft-shadow-strong);
+}
+.faw-combat-tracker .fct-row.fct-current::before { background: var(--ft-accent); }
+.faw-combat-tracker .fct-row.fct-acted:not(.fct-current) { opacity: .58; box-shadow: none; }
+.faw-combat-tracker .fct-row.fct-defeated { opacity: .38; filter: grayscale(.35); }
+.faw-combat-tracker .fct-avatar {
+  border: 1px solid var(--ft-border);
+  box-shadow: 0 1px 5px rgb(0 0 0 / 20%);
+}
+.faw-combat-tracker .fct-name { color: var(--ft-text); }
+.faw-combat-tracker .fct-row-actions button,
+.faw-combat-tracker .fct-manage-row button {
+  opacity: .4;
+  border-radius: 50%;
+}
+.faw-combat-tracker .fct-row:hover .fct-row-actions button,
+.faw-combat-tracker .fct-row:hover .fct-manage-row button,
+.faw-combat-tracker .fct-row-actions button:focus-visible,
+.faw-combat-tracker .fct-manage-row button:focus-visible { opacity: .9; }
+.faw-combat-tracker .fct-state {
+  margin-top: 7px;
+  padding-top: 5px;
+  border-top: 1px dashed var(--ft-border);
+}
+.faw-combat-tracker .fct-state summary { color: var(--ft-muted); }
+.faw-combat-tracker .fct-footer {
+  position: sticky;
+  bottom: -9px;
+  z-index: 2;
+  margin: 0 -9px -9px;
+  padding: 9px;
+  border-top: 1px solid var(--ft-border);
+  background: color-mix(in srgb, var(--ft-surface) 96%, transparent);
+  box-shadow: 0 -5px 14px rgb(0 0 0 / 12%);
+}
+.faw-combat-tracker .fct-danger:hover { color: var(--ft-danger); border-color: color-mix(in srgb, var(--ft-danger) 55%, transparent); }
+
+/* ------------------------------- Milestones ------------------------------ */
+.fms-window .fms-root { background: var(--ft-surface); }
+.fms-window .fms-scroll { padding: 12px; gap: 10px; }
+.fms-window .fms-hero,
+.fms-window .fms-card,
+.fms-window .fms-rule-card,
+.fms-window .fms-subcard {
+  border-color: var(--ft-border);
+  background: var(--ft-surface-raised);
+  box-shadow: var(--ft-shadow);
+}
+.fms-window .fms-hero { border-radius: var(--ft-radius-lg); }
+.fms-window .fms-hero-icon,
+.fms-window .fms-step {
+  background: color-mix(in srgb, var(--ft-accent) 78%, black 18%);
+  color: #fff;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ft-accent) 72%, transparent), 0 2px 7px rgb(0 0 0 / 20%);
+}
+.fms-window .fms-kicker,
+.fms-window .fms-field > span,
+.fms-window .fms-resource > span,
+.fms-window .fms-footnote { color: var(--ft-muted); opacity: 1; }
+.fms-window .fms-card {
+  padding: 13px;
+  border-radius: var(--ft-radius);
+}
+.fms-window .fms-section-heading {
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--ft-border);
+}
+.fms-window .fms-resource-card { gap: 7px; }
+.fms-window .fms-resource {
+  border: 1px solid var(--ft-border);
+  background: var(--ft-surface-soft);
+}
+.fms-window .fms-skill-budget {
+  border: 1px solid var(--ft-border);
+  background: var(--ft-surface-soft);
+}
+.fms-window .fms-skill-row,
+.fms-window .fms-actor-pick,
+.fms-window .fms-manager-actor,
+.fms-window .fms-action-checks label {
+  border-color: var(--ft-border);
+  background: rgb(255 255 255 / 2.5%);
+}
+.fms-window .fms-skill-row:hover,
+.fms-window .fms-actor-pick:hover,
+.fms-window .fms-manager-actor:hover { background: rgb(255 255 255 / 5%); }
+.fms-window .fms-skill-row.is-changed { border-left-color: var(--ft-accent); }
+.fms-window .fms-validation.good { border-left: 3px solid var(--ft-success); }
+.fms-window .fms-validation.bad { border-left: 3px solid var(--ft-danger); }
+.fms-window .fms-validation.warn { border-left: 3px solid var(--ft-accent); }
+.fms-window .fms-sticky-footer {
+  border-top-color: var(--ft-border);
+  background: color-mix(in srgb, var(--ft-surface) 97%, transparent);
+  box-shadow: 0 -5px 16px rgb(0 0 0 / 14%);
+}
+
+/* ---------------------------- Requests & cards --------------------------- */
+.frr-request-app .frr-section,
+.frr-sound-settings-app .frr-section {
+  border-color: var(--ft-border);
+  background: var(--ft-surface-raised);
+  box-shadow: var(--ft-shadow);
+}
+.frr-player-requests-app .frr-card {
+  border-color: var(--ft-border);
+  border-radius: var(--ft-radius);
+  background: var(--ft-surface-raised);
+  color: var(--ft-text);
+  box-shadow: var(--ft-shadow);
+}
+.frr-player-requests-app .frr-card-head {
+  padding: 10px 11px 6px;
+  border-bottom: 1px solid var(--ft-border);
+  background: linear-gradient(to right, rgb(255 255 255 / 4%), transparent 75%);
+}
+.frr-player-requests-app .frr-card-meta { color: var(--ft-muted); opacity: 1; }
+.frr-player-requests-app .frr-card-actions { border-top: 1px solid var(--ft-border); background: rgb(0 0 0 / 8%); }
+
+/* ------------------------------ Chat results ----------------------------- */
+.frr-chat-result.frr-resolution-card,
+.frr-chat-result.frr-opposition-audit {
+  margin-top: .65rem;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-border-light-primary, #888) 55%, transparent);
+  border-left: 1px solid color-mix(in srgb, var(--color-border-light-primary, #888) 55%, transparent);
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--color-bg-option, #222) 18%, transparent);
+  box-shadow: 0 2px 7px rgb(0 0 0 / 12%);
+}
+.frr-resolution-matchup {
+  padding: .48rem .58rem .18rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+.frr-resolution-winner {
+  padding: .12rem .58rem;
+  font-size: 1.08em;
+  font-weight: 900;
+}
+.frr-resolution-action {
+  padding: .12rem .58rem .48rem;
+  color: var(--color-text-secondary, #999);
+  font-size: .84em;
+}
+.frr-math-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  border-top: 1px solid rgb(128 128 128 / 24%);
+}
+.frr-math-side {
+  padding: .5rem .58rem !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgb(128 128 128 / 18%) !important;
+  min-width: 0;
+}
+.frr-math-side:last-child { border-bottom: 0 !important; }
+.frr-math-side h4 {
+  margin: 0 0 .35rem;
+  padding: 0;
+  border: 0;
+  font-size: .86em;
+  text-transform: uppercase;
+  letter-spacing: .035em;
+  color: var(--color-text-secondary, #999);
+}
+.frr-math-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) max-content !important;
+  gap: .65rem;
+  align-items: baseline;
+  padding: .12rem 0;
+}
+.frr-math-row > span { min-width: 0; overflow-wrap: normal; word-break: normal; }
+.frr-math-row > strong { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.frr-math-total {
+  margin-top: .22rem;
+  padding-top: .32rem;
+  border-top: 1px solid rgb(128 128 128 / 22%);
+  font-weight: 800;
+}
+.frr-comparison,
+.frr-resolution-effect,
+.frr-boost-action,
+.frr-boost-created,
+.frr-history-group {
+  margin: 0 !important;
+  padding: .48rem .58rem !important;
+  border-top: 1px solid rgb(128 128 128 / 20%);
+}
+.frr-comparison {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) max-content;
+  gap: .5rem;
+  align-items: baseline;
+}
+.frr-comparison > span { color: var(--color-text-secondary, #999); font-size: .82em; }
+.frr-resolution-effect { background: rgb(255 255 255 / 3%); }
+.frr-roll-history { margin: 0; }
+.frr-roll-history > summary {
+  cursor: pointer;
+  color: var(--color-text-secondary, #999);
+  font-size: .84em;
+  font-weight: 700;
+}
+.frr-roll-history[open] > summary { margin-bottom: .4rem; }
+.frr-history-row {
+  border: 1px solid rgb(128 128 128 / 20%);
+  border-radius: 5px;
+  background: rgb(255 255 255 / 2%);
+}
+.frr-revision-badge {
+  margin: 0 .58rem .35rem;
+  width: fit-content;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--color-warm-2, #c49a57) 55%, transparent);
+  background: color-mix(in srgb, var(--color-warm-2, #c49a57) 12%, transparent);
+}
+
+/* ------------------------------ Narrow views ----------------------------- */
+@media (max-width: 560px) {
+  .fate-action-widget .faw-action-grid { grid-template-columns: 1fr; }
+  .fms-window .fms-resource-card { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fms-window .fms-skill-list { grid-template-columns: 1fr; }
+  .fct-row-actions { max-width: 62px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.fate-aspect-widget,.fate-action-widget,.faw-combat-tracker,.fms-window,.frr-request-app,.frr-player-requests-app,.frr-sound-settings-app) *,
+  :is(.fate-aspect-widget,.fate-action-widget,.faw-combat-tracker,.fms-window,.frr-request-app,.frr-player-requests-app,.frr-sound-settings-app) *::before,
+  :is(.fate-aspect-widget,.fate-action-widget,.faw-combat-tracker,.fms-window,.frr-request-app,.frr-player-requests-app,.frr-sound-settings-app) *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
+
+/* v0.19 — contextual actions ------------------------------------------------ */
+.faw-context-actions {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.faw-context-secondary {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(2px);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+*:hover > .faw-context-actions .faw-context-secondary,
+*:focus-within > .faw-context-actions .faw-context-secondary,
+.faw-context-actions:focus-within .faw-context-secondary {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+details.faw-context-menu {
+  position: relative;
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+}
+
+details.faw-context-menu > summary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--color-border-light-primary, #777) 50%, transparent);
+  border-radius: 5px;
+  cursor: pointer;
+  list-style: none;
+}
+
+details.faw-context-menu > summary::-webkit-details-marker { display: none; }
+details.faw-context-menu > summary::marker { display: none; content: ""; }
+
+details.faw-context-menu[open] > summary,
+details.faw-context-menu > summary:hover,
+details.faw-context-menu > summary:focus-visible {
+  background: color-mix(in srgb, var(--color-warm-2, #b97a2d) 18%, transparent);
+}
+
+.faw-context-menu-popover {
+  position: absolute;
+  z-index: 100;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 190px;
+  display: grid;
+  gap: 2px;
+  padding: 5px;
+  border: 1px solid var(--color-border-light-primary, #777);
+  border-radius: 6px;
+  background: var(--color-cool-5, #23252a);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
+}
+
+.faw-context-menu-popover button {
+  width: 100%;
+  min-height: 30px;
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 7px;
+  border: 0;
+  text-align: left;
+  white-space: nowrap;
+  background: transparent;
+}
+
+.faw-context-menu-popover button:hover:not(:disabled),
+.faw-context-menu-popover button:focus-visible:not(:disabled) {
+  background: rgb(255 255 255 / 8%);
+}
+
+.faw-context-menu-popover button.is-danger { color: var(--color-level-error, #e26d6d); }
+.faw-context-menu-popover button:disabled { opacity: .4; }
+
+/* Aspect rows already have an obvious main interaction (their text/value).
+   Keep administrative actions quiet until the row is actually in context. */
+.faw-aspect-row > .faw-row-actions,
+.faw-boost-value > .faw-row-actions,
+.faw-character-value > .faw-row-actions {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+}
+.faw-aspect-row:hover > .faw-row-actions,
+.faw-aspect-row:focus-within > .faw-row-actions,
+.faw-boost-value:hover > .faw-row-actions,
+.faw-boost-value:focus-within > .faw-row-actions,
+.faw-character-value:hover > .faw-row-actions,
+.faw-character-value:focus-within > .faw-row-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.faw-confirm-danger .dialog-buttons button[data-action="yes"] {
+  color: var(--color-level-error, #e26d6d);
+}
+
+/* v0.25 — interface profiles ------------------------------------------------ */
+html.faw-density-compact :is(.fate-aspect-widget,.fate-action-widget,.faw-combat-tracker,.fms-window,.fwc-window,.frr-request-app,.frr-player-requests-app) .window-content {
+  padding: 7px;
+}
+
+html.faw-density-compact :is(.fate-aspect-widget,.fate-action-widget,.faw-combat-tracker,.fms-window,.fwc-window,.frr-request-app,.frr-player-requests-app) :is(button,input,select) {
+  min-height: 26px;
+}
+
+html.faw-density-compact :is(.faw-section-body,.faw-action-grid,.fct-list,.fwc-body,.fms-body) {
+  gap: 5px;
+}
+
+html.faw-density-compact :is(.faw-aspect-row,.faw-character-value,.faw-boost-value,.fct-row,.fwc-card,.fms-card) {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+html.faw-density-compact :is(.fct-row,.fwc-card,.frr-chat-result) {
+  font-size: .94em;
+}
+
+html.faw-density-compact .fct-state,
+html.faw-density-compact .fct-journal,
+html.faw-density-compact .frr-roll-history,
+html.faw-density-compact .frr-action-audit {
+  margin-top: 3px;
+}
+
+html.faw-density-compact details.faw-context-menu > summary {
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+}
+
+/* v0.30 — one-click milestone type choice. */
+.fms-type-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 4px;
+}
+.fms-type-buttons > button {
+  min-width: 0;
+  white-space: normal;
+  line-height: 1.1;
+}
+.fms-type-buttons > button.is-active {
+  outline: 2px solid var(--ft-accent, currentColor);
+  outline-offset: -2px;
+}
+
+/* v0.90 — contextual help and onboarding. */
+.faw-context-help {
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+}
+.faw-help-root { display: grid; gap: 12px; padding: 12px; }
+.faw-help-hero { display: flex; align-items: flex-start; gap: 12px; }
+.faw-help-hero > i { font-size: 1.5rem; margin-top: 3px; opacity: .85; }
+.faw-help-hero h2 { margin: 0 0 4px; }
+.faw-help-hero p { margin: 0; opacity: .8; line-height: 1.35; }
+.faw-help-list { display: grid; gap: 7px; margin: 0; padding-left: 1.25rem; }
+.faw-help-nav { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 4px; border-top: 1px solid rgb(255 255 255 / 10%); }

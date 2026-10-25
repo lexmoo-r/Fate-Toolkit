@@ -1,0 +1,769 @@
+.fate-aspect-widget .window-content {
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+.fate-aspect-widget .faw-shell {
+  flex: 1 1 0;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: rgba(20, 20, 24, 0.96);
+  color: var(--color-text-light-highlight, #f0f0e0);
+}
+
+.faw-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 34px;
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.035);
+}
+
+.faw-scene-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.faw-icon-button,
+.faw-action-button,
+.faw-add {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  color: inherit;
+}
+
+.faw-icon-button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+}
+
+.fate-aspect-widget .faw-scroll {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding: 0.35rem;
+}
+
+.faw-section {
+  margin: 0 0 0.35rem;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  background: rgba(255,255,255,0.025);
+}
+
+.faw-section > summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.55rem;
+  cursor: pointer;
+  font-weight: 700;
+  user-select: none;
+}
+
+.faw-section > summary::marker {
+  color: rgba(255,255,255,0.55);
+}
+
+.faw-count {
+  margin-left: auto;
+  min-width: 1.5rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 0.72rem;
+  background: rgba(255,255,255,0.1);
+  opacity: 0.75;
+}
+
+.faw-section-body {
+  padding: 0 0.35rem 0.35rem;
+}
+
+.faw-aspect-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 0.3rem;
+  align-items: center;
+  margin: 0.25rem 0;
+  padding: 0.25rem;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.045);
+}
+
+.faw-aspect-main,
+.faw-character-value {
+  min-width: 0;
+}
+
+.faw-aspect-input,
+.faw-invoke-input {
+  width: 100%;
+  min-width: 0;
+  height: 28px;
+  margin: 0;
+  border: 1px solid transparent;
+  background: rgba(0,0,0,0.18);
+  color: inherit;
+}
+
+.faw-aspect-input:hover,
+.faw-aspect-input:focus,
+.faw-invoke-input:hover,
+.faw-invoke-input:focus {
+  border-color: rgba(255,255,255,0.25);
+}
+
+.faw-aspect-text {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
+}
+
+.faw-invokes,
+.faw-boost-counter {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  opacity: 0.9;
+  white-space: nowrap;
+}
+
+.faw-invoke-input {
+  width: 48px;
+  text-align: center;
+}
+
+.faw-counter-value {
+  min-width: 1.5rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.faw-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+  flex: 0 0 auto;
+}
+
+.faw-action-button {
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  opacity: 0.55;
+}
+
+.faw-action-button:hover {
+  opacity: 1;
+}
+
+.faw-delete:hover {
+  opacity: 1;
+}
+
+.faw-hidden-row {
+  opacity: 0.58;
+  outline: 1px dashed rgba(255,255,255,0.16);
+}
+
+.faw-hidden-note {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.66rem;
+  font-style: italic;
+  opacity: 0.58;
+}
+
+.faw-add {
+  width: 100%;
+  min-height: 28px;
+  margin-top: 0.25rem;
+  border: 1px dashed rgba(255,255,255,0.18);
+  border-radius: 4px;
+  opacity: 0.7;
+}
+
+.faw-add:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.05);
+}
+
+.faw-boost-section {
+  background: rgba(255,255,255,0.04);
+}
+
+.faw-boost-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.25rem 0;
+  padding: 0.3rem 0.4rem;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.045);
+}
+
+.faw-owner {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 0.4rem;
+  font-weight: 700;
+}
+
+.faw-owner img,
+.faw-actor-header img {
+  width: 28px;
+  height: 28px;
+  object-fit: cover;
+  border: 0;
+  border-radius: 3px;
+}
+
+.faw-owner span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.faw-boost-label {
+  font-size: 0.7rem;
+  opacity: 0.62;
+}
+
+.faw-actors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: 0.35rem;
+}
+
+.faw-actor-card {
+  min-width: 0;
+  border-radius: 5px;
+  background: rgba(255,255,255,0.04);
+  overflow: hidden;
+}
+
+.faw-actor-header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.45rem;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.faw-actor-aspects {
+  padding: 0.25rem 0.35rem 0.35rem;
+}
+
+.faw-character-aspect {
+  display: grid;
+  grid-template-columns: minmax(100px, 0.42fr) minmax(0, 1fr);
+  gap: 0.35rem;
+  align-items: center;
+  padding: 0.24rem 0;
+}
+
+.faw-character-meta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
+}
+
+.faw-owner-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.72rem;
+  font-weight: 700;
+  opacity: 0.82;
+}
+
+.faw-slot {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.68rem;
+  opacity: 0.52;
+}
+
+.faw-character-value {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.faw-character-value .faw-aspect-input,
+.faw-character-value .faw-aspect-text {
+  flex: 1 1 auto;
+}
+
+.faw-empty {
+  padding: 0.45rem;
+  text-align: center;
+  font-style: italic;
+  opacity: 0.45;
+}
+
+@media (max-width: 520px) {
+  .faw-character-aspect,
+  .faw-boost-row {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+
+  .faw-boost-counter {
+    justify-content: flex-end;
+  }
+}
+
+.faw-travelling-section {
+  background: rgba(255,255,255,0.035);
+}
+
+.faw-header-action {
+  margin-left: auto;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  color: inherit;
+  opacity: 0.65;
+}
+
+.faw-header-action:hover {
+  opacity: 1;
+}
+
+.faw-boost-item {
+  padding: 0.24rem 0;
+}
+
+.faw-boost-item .faw-character-value {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+}
+
+.faw-single-invoke {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  min-width: 2rem;
+  justify-content: center;
+  font-weight: 700;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+.faw-consequence-item {
+  display: grid;
+  grid-template-columns: minmax(100px, 0.42fr) minmax(0, 1fr);
+  gap: 0.35rem;
+  align-items: center;
+  padding: 0.24rem 0;
+}
+
+.faw-harm {
+  font-size: 0.66rem;
+  opacity: 0.48;
+}
+
+/* v0.3.3 drag handles and canvas aspect markers */
+.faw-aspect-row {
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+}
+
+.faw-character-aspect,
+.faw-consequence-item {
+  grid-template-columns: auto minmax(100px, 0.42fr) minmax(0, 1fr);
+}
+
+.faw-boost-value {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  gap: 0.2rem;
+}
+
+.faw-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  min-width: 18px;
+  height: 26px;
+  cursor: grab;
+  opacity: 0.3;
+  user-select: none;
+}
+
+.faw-drag-handle:hover {
+  opacity: 0.9;
+}
+
+.faw-drag-handle:active {
+  cursor: grabbing;
+}
+
+.faw-invoke-input {
+  border-color: rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.28);
+  font-weight: 700;
+}
+
+.faw-canvas-marker-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.faw-canvas-marker {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+
+.faw-canvas-marker-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 50%;
+  background: rgba(18,18,22,0.92);
+  color: var(--color-text-light-highlight, #f0f0e0);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.55);
+  cursor: pointer;
+}
+
+.faw-canvas-marker-button:hover,
+.faw-canvas-marker.faw-marker-open .faw-canvas-marker-button {
+  transform: scale(1.08);
+  border-color: rgba(255,255,255,0.9);
+}
+
+.faw-canvas-marker-hidden .faw-canvas-marker-button {
+  opacity: 0.55;
+  border-style: dashed;
+}
+
+.faw-canvas-marker-card {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 7px);
+  width: max-content;
+  max-width: min(320px, 70vw);
+  padding: 0.42rem 0.55rem;
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 5px;
+  background: rgba(16,16,20,0.97);
+  color: var(--color-text-light-highlight, #f0f0e0);
+  box-shadow: 0 3px 12px rgba(0,0,0,0.58);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 4px);
+  transition: opacity 100ms ease, transform 100ms ease, visibility 100ms;
+  pointer-events: none;
+  overflow-wrap: anywhere;
+}
+
+.faw-canvas-marker:hover .faw-canvas-marker-card,
+.faw-canvas-marker.faw-marker-open .faw-canvas-marker-card {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+
+.faw-canvas-marker-text {
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.faw-canvas-marker-meta {
+  margin-top: 0.2rem;
+  font-size: 0.68rem;
+  opacity: 0.58;
+}
+
+@media (max-width: 520px) {
+  .faw-character-aspect,
+  .faw-consequence-item {
+    grid-template-columns: auto 1fr;
+  }
+
+  .faw-character-aspect > .faw-character-value,
+  .faw-consequence-item > .faw-character-value {
+    grid-column: 2;
+  }
+
+  .faw-boost-value {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .faw-boost-value > .faw-row-actions {
+    grid-column: 2 / -1;
+    justify-self: end;
+  }
+}
+
+/* Allow the action-target control inside a revealed aspect marker card to be clicked. */
+.faw-canvas-marker:hover .faw-canvas-marker-card,
+.faw-canvas-marker.faw-marker-open .faw-canvas-marker-card {
+  pointer-events: auto;
+}
+
+.faw-marker-target-button {
+  margin-top: 0.35rem;
+  width: 100%;
+  min-height: 24px;
+  padding: 0.2rem 0.45rem;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 4px;
+  background: rgba(255,255,255,0.08);
+  color: inherit;
+  cursor: pointer;
+}
+
+.faw-marker-target-button:hover {
+  background: rgba(255,255,255,0.16);
+}
+
+/* v0.6.0 collapsible sections and compact filters */
+.faw-toolbar {
+  gap: 0.3rem;
+}
+
+.faw-toolbar-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.08rem;
+  flex: 0 0 auto;
+}
+
+.faw-mini-button {
+  width: 23px;
+  height: 23px;
+  min-width: 23px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  box-shadow: none;
+  background: transparent;
+  color: inherit;
+  opacity: 0.34;
+  font-size: 0.7rem;
+  line-height: 1;
+}
+
+.faw-mini-button:hover,
+.faw-mini-button:focus-visible {
+  opacity: 0.95;
+  border-color: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.07);
+}
+
+.faw-mini-button.faw-filter-active {
+  opacity: 0.9;
+  background: rgba(255,255,255,0.11);
+  border-color: rgba(255,255,255,0.18);
+}
+
+.faw-toolbar-separator {
+  width: 1px;
+  height: 16px;
+  margin: 0 0.12rem;
+  background: rgba(255,255,255,0.15);
+}
+
+.faw-section[hidden] {
+  display: none !important;
+}
+
+.faw-section > summary,
+.faw-subsection > summary {
+  list-style: none;
+}
+
+.faw-section > summary::-webkit-details-marker,
+.faw-subsection > summary::-webkit-details-marker {
+  display: none;
+}
+
+.faw-section > summary::before,
+.faw-subsection > summary::before {
+  content: "›";
+  flex: 0 0 auto;
+  width: 0.8rem;
+  text-align: center;
+  opacity: 0.48;
+  transform: rotate(0deg);
+  transition: transform 100ms ease;
+}
+
+.faw-section[open] > summary::before,
+.faw-subsection[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.faw-subsection {
+  min-width: 0;
+  margin: 0;
+  border: 0;
+}
+
+.faw-subsection + .faw-subsection {
+  margin-top: 0.25rem;
+}
+
+.faw-subsection > .faw-actor-header {
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 0;
+}
+
+.faw-subsection[open] > .faw-actor-header {
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.faw-subcount {
+  margin-left: auto;
+  min-width: 1.35rem;
+  padding: 0.02rem 0.32rem;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 0.65rem;
+  background: rgba(255,255,255,0.08);
+  opacity: 0.62;
+}
+
+.faw-subsection .faw-header-action {
+  margin-left: 0.15rem;
+}
+
+@media (max-width: 500px) {
+  .faw-scene-name {
+    max-width: 7rem;
+  }
+  .faw-mini-button {
+    width: 21px;
+    min-width: 21px;
+    height: 21px;
+  }
+}
+
+/* An action button can be dragged from the action widget onto an aspect marker. */
+.faw-canvas-marker.faw-action-drop-hover .faw-canvas-marker-button {
+  transform: scale(1.18);
+  border-color: rgba(255,255,255,1);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.18), 0 2px 10px rgba(0,0,0,0.65);
+}
+
+
+/* v0.6.1 native GM Fate Point counter */
+.faw-gm-fp {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex: 0 0 auto;
+  min-height: 24px;
+  padding: 1px 4px;
+  border: 1px solid color-mix(in srgb, var(--color-border-light-2, #777) 65%, transparent);
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--color-bg-option, #222) 55%, transparent);
+}
+
+.faw-gm-fp > i {
+  font-size: 0.72rem;
+  opacity: 0.8;
+}
+
+.faw-gm-fp-label {
+  font-size: 0.67rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.faw-gm-fp input {
+  width: 34px;
+  height: 20px;
+  margin: 0;
+  padding: 0 2px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.faw-gm-fp-step {
+  width: 19px;
+  height: 19px;
+  min-width: 19px;
+  min-height: 19px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  line-height: 18px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: transparent;
+}
+
+.faw-gm-fp-step:hover {
+  background: rgba(127, 127, 127, 0.18);
+}
+
+@media (max-width: 430px) {
+  .faw-gm-fp-label { display: none; }
+}
+
+
+/* Safe local collapse: never call Foundry ApplicationV2.minimize(). */
+.fate-aspect-widget.faw-safe-collapsed { height: auto !important; min-height: 0 !important; }
+.fate-aspect-widget.faw-safe-collapsed .window-content { display: none !important; }
+.fate-aspect-widget.faw-safe-collapsed .window-resize-handle { display: none !important; }
+.faw-compact-dialog { display:flex; flex-direction:column; gap:.65rem; width:100%; min-width:0; }
+.faw-compact-dialog label { display:flex; flex-direction:column; gap:.25rem; min-width:0; }
+.faw-compact-dialog input, .faw-compact-dialog select { width:100%; min-width:0; }
+
+
+/* v0.22 — pinned aspects and direct drag/drop */
+.faw-favorite {
+  flex: 0 0 auto;
+  opacity: .45;
+}
+.faw-favorite.is-active { color: #d6ad44; opacity: 1; }
+.faw-aspect-row:hover > .faw-favorite,
+.faw-character-value:hover > .faw-favorite,
+.faw-consequence-item:hover .faw-favorite { opacity: 1; }
+.faw-section[data-aspect-drop-target] { transition: box-shadow .12s ease, background .12s ease; }
+.faw-section[data-aspect-drop-target].faw-aspect-drop-active {
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--color-warm-2, #b97a2d) 65%, transparent);
+  background: color-mix(in srgb, var(--color-warm-2, #b97a2d) 8%, transparent);
+}

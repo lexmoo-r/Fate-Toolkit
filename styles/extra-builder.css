@@ -1,0 +1,66 @@
+.faw-extra-builder,.faw-extra-import { min-width:min(580px,85vw);max-height:65vh;overflow:auto;padding:10px;color:var(--color-text-primary,#ddd);}
+.faw-extra-base,.faw-extra-effect-fields {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+.faw-extra-builder label {display:flex;flex-direction:column;gap:4px;font-weight:500;min-width:0;}
+.faw-extra-builder :is(input,select,textarea),.faw-extra-import textarea {width:100%;box-sizing:border-box;min-width:0;}
+.faw-extra-full {grid-column:1/-1;}
+.faw-extra-hint {font-size:12px;opacity:.8;line-height:1.45;}
+.faw-extra-advanced {margin-top:12px;border:1px solid var(--color-border-light-tertiary,#555);border-radius:8px;padding:8px;}
+.faw-extra-advanced summary {cursor:pointer;padding:4px 0;}
+.faw-extra-effect {border:1px solid var(--color-border-light-tertiary,#555);border-radius:8px;padding:10px;margin:8px 0;}
+.faw-extra-effect legend {display:flex;align-items:center;gap:8px;}
+.faw-extra-effect [data-remove-effect] {width:24px;height:24px;min-height:24px;line-height:1;padding:0;}
+.fts-extra-hotbar {display:inline-flex;align-items:center;justify-content:center;min-width:24px;min-height:26px;border:1px dashed currentColor;border-radius:5px;cursor:grab;opacity:.85;}
+.fts-extra-hotbar:active {cursor:grabbing;}
+@media(max-width:650px) {.faw-extra-base,.faw-extra-effect-fields{grid-template-columns:1fr;}}
+
+.faw-extra-conditions{margin:7px 0;border:1px solid #8885;border-radius:5px;padding:6px;}
+.faw-extra-conditions summary{cursor:pointer;font-size:12px;}
+.faw-extra-condition{display:grid;grid-template-columns:1fr 1fr 68px 22px;gap:4px;align-items:end;padding:4px 0;}
+.faw-extra-condition label{font-size:11px;}
+.faw-extra-condition button{min-width:0;min-height:26px;}
+.faw-extra-branch{display:grid;grid-template-columns:1fr 1fr;gap:8px;border-top:1px solid #8885;padding-top:10px;}
+.faw-extra-branch-hidden{display:none;}
+.faw-extra-library-list{max-height:56vh;overflow:auto;display:flex;flex-direction:column;gap:6px;}
+.faw-extra-library-item{display:flex;gap:10px;padding:8px;align-items:center;border:1px solid #8885;border-radius:5px;}
+.faw-extra-library-item small{margin-left:auto;opacity:.7;}
+.faw-extra-library input[type=checkbox]{width:auto;}
+@media(max-width:720px){.faw-extra-condition,.faw-extra-branch{grid-template-columns:1fr;}}
+
+/* Builder 2026: consistent field dimensions, readable description, visual icon picker. */
+.faw-extra-builder{min-width:min(780px,90vw);padding:18px;box-sizing:border-box;}
+.faw-extra-builder textarea[name="description"]{min-height:160px;resize:vertical;line-height:1.45;}
+.faw-extra-builder .faw-extra-base{gap:14px;align-items:start;}
+.faw-extra-builder .faw-extra-base>label,.faw-extra-icon-picker{padding:10px;border:1px solid var(--color-border-light-tertiary,#8885);border-radius:8px;min-height:73px;box-sizing:border-box;}
+.faw-extra-icon-picker{display:flex;flex-direction:column;gap:8px;min-width:0;}
+.faw-extra-icon-preview{display:flex;align-items:center;gap:12px;}
+.faw-extra-icon-preview img{width:62px;height:62px;object-fit:contain;flex:none;border-radius:8px;background:#0003;}
+.faw-extra-icon-preview>div{display:flex;flex-direction:column;gap:5px;min-width:0;}
+.faw-extra-icon-preview button{min-width:0;white-space:normal;}
+.faw-extra-builder .faw-extra-advanced{padding:12px;margin-top:14px;}
+@media(max-width:700px){.faw-extra-builder{min-width:0;padding:10px;}}
+
+/* Toolkit form system: predictable label hierarchy and conditional effect cards. */
+.application:has(.faw-extra-builder){min-width:min(600px,94vw);max-width:min(920px,96vw);}
+.application:has(.faw-extra-builder) .dialog-content{min-height:0;overflow:hidden;padding:0!important;}
+.application:has(.faw-extra-builder) .window-content{min-height:0;overflow:hidden;}
+.application:has(.faw-extra-builder) .dialog-buttons{padding:12px 18px!important;border-top:1px solid var(--color-border-light-tertiary,#7777);}
+.faw-extra-builder{display:block!important;width:100%!important;min-width:0!important;max-height:min(74vh,780px)!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-gutter:stable;padding:18px 20px!important;box-sizing:border-box;}
+.faw-extra-builder *{box-sizing:border-box;}
+.faw-extra-builder label{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:7px!important;min-width:0!important;margin:0!important;font-weight:600;line-height:1.4;}
+.faw-extra-builder label :is(input,select,textarea){display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;}
+.faw-extra-builder :is(input,select){min-height:34px!important;padding:5px 9px!important;}
+.faw-extra-builder .faw-extra-base{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start;}
+.faw-extra-builder .faw-extra-base>label,.faw-extra-icon-picker{background:rgba(255,255,255,.025);padding:12px!important;border:1px solid var(--color-border-light-tertiary,#7777);border-radius:9px;min-height:70px;}
+.faw-extra-builder label.faw-extra-full{grid-column:1/-1;}
+.faw-extra-builder textarea[name="description"]{min-height:170px!important;line-height:1.5!important;resize:vertical;}
+.faw-extra-builder details.faw-extra-advanced{border:1px solid var(--color-border-light-tertiary,#7777);border-radius:9px;background:rgba(255,255,255,.025);padding:12px 14px;margin-top:16px;}
+.faw-extra-builder details.faw-extra-advanced >summary{font-size:13px;font-weight:700;cursor:pointer;line-height:1.5;padding:5px 2px;}
+.faw-extra-builder .faw-extra-effect{min-width:0;border-radius:8px;padding:12px;margin-top:12px;}
+.faw-extra-builder .faw-extra-effect legend{font-size:12px;font-weight:700;max-width:100%;white-space:normal;}
+.faw-extra-builder .faw-extra-effect-fields{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 14px;align-items:start;}
+.faw-extra-builder [data-effect-param][hidden]{display:none!important;}
+.faw-extra-builder .faw-extra-effect-fields>[name="kind"]{grid-column:1/-1;}
+.faw-extra-builder .faw-extra-condition{grid-template-columns:minmax(100px,1fr) minmax(130px,1.2fr) 66px 32px;gap:7px;align-items:end;}
+.faw-extra-builder .faw-extra-condition button{min-width:32px;min-height:34px;padding:0;}
+.faw-extra-builder .faw-extra-conditions{margin:12px 0;padding:10px;border-radius:7px;}
+@media(max-width:650px){.faw-extra-builder{padding:12px!important;}.faw-extra-builder .faw-extra-base,.faw-extra-builder .faw-extra-effect-fields,.faw-extra-builder .faw-extra-condition{grid-template-columns:1fr;}.faw-extra-builder .faw-extra-condition button{justify-self:end;}}

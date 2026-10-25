@@ -1,0 +1,270 @@
+/* Fate Toolkit v1.41 — component-level UI audit.
+ * These rules deliberately sit last. They standardise controls without
+ * replacing the density/touch profiles introduced in v1.38-v1.40.
+ */
+
+:root {
+  --faw-component-target: 32px;
+  --faw-component-target-compact: 30px;
+  --faw-component-meta-size: max(.72rem, 11px);
+}
+
+/* One desktop target scale for icon-only controls. The visible icon may stay
+ * small; the interactive hit area must not. */
+:where(
+  .fate-aspect-widget .faw-mini-button,
+  .fate-aspect-widget .faw-action-button,
+  .fate-aspect-widget .faw-header-action,
+  .fate-aspect-widget .faw-gm-fp-step,
+  .faw-combat-tracker .fct-row-actions > button,
+  .faw-combat-tracker .fct-gm-tools > button,
+  .faw-combat-tracker .fct-journal-row > button,
+  .fwc-window .fwc-icon-button,
+  .fwc-window .fwc-focus-toggle,
+  .fms-window .faw-context-primary,
+  .fms-window .faw-context-secondary,
+  .fms-window .fms-skill-actions > button,
+  .fate-toolkit-character-sheet .fts-icon-button,
+  .fate-toolkit-character-sheet .fts-star,
+  .fate-toolkit-character-sheet .fts-toggle,
+  .fate-toolkit-character-sheet .fts-mini-actions > button,
+  .fate-toolkit-character-sheet .fts-layout-actions > button,
+  .faw-context-help
+) {
+  min-width: var(--faw-component-target);
+  width: var(--faw-component-target);
+  min-height: var(--faw-component-target);
+  height: var(--faw-component-target);
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+}
+
+html.faw-density-compact :where(
+  .fate-aspect-widget .faw-mini-button,
+  .fate-aspect-widget .faw-action-button,
+  .fate-aspect-widget .faw-header-action,
+  .faw-combat-tracker .fct-row-actions > button,
+  .fwc-window .fwc-icon-button,
+  .fms-window .fms-skill-actions > button,
+  .fate-toolkit-character-sheet .fts-star,
+  .fate-toolkit-character-sheet .fts-toggle,
+  .fate-toolkit-character-sheet .fts-mini-actions > button,
+  .fate-toolkit-character-sheet .fts-layout-actions > button
+) {
+  min-width: var(--faw-component-target-compact);
+  width: var(--faw-component-target-compact);
+  min-height: var(--faw-component-target-compact);
+  height: var(--faw-component-target-compact);
+}
+
+/* Stateful controls: pressed must look meaningfully different from hover. */
+:where(
+  .fate-aspect-widget,
+  .fwc-window,
+  .fms-window,
+  .fate-toolkit-character-sheet
+) [aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--ft-ui-accent, var(--fts-accent, #c49a57)) 62%, transparent);
+  background: color-mix(in srgb, var(--ft-ui-accent, var(--fts-accent, #c49a57)) 16%, transparent);
+}
+
+/* Character sheet tabs follow a real tablist/tabpanel model. */
+.fate-toolkit-character-sheet .fts-tabs {
+  align-items: stretch;
+}
+.fate-toolkit-character-sheet .fts-tab-set {
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+}
+.fate-toolkit-character-sheet .fts-tab-set .fts-tab-button[aria-selected="true"] {
+  position: relative;
+}
+.fate-toolkit-character-sheet .fts-tab-set .fts-tab-button[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  inset: auto 7px 0;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--fts-accent);
+}
+.fate-toolkit-character-sheet .fts-tab-panel[hidden],
+.fate-toolkit-character-sheet .fts-tab-hidden {
+  display: none !important;
+}
+
+/* D&D/Tidy-style hierarchy: metadata is compact, never microscopic. */
+:where(
+  .fate-aspect-widget .faw-hidden-note,
+  .fate-aspect-widget .faw-count,
+  .fate-aspect-widget .faw-subcount,
+  .faw-combat-tracker .fct-last-event,
+  .faw-combat-tracker .fct-badge,
+  .fms-window .fms-footnote,
+  .fms-window .fms-submit-hint,
+  .fms-window .fms-chat-meta,
+  .fms-window .fms-resource > span,
+  .fms-window .fms-resource > small,
+  .fwc-window small,
+  .fate-toolkit-character-sheet .fts-count,
+  .fate-toolkit-character-sheet .fts-pill,
+  .fate-toolkit-character-sheet .fts-action-code,
+  .fate-toolkit-character-sheet .fts-track-group h4
+) {
+  font-size: var(--faw-component-meta-size);
+  line-height: 1.25;
+}
+
+/* Empty states are an information component, not unstyled leftover text. */
+.fate-toolkit-character-sheet .fts-empty-state,
+.fate-aspect-widget .faw-empty-state,
+.fwc-window .fwc-inline-empty {
+  min-width: 0;
+  padding: 16px 12px;
+  display: grid;
+  place-items: center;
+  gap: 4px;
+  text-align: center;
+  color: var(--fts-muted, var(--ft-ui-muted, currentColor));
+  border: 1px dashed var(--fts-border, var(--ft-ui-border, currentColor));
+  border-radius: var(--fts-radius-sm, var(--ft-ui-radius-sm, 6px));
+  background: color-mix(in srgb, currentColor 2.5%, transparent);
+}
+.fate-toolkit-character-sheet .fts-empty-state > i,
+.fate-aspect-widget .faw-empty-state > i,
+.fwc-window .fwc-inline-empty > i {
+  font-size: 1.1rem;
+  opacity: .7;
+}
+.fate-toolkit-character-sheet .fts-empty-state > strong { color: var(--fts-text); }
+.fate-toolkit-character-sheet .fts-empty-state > span { max-width: 34rem; font-size: .78rem; line-height: 1.35; }
+.fate-aspect-widget .faw-empty-state { padding: 10px 8px; grid-template-columns: auto 1fr; justify-items: start; text-align: left; }
+.fwc-window .fwc-inline-empty { padding: 10px; grid-template-columns: auto 1fr; justify-items: start; text-align: left; }
+
+/* Dense list rows: one clear primary surface and quieter secondary controls. */
+.fate-toolkit-character-sheet :is(.fts-skill-row,.fts-extra-row,.fts-aspect-row,.fts-stunt-row) {
+  min-height: 38px;
+}
+.fate-toolkit-character-sheet .fts-extra-main {
+  min-height: 34px;
+  border-radius: var(--fts-radius-sm);
+}
+.fate-toolkit-character-sheet .fts-extra-main:hover,
+.fate-toolkit-character-sheet .fts-extra-main:focus-visible {
+  background: color-mix(in srgb, var(--fts-accent) 7%, transparent);
+}
+.fate-toolkit-character-sheet .fts-skill-row:focus-within,
+.fate-toolkit-character-sheet .fts-aspect-row:focus-within,
+.fate-toolkit-character-sheet .fts-stunt-row:focus-within,
+.fate-toolkit-character-sheet .fts-extra-row:focus-within {
+  border-color: var(--fts-border-strong);
+}
+
+/* Discrete stress/consequence boxes are toggle buttons: preserve a strong
+ * selected state and a target larger than the visible pip. */
+.fate-toolkit-character-sheet .fts-track-box {
+  min-width: 32px;
+  width: 32px;
+  min-height: 32px;
+  height: 32px;
+}
+.fate-toolkit-character-sheet .fts-track-box[aria-pressed="true"] {
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 18%);
+}
+
+/* Destructive icon actions read as destructive before hover. */
+.fate-toolkit-character-sheet .is-danger,
+.fate-aspect-widget .faw-delete,
+.faw-combat-tracker .is-danger,
+.fms-window .fms-danger {
+  color: color-mix(in srgb, var(--ft-ui-danger, #b84c4c) 82%, currentColor 18%);
+}
+
+/* Comfortable character-sheet profile now matches the toolkit's third
+ * density profile instead of silently falling back to standard. */
+.fate-toolkit-character-sheet[data-density="comfortable"] .fts-header { padding: 14px 16px; }
+.fate-toolkit-character-sheet[data-density="comfortable"] .fts-tab-panel { padding: 12px; }
+.fate-toolkit-character-sheet[data-density="comfortable"] .fts-section-grid { gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+.fate-toolkit-character-sheet[data-density="comfortable"] .fts-card-body { padding: 11px; }
+.fate-toolkit-character-sheet[data-density="comfortable"] :is(.fts-aspect-row,.fts-stunt-row,.fts-custom-field) { padding: 9px; }
+
+/* Tidy-style secondary information should truncate before it pushes actions
+ * off-screen. */
+:where(.faw-combat-tracker .fct-identity,.fwc-window .fwc-card-title,.fate-toolkit-character-sheet .fts-row-title) {
+  min-width: 0;
+}
+:where(.faw-combat-tracker .fct-name,.fwc-window .fwc-card-title > strong,.fate-toolkit-character-sheet .fts-row-title > strong) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Narrow sheets: keep both tab semantics and the always-available Action
+ * Center without making three equal pseudo-tabs. */
+.fate-toolkit-character-sheet.fts-narrow .fts-tabs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.fate-toolkit-character-sheet.fts-narrow .fts-tab-set { min-width: 0; }
+.fate-toolkit-character-sheet.fts-narrow .fts-tab-set .fts-tab-button { flex: 1 1 0; }
+
+@media (hover: none), (pointer: coarse) {
+  :root { --faw-component-target: 40px; --faw-component-target-compact: 38px; }
+  .fate-toolkit-character-sheet .fts-track-box { min-width: 40px; width: 40px; min-height: 40px; height: 40px; }
+}
+
+/* Search/filter feedback: compact live result count, without extra buttons. */
+.fate-toolkit-character-sheet .fts-card-header > .fts-search-control {
+  min-width: 0;
+  width: min(176px, 46%);
+  position: relative;
+  display: block;
+}
+.fate-toolkit-character-sheet .fts-search-control > input[type="search"] {
+  width: 100%;
+  min-height: 32px;
+  padding-right: 34px;
+  border: 1px solid var(--fts-border);
+  background: var(--fts-panel-soft);
+  color: var(--fts-text);
+}
+.fate-toolkit-character-sheet .fts-search-count {
+  position: absolute;
+  inset: 50% 8px auto auto;
+  transform: translateY(-50%);
+  color: var(--fts-muted);
+  font-size: var(--faw-component-meta-size);
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+.fate-toolkit-character-sheet [data-search-group].is-filter-empty::after {
+  content: "—";
+  display: grid;
+  place-items: center;
+  min-height: 48px;
+  color: var(--fts-muted);
+  font-size: 1.15rem;
+}
+
+/* v1.44 reference-parity pass: search feedback is a first-class compact
+ * status component across dialogs, not only on the character sheet. */
+.frr-search-status {
+  min-width: 2.5em;
+  min-height: 1em;
+  color: var(--ft-ui-muted, currentColor);
+  font-size: var(--faw-component-meta-size);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+.frr-list-toolbar > .frr-search-status {
+  margin-inline-start: auto;
+  align-self: center;
+}
+
+/* Groups copied from mature Foundry patterns keep their visual layout while
+ * exposing the relationship of their controls to assistive technology. */
+:where(.faw-toolbar-tools[role="toolbar"], .frr-list-toolbar[role="toolbar"]) {
+  align-items: center;
+}

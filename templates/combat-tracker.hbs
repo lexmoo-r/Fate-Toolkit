@@ -1,0 +1,163 @@
+<div class="fct-shell">
+  {{#unless hasCombat}}
+    <div class="fct-empty">
+      <button type="button" class="faw-context-help" data-faw-help="combat" title="{{localize 'FAW.Help'}}" aria-label="{{localize 'FAW.Help'}}"><i class="fa-solid fa-circle-question" aria-hidden="true"></i></button>
+      <i class="fa-solid fa-list-ol" aria-hidden="true"></i>
+      <strong>{{localize "FCT.NoConflict"}}</strong>
+      {{#if sceneName}}<span>{{sceneName}}</span>{{/if}}
+      {{#if canCreate}}
+        <button type="button" data-fct-action="create"><i class="fa-solid fa-plus" aria-hidden="true"></i> {{localize "FCT.CreateFromSelected"}}</button>
+        <small>{{localize "FCT.CreateHint"}}</small>
+      {{/if}}
+    </div>
+  {{else}}
+    <header class="fct-header">
+      <div class="fct-title-row">
+        {{#if isGM}}
+          <input name="fct-conflict-name" type="text" value="{{conflictName}}" aria-label="{{localize 'FCT.ConflictName'}}">
+        {{else}}
+          <strong>{{conflictName}}</strong>
+        {{/if}}
+<button type="button" class="faw-context-help" data-faw-help="combat" title="{{localize 'FAW.Help'}}" aria-label="{{localize 'FAW.Help'}}"><i class="fa-solid fa-circle-question" aria-hidden="true"></i></button>
+        <span class="fct-round {{#unless started}}fct-prep{{/unless}}">
+          {{#if started}}{{localize "FCT.Exchange"}} {{round}}{{else}}{{localize "FCT.Preparation"}}{{/if}}
+        </span>
+      </div>
+      <div class="fct-summary">
+        <span><i class="fa-solid fa-users" aria-hidden="true"></i> {{participantCount}}</span>
+        <span><i class="fa-regular fa-circle" aria-hidden="true"></i> {{localize "FCT.Waiting"}}: {{unactedCount}}</span>
+        {{#if hasCurrent}}<span class="fct-current-summary"><i class="fa-solid fa-play" aria-hidden="true"></i> {{currentName}}</span>{{/if}}
+      </div>
+    </header>
+
+    {{#if hasAnyPendingDamage}}
+      <button type="button" class="fct-pending-damage" data-fct-action="open-first-damage">
+        <i class="fa-solid fa-hourglass-half" aria-hidden="true"></i>
+        <span>{{localize "FCT.UnresolvedHits"}}: {{pendingDamageCount}}</span>
+        <i class="fa-solid fa-message" aria-hidden="true"></i>
+      </button>
+    {{/if}}
+
+    {{#if isGM}}
+      <section class="fct-gm-tools">
+        <div class="fct-order-tools">
+          <label>
+            <span>{{localize "FCT.OrderSkill"}}</span>
+            <input type="search" data-fct-skill-search placeholder="{{localize 'FCT.SearchSkill'}}" aria-label="{{localize 'FCT.SearchSkill'}}" autocomplete="off">
+            <select name="fct-order-skill">
+              <option value="">{{localize "FCT.ManualOrder"}}</option>
+              {{#each skills}}
+                <option value="{{name}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+              {{/each}}
+            </select>
+          </label>
+          <button type="button" data-fct-action="sort-skill" {{#unless selectedSkill}}disabled{{/unless}} title="{{localize 'FCT.SortBySkill'}}" aria-label="{{localize 'FCT.SortBySkill'}}"><i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i></button>
+        </div>
+        <button type="button" data-fct-action="add-selected" title="{{localize 'FCT.AddSelected'}}" aria-label="{{localize 'FCT.AddSelected'}}"><i class="fa-solid fa-user-plus" aria-hidden="true"></i></button>
+      </section>
+    {{/if}}
+
+    <label class="fct-participant-search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" data-fct-participant-search placeholder="{{localize 'FCT.SearchParticipant'}}" aria-label="{{localize 'FCT.SearchParticipant'}}" autocomplete="off"></label>
+
+    <ol class="fct-list">
+      {{#each rows}}
+        <li class="fct-row {{#if current}}fct-current{{/if}} {{#if acted}}fct-acted{{/if}} {{#if defeated}}fct-defeated{{/if}}" data-combatant-id="{{id}}" data-search="{{name}} {{selectedSkill}} {{skillRankText}}">
+          <div class="fct-main-row">
+            <div class="fct-order-number">{{index}}</div>
+            <button type="button" class="fct-avatar" data-fct-row-action="focus" data-combatant-id="{{id}}" title="{{localize 'FCT.FocusToken'}}" aria-label="{{localize 'FCT.FocusToken'}}">
+              <img src="{{img}}" alt="{{name}}">
+            </button>
+            <div class="fct-identity">
+              <button type="button" class="fct-name" data-fct-row-action="sheet" data-combatant-id="{{id}}">{{name}}</button>
+              <div class="fct-badges" role="group" aria-label="{{localize 'FCT.State'}}">
+                {{#if current}}<span class="fct-badge fct-badge-current"><i class="fa-solid fa-play" aria-hidden="true"></i> {{localize "FCT.Current"}}</span>{{/if}}
+                {{#if defeated}}
+                  <span class="fct-badge"><i class="fa-solid fa-skull" aria-hidden="true"></i> {{localize "FCT.Defeated"}}</span>
+                {{else}}
+                  {{#if acted}}<span class="fct-badge fct-badge-done"><i class="fa-solid fa-check" aria-hidden="true"></i> {{localize "FCT.Acted"}}</span>
+                  {{else}}<span class="fct-badge"><i class="fa-regular fa-circle" aria-hidden="true"></i> {{localize "FCT.Waiting"}}</span>{{/if}}
+                {{/if}}
+                {{#if hidden}}<span class="fct-badge"><i class="fa-solid fa-eye-slash" aria-hidden="true"></i></span>{{/if}}
+                {{#if selectedSkill}}<span class="fct-badge">{{selectedSkillLabel}} {{skillRankText}}</span>{{/if}}
+                <span class="fct-badge">{{#if campaignMode}}{{localize "FAW.Campaign.Will"}} {{fatePoints}}/{{campaignMax}}{{else}}{{localize "FCT.FatePointsShort"}} {{fatePoints}}{{/if}}</span>
+                {{#unless campaignMode}}{{#if stressTotal}}<span class="fct-badge"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> {{stressMarked}}/{{stressTotal}}</span>{{/if}}{{/unless}}
+                {{#if consequenceCount}}<span class="fct-badge"><i class="fa-solid fa-bandage" aria-hidden="true"></i> {{consequenceCount}}</span>{{/if}}
+                {{#if boosts}}<span class="fct-badge">{{localize "FCT.Boosts"}} {{boosts}}</span>{{/if}}
+                {{#if hasPendingDamage}}<span class="fct-badge fct-badge-warning"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i> {{pendingDamage.remaining}}</span>{{/if}}
+              </div>
+              {{#if lastEvent}}
+                <div class="fct-last-event {{lastEvent.cssClass}}"><i class="{{lastEvent.icon}}" aria-hidden="true"></i><span>{{lastEvent.text}}</span></div>
+              {{/if}}
+            </div>
+            <div class="fct-row-actions faw-context-actions">
+              {{#if hasPendingDamage}}<button type="button" class="fct-warning-button faw-context-primary" data-fct-row-action="damage" data-combatant-id="{{id}}" title="{{localize 'FCT.OpenUnresolvedHit'}}" aria-label="{{localize 'FCT.OpenUnresolvedHit'}}"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></button>
+              {{else}}{{#if canFinish}}<button type="button" class="fct-finish-mini faw-context-primary" data-fct-row-action="acted" data-combatant-id="{{id}}" title="{{localize 'FCT.FinishTurn'}}" aria-label="{{localize 'FCT.FinishTurn'}}"><i class="fa-solid fa-check" aria-hidden="true"></i></button>
+              {{else}}{{#if canAct}}<button type="button" class="faw-context-primary" data-fct-row-action="action" data-combatant-id="{{id}}" title="{{localize 'FCT.ActAsParticipant'}}" aria-label="{{localize 'FCT.ActAsParticipant'}}"><i class="fa-solid fa-burst" aria-hidden="true"></i></button>{{/if}}{{/if}}{{/if}}
+              <button type="button" class="fct-more-actions" data-fct-row-action="toggle-menu" data-combatant-id="{{id}}" aria-expanded="false" title="{{localize 'FCT.MoreActions'}}" aria-label="{{localize 'FCT.MoreActions'}}"><i class="fa-solid fa-ellipsis" aria-hidden="true"></i></button>
+            </div>
+          </div>
+          <div class="fct-inline-menu" hidden aria-label="{{localize 'FCT.MoreActions'}}">
+                  {{#if canAct}}<button type="button" data-fct-row-action="action" data-combatant-id="{{id}}"><i class="fa-solid fa-burst" aria-hidden="true"></i><span>{{localize 'FCT.ActAsParticipant'}}</span></button>{{/if}}
+                  {{#if hasToken}}<button type="button" data-fct-row-action="target" data-combatant-id="{{id}}"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i><span>{{localize 'FCT.TargetForAction'}}</span></button>{{/if}}
+                  {{#if canFinish}}<button type="button" data-fct-row-action="acted" data-combatant-id="{{id}}"><i class="fa-solid fa-check" aria-hidden="true"></i><span>{{localize 'FCT.FinishTurn'}}</span></button>{{/if}}
+                  {{#if canConcede}}<button type="button" data-fct-row-action="concede" data-combatant-id="{{id}}"><i class="fa-solid fa-flag" aria-hidden="true"></i><span>{{localize 'FAW.Campaign.Concede'}}</span></button>{{/if}}
+                  {{#if canManage}}
+                    <button type="button" data-fct-row-action="current" data-combatant-id="{{id}}"><i class="fa-solid fa-play" aria-hidden="true"></i><span>{{localize 'FCT.MakeCurrent'}}</span></button>
+                    <button type="button" data-fct-row-action="acted" data-combatant-id="{{id}}" aria-pressed="{{#if acted}}true{{else}}false{{/if}}"><i class="fa-solid fa-check-double" aria-hidden="true"></i><span>{{localize 'FCT.ToggleActed'}}</span></button>
+                    <button type="button" data-fct-row-action="up" data-combatant-id="{{id}}" {{#unless canMoveUp}}disabled{{/unless}}><i class="fa-solid fa-chevron-up" aria-hidden="true"></i><span>{{localize 'FCT.MoveUp'}}</span></button>
+                    <button type="button" data-fct-row-action="down" data-combatant-id="{{id}}" {{#unless canMoveDown}}disabled{{/unless}}><i class="fa-solid fa-chevron-down" aria-hidden="true"></i><span>{{localize 'FCT.MoveDown'}}</span></button>
+                    <button type="button" data-fct-row-action="defeated" data-combatant-id="{{id}}" aria-pressed="{{#if defeated}}true{{else}}false{{/if}}"><i class="fa-solid fa-skull" aria-hidden="true"></i><span>{{localize 'FCT.ToggleDefeated'}}</span></button>
+                    <button type="button" class="is-danger" data-fct-row-action="remove" data-combatant-id="{{id}}"><i class="fa-solid fa-user-minus" aria-hidden="true"></i><span>{{localize 'FCT.Remove'}}</span></button>
+                  {{/if}}
+                
+          </div>
+
+          {{#if ../showDetailedState}}
+            {{#if hasState}}
+              <details class="fct-state">
+                <summary>{{localize "FCT.State"}}</summary>
+                {{#each tracks}}
+                  <div class="fct-track-row">
+                    <span>{{name}}</span>
+                    <span class="fct-boxes">
+                      {{#each boxes}}<i class="fa-{{#if marked}}solid{{else}}regular{{/if}} fa-square" title="{{index}}" aria-hidden="true"></i>{{/each}}
+                    </span>
+                  </div>
+                {{/each}}
+                {{#each consequences}}
+                  <div class="fct-consequence"><i class="fa-solid fa-burst" aria-hidden="true"></i> {{name}} <small>({{harm}})</small></div>
+                {{/each}}
+              </details>
+            {{/if}}
+          {{/if}}
+
+        </li>
+      {{/each}}
+    </ol>
+
+    {{#if hasTimeline}}
+      <details class="fct-journal">
+        <summary><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> {{localize "FCT.Timeline"}}</summary>
+        <div class="fct-journal-list">
+          {{#each timeline}}
+            <div class="fct-journal-row {{cssClass}}">
+              <i class="{{icon}}" aria-hidden="true"></i>
+              <div><span>{{text}}</span><small>{{#if round}}{{localize "FCT.Exchange"}} {{round}} · {{/if}}{{time}}</small></div>
+              {{#if hasMessage}}<button type="button" data-fct-journal-message="{{messageId}}" title="{{localize 'FCT.OpenChatMessage'}}" aria-label="{{localize 'FCT.OpenChatMessage'}}"><i class="fa-solid fa-message" aria-hidden="true"></i></button>{{/if}}
+            </div>
+          {{/each}}
+        </div>
+      </details>
+    {{/if}}
+
+    <footer class="fct-footer">
+      {{#if canFinishCurrent}}
+        <button type="button" class="fct-primary" data-fct-action="finish-current"><i class="fa-solid fa-check" aria-hidden="true"></i> {{localize "FCT.FinishTurn"}} — {{currentName}}</button>
+      {{/if}}
+      {{#if isGM}}
+        <button type="button" class="{{#if allActed}}{{#if canAdvanceExchange}}fct-primary{{/if}}{{/if}}" data-fct-action="new-exchange" {{#if hasAnyPendingDamage}}title="{{localize 'FCT.ExchangeBlockedDamageHint'}}"{{/if}} aria-label="{{localize 'FCT.ExchangeBlockedDamageHint'}}"><i class="fa-solid fa-rotate-right" aria-hidden="true"></i> {{#if started}}{{localize "FCT.NextExchange"}}{{else}}{{localize "FCT.StartExchange"}}{{/if}}</button>
+        <button type="button" class="fct-danger" data-fct-action="end-conflict"><i class="fa-solid fa-flag-checkered" aria-hidden="true"></i> {{localize "FCT.EndConflict"}}</button>
+      {{/if}}
+    </footer>
+  {{/unless}}
+</div>
