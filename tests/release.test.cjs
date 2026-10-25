@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const root = path.join(__dirname, '..');
 const moduleJson = JSON.parse(fs.readFileSync(path.join(root, 'module.json'), 'utf8'));
-assert.equal(moduleJson.version, '1.50.0-preview.9.4');
+assert.equal(moduleJson.version, '1.50.0-preview.9.5');
 assert.deepEqual(moduleJson.compatibility, { minimum:'13.351', verified:'13.351', maximum:'13.351' });
 const sys = moduleJson.relationships.systems.find(row => row.id === 'fate-core-official');
 assert.ok(sys, 'Fate Core Official relationship missing');

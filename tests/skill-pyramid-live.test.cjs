@@ -1,0 +1,41 @@
+const assert=require('node:assert/strict');
+const fs=require('fs'),path=require('path'),vm=require('vm');
+const {baseContext}=require('./harness.cjs');
+const script=fs.readFileSync(path.join(__dirname,'..','scripts/character-editors.js'),'utf8');
+(async()=>{
+ const alerts=[];
+ const context=baseContext({game:{user:{id:'gm',isGM:true},settings:{get:()=>null}}});
+ context.foundry.utils.deepClone=structuredClone;
+ context.FateToolkitWill={enabled:()=>true,details:()=>({isPc:true})};
+ context.ui.notifications.error=t=>alerts.push(t);
+ let cfg;
+ context.foundry.applications.api.DialogV2.wait=async c=>{cfg=c;return null};
+ vm.createContext(context);vm.runInContext(script,context);
+ const actor={isOwner:true,system:{skills:{one:{name:'Атлетика',rank:0},two:{name:'Драка',rank:0}}}};
+ await context.FateToolkitEditors.editActor(actor,'skills');
+ assert.match(cfg.content,/data-skill-pyramid/);
+ for(const [rank,cap] of [[4,1],[3,2],[2,3],[1,5]]){
+   const row=cfg.content.match(new RegExp(`data-pyramid-tier="${rank}"[\\s\\S]*?<\\/div><span class="fte-pyramid-usage"`));
+   assert.ok(row,`pyramid tier ${rank} missing`);
+   assert.equal((row[0].match(/data-pyramid-slot=/g)||[]).length,cap);
+ }
+ assert.match(cfg.content,/<strong data-skill-remaining>21<\/strong>/);
+ const row=(key,name,rank)=>({dataset:{traitKey:key},querySelector(sel){const match=sel.match(/name="([^"]+)"/);return match?{value:{name,rank}[match[1]]}:null}});
+ const click=async(ranks)=>cfg.buttons[1].callback(null,{form:{querySelectorAll:()=>ranks.map(([key,name,rank])=>row(key,name,rank))}});
+ assert.equal((await click([['one','Атлетика','6'],['two','Драка','0']])),null,'invalid +6 must be rejected even for GM');
+ assert.ok(alerts.pop().includes('от +0 до +4'));
+ assert.equal((await click([['one','Атлетика','4'],['two','Драка','4']])),null,'two +4 ranks must be rejected');
+ assert.ok(alerts.pop().includes('ступени +4'));
+ assert.equal((await click([['one','Атлетика','4'],['two','Драка','3']])).length,2,'valid split must be accepted');
+ const npc=baseContext({game:{user:{id:'gm',isGM:true},settings:{get:()=>null}}});npc.foundry.utils.deepClone=structuredClone;
+ npc.FateToolkitWill={enabled:()=>true,details:()=>({isPc:false})};
+ let n; npc.foundry.applications.api.DialogV2.wait=async c=>{n=c;return null};vm.createContext(npc);vm.runInContext(script,npc);
+ await npc.FateToolkitEditors.editActor(actor,'skills');
+ assert.match(n.content,/Без ограничений/,'NPCs need unrestricted budgets');
+ const npcSave=n.buttons[1].callback(null,{form:{querySelectorAll:()=>[row('one','Атлетика','6'),row('two','Драка','5')]}});
+ assert.equal(npcSave.length,2,'NPC +6 rank must be allowed');
+ const css=fs.readFileSync(path.join(__dirname,'..','styles/character-editors.css'),'utf8');
+ assert.match(css,/\.fte-pyramid-slot\.is-filled/);
+ assert.match(script,/event\.target\.matches\('\.fte-skill-rank, \.fte-skill-name input'\)/,'updates must react to rank and name');
+ console.log('skill-pyramid-live.test.cjs OK');
+})().catch(e=>{console.error(e);process.exitCode=1});

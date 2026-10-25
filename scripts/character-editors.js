@@ -22,6 +22,28 @@
   .fte-editor .fte-field select{height:36px!important;min-height:36px!important;padding:4px 9px!important}
   .fte-editor .fte-trait:has([name="linked_skill"]) .fte-field-full{grid-column:1/-1!important}
   @media(max-width:640px){.fte-editor .fte-skill-summary{padding:8px 12px!important;gap:5px!important}.fte-editor .fte-skill-metric{padding:7px!important}.fte-editor .fte-skill-metric strong{font-size:17px!important}.fte-editor .fte-skill-guidance{padding:8px 12px!important}}
+
+/* Skill allocation: visible, live-updating Fate pyramid, not a prose legend. */
+.fte-editor:has([data-skill-pyramid]){height:clamp(490px,79vh,750px)!important;max-height:calc(100vh - 150px)!important}
+.fte-editor .fte-skill-summary{padding:9px 18px 12px!important;position:relative!important;}
+.fte-editor .fte-skill-summary .fte-skill-metric{padding:8px 12px!important}
+.fte-editor .fte-skill-progress{grid-column:1/-1;width:100%!important;height:5px!important;margin:1px 0 0!important;border:0!important;accent-color:#d67d60;}
+.fte-editor .fte-skill-summary.is-invalid{outline:1px solid #b95e5e!important;outline-offset:-1px!important}
+.fte-editor .fte-pyramid{display:flex!important;flex:0 0 auto!important;flex-direction:column!important;gap:5px!important;margin:0!important;padding:9px 18px!important;background:rgba(255,255,255,.025)!important;border-bottom:1px solid var(--fte-line)!important;min-height:0!important;}
+.fte-editor .fte-pyramid-heading{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:12px!important;color:var(--fte-dim)!important;font-size:11px!important;line-height:1.3!important;}
+.fte-editor .fte-pyramid-heading strong{font-size:13px!important;color:var(--fte-ink)!important;}
+.fte-editor .fte-pyramid-tier{display:grid!important;grid-template-columns:34px minmax(0,1fr) 35px!important;gap:9px!important;align-items:center!important;min-width:0!important;height:27px!important;}
+.fte-editor .fte-pyramid-grade{font-weight:700!important;font-size:12px!important;font-variant-numeric:tabular-nums!important;color:#ecb89d!important;}
+.fte-editor .fte-pyramid-track{display:flex!important;justify-content:center!important;gap:6px!important;width:100%!important;min-width:0!important;}
+.fte-editor .fte-pyramid-slot{display:flex!important;justify-content:center!important;align-items:center!important;flex:0 1 105px!important;max-width:105px!important;min-width:0!important;height:25px!important;padding:0 6px!important;overflow:hidden!important;white-space:nowrap!important;text-overflow:ellipsis!important;background:rgba(215,148,121,.075)!important;border:1px dashed rgba(206,167,151,.38)!important;border-radius:5px!important;color:rgba(218,187,174,.54)!important;font-size:11px!important;}
+.fte-editor .fte-pyramid-slot.is-filled{background:rgba(206,122,89,.23)!important;border:1px solid rgba(214,133,99,.7)!important;color:#ffddd1!important;}
+.fte-editor .fte-pyramid-usage{font-size:11px!important;text-align:right!important;font-variant-numeric:tabular-nums!important;color:var(--fte-dim)!important;}
+.fte-editor .fte-pyramid-tier.is-overfull .fte-pyramid-usage{color:#ffa6a6!important;font-weight:bold!important;}
+.fte-editor .fte-pyramid-zero{display:flex!important;justify-content:space-between!important;gap:12px!important;font-size:11px!important;color:var(--fte-dim)!important;}
+.fte-editor .fte-skill-feedback{padding:5px 18px!important;border-bottom:1px solid var(--fte-line)!important;color:#c5b3a8!important;font-size:11px!important;line-height:1.4!important;flex:none!important;}
+.fte-editor .fte-skill-feedback.is-error{background:rgba(191,61,61,.14)!important;color:#ffb0a7!important;font-weight:600!important;}
+.fte-editor .fte-skill-row input.fte-skill-rank:out-of-range{border-color:#c65f5f!important;box-shadow:inset 0 0 0 1px #c65f5f!important;}
+@media(max-width:640px){.fte-editor .fte-pyramid{padding:7px 12px!important;}.fte-editor .fte-pyramid-slot{font-size:10px!important;padding:0 3px!important}.fte-editor .fte-pyramid-heading span{font-size:10px!important;}.fte-editor .fte-pyramid-zero span:last-child{display:none!important}}
 `;
   function ensureEditorStyles(){
     if(typeof document==='undefined'||!document.head)return;
@@ -62,29 +84,73 @@
     const extra=normalized&&!names.includes(normalized)?[normalized]:[];
     return `<select name="linked_skill" aria-label="Связанный навык" ${disabled}><option value="None" ${!normalized?'selected':''}>Без связанного навыка</option>${[...names,...extra].map(v=>`<option value="${quote(v)}" ${v===normalized?'selected':''}>${quote(globalThis.FateToolkitI18n?.skill?.(v)||v)}</option>`).join('')}</select>`;
   }
-  function getSkillStats(actor,ranks){
-    const values=ranks.map(v=>Number(v)||0);
-    const spent=values.reduce((sum,v)=>sum+Math.max(0,v),0);
-    const isPc=Boolean(globalThis.FateToolkitWill?.enabled?.()&&globalThis.FateToolkitWill?.details?.(actor)?.isPc);
+  const SKILL_TIERS=Object.freeze([{rank:4,cap:1},{rank:3,cap:2},{rank:2,cap:3},{rank:1,cap:5}]);
+  function pointsLabel(number){
+    const n=Math.abs(Math.trunc(number)),mod10=n%10,mod100=n%100;
+    return `${number} ${mod10===1&&mod100!==11?'очко':mod10>=2&&mod10<=4&&(mod100<12||mod100>14)?'очка':'очков'}`;
+  }
+  function isPlayerSkills(actor){
+    return Boolean(globalThis.FateToolkitWill?.enabled?.() && globalThis.FateToolkitWill?.details?.(actor)?.isPc);
+  }
+  function allowedSkillBudget(actor){
+    if(!isPlayerSkills(actor))return null;
     const override=actor.system?.override;
-    const limit=isPc?(override?.active?Math.max(21,Number(override.skillPoints)||0):21):null;
-    const byRank=[4,3,2,1].map(i=>values.filter(v=>v===i).length);
-    const distribution=`+4: ${byRank[0]} из 1 · +3: ${byRank[1]} из 2 · +2: ${byRank[2]} из 3 · +1: ${byRank[3]} из 5`;
-    const warning=limit===null?'У NPC распределение свободное.':
-      spent>limit?'Превышен базовый бюджет. Рост после создания персонажа оформляется через вехи.':
-      values.some(v=>v>4)?'Ранг выше +4 требует отдельного разрешения ведущего.':
-      'Стартовая пирамида: +4 × 1, +3 × 2, +2 × 3, +1 × 5; остальные +0. Дальнейший рост — через вехи.';
-    return {spent,limit,remaining:limit===null?'—':String(Math.max(0,limit-spent)),distribution,warning};
+    const alreadySpent=Object.values(actor.system?.skills||{}).filter(row=>!row?.extra_id)
+      .reduce((sum,row)=>sum+Math.max(0,Number(row?.rank)||0),0);
+    return Math.max(21,alreadySpent,override?.active?(Number(override.skillPoints)||0):0);
+  }
+  function getSkillStats(actor,rows){
+    const entries=rows.map(row=>typeof row==='object'&&row!==null?row:{name:'',rank:row});
+    const isPc=isPlayerSkills(actor);
+    const limit=allowedSkillBudget(actor);
+    const tiers=SKILL_TIERS.map(({rank,cap})=>({rank,cap,names:entries.filter(r=>Number(r.rank)===rank).map(r=>String(r.name||'').trim()||'Без названия')}));
+    const invalid=entries.filter(r=>String(r.rank??'').trim()===''||!Number.isInteger(Number(r.rank)) || Number(r.rank)<0 || (isPc&&Number(r.rank)>4));
+    const spent=entries.reduce((sum,r)=>sum+(Number.isFinite(Number(r.rank))?Math.max(0,Number(r.rank)):0),0);
+    const overloaded=isPc?tiers.filter(t=>t.names.length>t.cap):[];
+    const overBudget=limit!==null&&spent>limit;
+    const errors=[];
+    if(invalid.length)errors.push(isPc?'Для ПК допустимы только целые ранги от +0 до +4.':'Ранги должны быть целыми неотрицательными числами.');
+    if(overloaded.length)errors.push('Превышено число мест на ступени '+overloaded.map(t=>`+${t.rank}`).join(', ')+'.');
+    if(overBudget)errors.push(`Превышен бюджет на ${pointsLabel(spent-limit)}.`);
+    const remaining=limit===null?null:limit-spent;
+    const complete=isPc&&!errors.length&&remaining===0&&tiers.every(t=>t.names.length===t.cap);
+    const note=errors.length?errors.join(' '):!isPc?'Для NPC нет ограничений по пирамиде.':
+      complete?'Стартовая пирамида полностью распределена.':`Осталось распределить ${pointsLabel(remaining)}. Поднимайте навыки по ступеням, не превышая число мест.`;
+    return {spent,limit,remaining,tiers,invalid:invalid.length,valid:errors.length===0,errors,note,complete,zero:entries.filter(r=>Number(r.rank)===0).length};
+  }
+  function skillPyramidMarkup(stats){
+    return `<section class="fte-pyramid" data-skill-pyramid aria-label="Пирамида навыков"><div class="fte-pyramid-heading"><strong>Пирамида навыков</strong><span data-pyramid-mode>${stats.limit===null?'Свободное распределение NPC':'Начальная форма · +4 / +3 / +2 / +1'}</span></div>${stats.tiers.map(t=>`<div class="fte-pyramid-tier" data-pyramid-tier="${t.rank}"><span class="fte-pyramid-grade">+${t.rank}</span><div class="fte-pyramid-track">${Array.from({length:t.cap},(_,i)=>`<span class="fte-pyramid-slot ${t.names[i]?'is-filled':''}" data-pyramid-slot="${i}" title="${quote(t.names[i]||'Свободное место')}">${quote(t.names[i]||'＋')}</span>`).join('')}</div><span class="fte-pyramid-usage" data-pyramid-usage>${t.names.length}/${t.cap}</span></div>`).join('')}<div class="fte-pyramid-zero"><span>+0 — ${stats.zero} навык(ов)</span><span>Заполняйте ступени в списке ниже</span></div></section>`;
+  }
+  function skillRows(root){
+    return [...(root?.querySelectorAll?.('.fte-skill-row:not([data-extra-owned="true"])')||[])].map(r=>({name:r.querySelector('[name="name"]')?.value||'',rank:r.querySelector('[name="rank"]')?.value}));
   }
   function updateSkillSummary(root,actor){
-    const panel=root?.querySelector('[data-skill-summary]');if(!panel)return;
-    const rows=[...root.querySelectorAll('.fte-skill-row:not([data-extra-owned="true"])')];
-    const data=getSkillStats(actor,rows.map(r=>r.querySelector('[name="rank"]')?.value));
-    panel.querySelector('[data-skill-spent]').textContent=String(data.spent);
-    panel.querySelector('[data-skill-remaining]').textContent=data.remaining;
-    panel.querySelector('[data-skill-limit]').textContent=data.limit===null?'Не ограничен':String(data.limit);
-    panel.querySelector('[data-skill-distribution]').textContent=data.distribution;
-    panel.querySelector('[data-skill-warning]').textContent=data.warning;
+    const panel=root?.querySelector?.('[data-skill-summary]');if(!panel)return;
+    const stats=getSkillStats(actor,skillRows(root));
+    const assign=(sel,value)=>{const el=root.querySelector(sel);if(el)el.textContent=String(value);};
+    assign('[data-skill-spent]',stats.spent);
+    assign('[data-skill-remaining]',stats.remaining===null?'—':stats.remaining);
+    assign('[data-skill-limit]',stats.limit===null?'Без ограничений':stats.limit);
+    const note=root.querySelector('[data-skill-warning]');
+    if(note){note.textContent=stats.note;note.classList.toggle('is-error',!stats.valid);note.setAttribute('role',stats.valid?'status':'alert');}
+    const progress=root.querySelector('[data-skill-progress]');
+    if(progress){progress.max=Math.max(1,stats.limit??stats.spent??1);progress.value=Math.min(progress.max,stats.spent);}
+    for(const tier of stats.tiers){
+      const el=root.querySelector(`[data-pyramid-tier="${tier.rank}"]`);if(!el)continue;
+      el.classList.toggle('is-overfull',stats.limit!==null&&tier.names.length>tier.cap);
+      const usage=el.querySelector('[data-pyramid-usage]');if(usage)usage.textContent=`${tier.names.length}/${tier.cap}`;
+      [...el.querySelectorAll('[data-pyramid-slot]')].forEach((cell,i)=>{
+        cell.textContent=tier.names[i]||'＋';cell.title=tier.names[i]||'Свободное место';cell.classList.toggle('is-filled',Boolean(tier.names[i]));
+      });
+    }
+    assign('.fte-pyramid-zero span',`+0 — ${stats.zero} навыков`);
+    panel.classList.toggle('is-invalid',!stats.valid);
+    const editor=root.querySelector('.fte-editor')||root;
+    editor.dataset.skillValid=String(stats.valid);
+    const form=root.closest?.('.application')||root.parentElement;
+    const save=form?.querySelector?.('.dialog-buttons [data-action="save"]')||form?.querySelector?.('button[data-action="save"]');
+    if(save){save.disabled=!stats.valid;save.title=stats.valid?'Сохранить распределение':'Исправьте ошибки распределения навыков';}
+    return stats;
   }
   function entry(kind,id,data,readonly=false,names=[]){
     const fixed=Boolean(data.extra_id), locked=readonly||fixed;
@@ -93,7 +159,7 @@
     const del=`<button type="button" class="fte-remove" data-remove-trait title="Удалить запись" aria-label="Удалить запись" ${locked?'disabled':''}><i class="fa-solid fa-trash" aria-hidden="true"></i></button>`;
     if(kind==='skills'){
       const name=`<input name="name" aria-label="Название навыка" value="${quote(prettyName(data.name||''))}" ${lockedName} placeholder="Название навыка" maxlength="100" required>`;
-      return `<article class="fte-trait fte-skill-row${fixed?' is-owned':''}" data-trait-key="${quote(id)}" data-extra-owned="${fixed}"><div class="fte-skill-name">${name}${fixedBadge}</div><input class="fte-skill-rank" name="rank" aria-label="Ранг навыка ${quote(data.name||'')}" type="number" min="-2" max="12" step="1" value="${Number(data.rank||0)}" ${fixed?'disabled':''}>${del}</article>`;
+      return `<article class="fte-trait fte-skill-row${fixed?' is-owned':''}" data-trait-key="${quote(id)}" data-extra-owned="${fixed}"><div class="fte-skill-name">${name}${fixedBadge}</div><input class="fte-skill-rank" name="rank" aria-label="Ранг навыка ${quote(data.name||'')}" type="number" min="0" max="12" step="1" value="${Number(data.rank||0)}" ${fixed?'disabled':''}>${del}</article>`;
     }
     const header=`<div class="fte-trait-head"><input name="name" aria-label="Название записи" value="${quote(prettyName(data.name||''))}" ${lockedName} placeholder="Название" maxlength="100" required>${fixedBadge}${del}</div>`;
     let fields='';
@@ -121,7 +187,7 @@
     const result={...clone(old),name:val('name').trim().slice(0,100)};
     if(!result.name) throw new Error('У всех записей должно быть название.');
     const number=(field,min,max)=>{const n=Number(val(field));if(!Number.isInteger(n)||n<min||n>max)throw new Error(`Недопустимое значение «${field}»: ${result.name}`);return n;};
-    if(kind==='skills')result.rank=number('rank',-2,12);
+    if(kind==='skills')result.rank=number('rank',0,12);
     if(kind==='aspects'){result.value=val('value');result.description=val('description');}
     if(kind==='stunts'){result.description=val('description');result.linked_skill=val('linked_skill')||'None';result.bonus=number('bonus',-20,20);result.refresh_cost=number('refresh_cost',0,20);}
     if(kind==='tracks'){
@@ -135,27 +201,37 @@
     const original=Object.fromEntries(list(actor,kind).map(([key,value])=>[key,clone(value)]));
     const names=skillNames(actor);
     ensureEditorStyles();
-    const initialSkillStats=getSkillStats(actor,Object.values(original).filter(row=>!row?.extra_id).map(row=>row.rank));
+    const initialSkillStats=getSkillStats(actor,Object.values(original).filter(row=>!row?.extra_id).map(row=>({name:row.name,rank:row.rank})));
     const summary=kind==='skills'?`<div data-skill-summary class="fte-skill-summary" role="status" aria-live="polite">
        <div class="fte-skill-metric"><span>Распределено</span><strong data-skill-spent>${initialSkillStats.spent}</strong></div>
-       <div class="fte-skill-metric"><span>Осталось от бюджета</span><strong data-skill-remaining>${initialSkillStats.remaining}</strong></div>
-       <div class="fte-skill-metric"><span>Бюджет очков</span><strong data-skill-limit>${initialSkillStats.limit===null?'Не ограничен':initialSkillStats.limit}</strong></div>
-     </div><div class="fte-skill-guidance"><strong>Ступени навыков</strong><span data-skill-distribution>${initialSkillStats.distribution}</span><span data-skill-warning>${initialSkillStats.warning}</span></div>`:'';
+       <div class="fte-skill-metric"><span>Осталось</span><strong data-skill-remaining>${initialSkillStats.remaining===null?'—':initialSkillStats.remaining}</strong></div>
+       <div class="fte-skill-metric"><span>Бюджет</span><strong data-skill-limit>${initialSkillStats.limit===null?'Без ограничений':initialSkillStats.limit}</strong></div>
+       <progress class="fte-skill-progress" data-skill-progress value="${initialSkillStats.spent}" max="${Math.max(1,initialSkillStats.limit??initialSkillStats.spent)}"></progress>
+     </div>${skillPyramidMarkup(initialSkillStats)}<div class="fte-skill-feedback" data-skill-warning role="status">${initialSkillStats.note}</div>`:'';
     const form=`<div class="fte-editor" data-fte-editor autocomplete="off"><div class="fte-editor-intro">Изменения сохраняются в анкете персонажа. Свойства, полученные от дополнений, редактируются в самих дополнениях.</div><div class="fte-editor-tools"><strong>${titles[kind]} <span class="fte-count">${Object.keys(original).length}</span></strong><input type="search" class="fte-search" data-trait-search placeholder="Найти ${kind==='skills'?'навык':'запись'}…" aria-label="Поиск по названию"></div>${summary}${kind==='skills'?'<div class="fte-skill-head"><span>Навык</span><span>Ранг</span><span></span></div>':''}<div class="fte-list ${kind==='skills'?'fte-skills':''}" data-traits>${Object.entries(original).map(([k,v])=>entry(kind,k,v,!game.user?.isGM,names)).join('')}</div>${game.user?.isGM?`<div class="fte-toolbar"><button type="button" data-add-trait><i class="fa-solid fa-plus" aria-hidden="true"></i> Добавить ${kind==='skills'?'навык':kind==='aspects'?'аспект':kind==='stunts'?'трюк':'состояние'}</button></div>`:''}</div>`;
     const response=await foundry.applications.api.DialogV2.wait({window:{title:`Fate Toolkit · ${titles[kind]}`,resizable:true},position:{width:800,height:710},content:form,buttons:[
       {action:'cancel',label:'Отмена',callback:()=>null},
       {action:'save',label:'Сохранить',default:true,callback:(_event,button)=>{
         const root=button.form||button.closest?.('.application')||document.querySelector?.('.application:has(.fte-editor)');
+        if(kind==='skills'&&root?.querySelector?.('[data-skill-summary]')&&!updateSkillSummary(root,actor)?.valid){ui.notifications.error('Исправьте распределение навыков перед сохранением.');return null;}
         const rows=[...(root?.querySelectorAll?.('[data-trait-key]')||[])];
         const result=[];const names=new Set();
         try{
           for(const row of rows){const key=row.dataset.traitKey;const base=original[key]||{...clone(defaults[kind]),name:''};const value=base.extra_id?clone(base):read(row,kind,base);const slug=value.name.trim().toLocaleLowerCase();if(names.has(slug)&&!value.extra_id)throw new Error(`Повторяется название «${value.name}».`);names.add(slug);result.push({key,value});}
         }catch(error){ui.notifications.error(String(error.message||error));return null;}
+        if(kind==='skills'){
+          const evaluated=getSkillStats(actor,result.filter(r=>!r.value.extra_id).map(r=>({name:r.value.name,rank:r.value.rank})));
+          if(!evaluated.valid){ui.notifications.error(evaluated.note);return null;}
+        }
         return result;
       }}
     ],render:(_event,app)=>{
+      if(kind==='skills'&&isPlayerSkills(actor)){
+        for(const input of app.element?.querySelectorAll?.('.fte-skill-rank')||[])input.max='4';
+      }
       updateSkillSummary(app.element,actor);
-      app.element?.addEventListener('input',event=>{if(event.target.matches('.fte-skill-rank'))updateSkillSummary(app.element,actor);});
+      app.element?.addEventListener('input',event=>{if(kind==='skills'&&event.target.matches('.fte-skill-rank, .fte-skill-name input'))updateSkillSummary(app.element,actor);});
+      app.element?.addEventListener('change',event=>{if(kind==='skills'&&event.target.matches('.fte-skill-rank, .fte-skill-name input'))updateSkillSummary(app.element,actor);});
       app.element?.querySelector('[data-trait-search]')?.addEventListener('input',event=>{
         const q=String(event.target.value||'').toLocaleLowerCase().trim();
         for(const row of app.element.querySelectorAll('[data-trait-key]')){
@@ -168,7 +244,9 @@
         if(btn.hasAttribute('data-add-trait')){
           const list=app.element.querySelector('[data-traits]');const holder=document.createElement('div');holder.innerHTML=entry(kind,newKey(kind),{...clone(defaults[kind]),name:''},false,names);list?.append(holder.firstElementChild);
           app.element.querySelector('[data-trait-search]')?.value && app.element.querySelector('[data-trait-search]').dispatchEvent(new Event('input',{bubbles:true}));
-          list?.lastElementChild?.querySelector('[name="name"]')?.focus();updateSkillSummary(app.element,actor);
+          list?.lastElementChild?.querySelector('[name="name"]')?.focus();
+          if(kind==='skills'&&isPlayerSkills(actor)){const input=list?.lastElementChild?.querySelector('.fte-skill-rank');if(input)input.max='4';}
+          updateSkillSummary(app.element,actor);
         }
         if(btn.hasAttribute('data-remove-trait')){btn.closest('[data-trait-key]')?.remove();updateSkillSummary(app.element,actor);}
       });
@@ -182,13 +260,6 @@
         // the system-calculated values or detach the linkage.
         continue;
       }else if(!original[key]||JSON.stringify(value)!==JSON.stringify(original[key]))update[`system.${kind}.${key}`]=value;
-    }
-    if(!game.user?.isGM && kind==='skills' && globalThis.FateToolkitWill?.enabled?.() && globalThis.FateToolkitWill?.details?.(actor)?.isPc){
-      const canonical=new Set(globalThis.FateToolkitFramework?.names||[]);
-      const ranks=response.filter(row=>canonical.has(row.value.name)&&!row.value.extra_id).map(row=>row.value.rank);
-      const total=ranks.reduce((sum,rank)=>sum+Math.max(0,rank),0);
-      const previous=Object.values(original).filter(row=>canonical.has(row?.name)&&!row?.extra_id).reduce((sum,row)=>sum+Math.max(0,Number(row.rank)||0),0);
-      if(ranks.some(rank=>rank<0||rank>4) || total>Math.max(21,previous))throw new Error('Для ПК при создании доступны 21 очко навыков, максимальный ранг +4. После создания повышайте навыки через вехи.');
     }
     if(Object.keys(update).length){await actor.update(update);ui.notifications.info(`${titles[kind]} сохранены.`);}
     return true;
