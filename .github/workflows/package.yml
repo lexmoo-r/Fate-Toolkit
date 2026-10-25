@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'module.json'
+      - 'tests/**'
       - 'scripts/**'
       - 'styles/**'
       - 'templates/**'
