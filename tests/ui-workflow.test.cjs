@@ -17,7 +17,8 @@ const doc=()=>{const nodes=new Map();return {nodes,head:{appendChild(n){nodes.se
   assert.match(data,/<strong data-skill-remaining>14<\/strong>/,'21-point creation budget must be visible');
   assert.match(data,/data-skill-pyramid/,'graphical pyramid missing');
   assert.match(data,/data-pyramid-tier="4"/,'rank 4 slots missing');
-  assert.match(data,/data-pyramid-usage>1\/1/,'rank 4 occupancy should be visible');
+  assert.match(data,/data-pyramid-usage>1<\/span>/,'actual rank 4 occupancy should be visible without fixed quotas');
+  assert.match(data,/is-broken/,'missing lower ranks must visibly flag the incomplete ladder');
   await ctx.FateToolkitEditors.editActor(a,'stunts');
   assert.match(data,/<select name="linked_skill"/,'linked skill must be a dropdown, not a text box');
   assert.match(data,/<option value="Драка" selected>/,'current skill choice must persist');
