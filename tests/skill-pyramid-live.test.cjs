@@ -103,8 +103,9 @@ const script=fs.readFileSync(path.join(__dirname,'..','scripts/character-editors
  helpers.updateSkillSummary(liveRoot,actor);
  assert.match(pyramid.outerHTML,/data-pyramid-tier="10"/);
  assert.match(pyramid.outerHTML,/Переименованный/);
- assert.match(pyramid.outerHTML,/data-pyramid-tier="8"[^>]*>[\s\S]*?fte-pyramid-vacant/,'an unused intermediate step appears as an empty rung');
- assert.doesNotMatch(pyramid.outerHTML,/title="Высший навык">Высший навык<\/span>[\s\S]*?data-pyramid-tier="8"/,'moved skill is no longer on rank +8');
+ const rung8=pyramid.outerHTML.slice(pyramid.outerHTML.indexOf('data-pyramid-tier="8"'),pyramid.outerHTML.indexOf('data-pyramid-tier="7"'));
+ assert.match(rung8,/fte-pyramid-vacant/,'unused intermediate tier is an empty rung');
+ assert.doesNotMatch(rung8,/Высший навык/,'the moved skill no longer occupies +8');
  assert.match(script,/data-npc-ladder-override/);
  const css=fs.readFileSync(path.join(__dirname,'..','styles/character-editors.css'),'utf8');
  assert.match(css,/\.fte-pyramid-slot\.is-filled/);
