@@ -26,13 +26,34 @@ const {baseContext}=require('./harness.cjs');
  assert.equal(actor.updates[0]['system.skills.physical'].description,'Сохранить описание');
  assert.equal(actor.updates[0]['system.skills.physical'].attack,'special');
  assert.ok(!Object.keys(actor.updates[0]).some(key=>key.includes('extra')),'Extra-owned skill must not be modified');
- // A missing actor trait must become an explicit Foundry deletion, not a destructive replacement.
+ // Missing or fabricated skill rows cannot delete/add/rename actor skills.
+ let renderedSkillEditor;
+ context.foundry.applications.api.DialogV2.wait=async config=>{
+   renderedSkillEditor=config.content;
+   return config.buttons[1].callback(null,{form:{querySelectorAll:()=>[
+     row('extra',{name:'Дар',rank:'0'}),
+     row('injected',{name:'Чужой навык',rank:'12'})
+   ]}});
+ };
+ await context.FateToolkitEditors.editActor(actor,'skills');
+ assert.equal(actor.updates.length,1,'missing actor skills are preserved; injected skills are rejected');
+ assert.match(renderedSkillEditor,/class="fte-skill-label"/,'skill names rendered as labels');
+ assert.doesNotMatch(renderedSkillEditor,/<input[^>]+name="name"/,'names are not editable in actor editor');
+ assert.doesNotMatch(renderedSkillEditor,/data-remove-trait/,'actor skills cannot be deleted');
+ assert.doesNotMatch(renderedSkillEditor,/data-add-trait/,'actor skills cannot be created ad hoc');
+ // Even a tampered name input must not overwrite the original skill name.
  context.foundry.applications.api.DialogV2.wait=async config=>config.buttons[1].callback(null,{form:{querySelectorAll:()=>[
-   row('extra',{name:'Дар',rank:'0'})
+   row('physical',{name:'Переименован',rank:'1'}),
+   row('extra',{name:'Дар',rank:'4'})
  ]}});
  await context.FateToolkitEditors.editActor(actor,'skills');
- assert.equal(actor.updates[1]['system.skills.-=physical'],null);
- assert.ok(!Object.hasOwn(actor.updates[1],'system.skills.-=extra'));
+ assert.equal(actor.updates[1]['system.skills.physical'].name,'Атлетика');
+ assert.equal(actor.updates[1]['system.skills.physical'].rank,1);
+ // The explicit world-catalog editor still supports GM updates to the shared skill set.
+ context.foundry.applications.api.DialogV2.wait=async config=>{renderedSkillEditor=config.content;return null;};
+ await context.FateToolkitEditors.editActor(actor,'skills',{editCatalog:true});
+ assert.match(renderedSkillEditor,/<input[^>]+name="name"/,'world catalog editor retains skill name controls');
+ assert.match(renderedSkillEditor,/data-remove-trait/,'world catalog editor retains skill removal');
  const sheet=fs.readFileSync(path.join(__dirname,'../templates/character-sheet.hbs'),'utf8');
  assert.doesNotMatch(sheet,/data-action="actionAttack"/,'action widget must remain standalone');
  const moduleData=JSON.parse(fs.readFileSync(path.join(__dirname,'../module.json'),'utf8'));

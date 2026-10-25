@@ -27,6 +27,10 @@ const script=fs.readFileSync(path.join(root,'scripts/character-editors.js'),'utf
   assert.ok(contents.every(x=>!x.includes('<form class="fte-editor"')),'no nested forms inside DialogV2');
   assert.equal((contents[0].match(/data-trait-key=/g)||[]).length,19,'skills must be all present, with a scrollable list');
   assert.equal((contents[1].match(/data-trait-key=/g)||[]).length,5,'aspects must be all present');
+  assert.match(contents[0], /class="fte-skill-label"/, 'actor skills appear as text, not editable fields');
+  assert.doesNotMatch(contents[0], /data-remove-trait/, 'skill editor must not offer deletion');
+  assert.doesNotMatch(contents[0], /data-add-trait/, 'skill editor must not create arbitrary skills');
+  assert.match(css, /\.fte-editor\.is-skill-assignment \.fte-trait\.fte-skill-row\{grid-template-columns:minmax\(0,1fr\) 82px!important/, 'rank-only list needs two aligned columns');
   assert.match(contents[0], /<details class="fte-pyramid-shell" data-pyramid-shell open>/, 'ladder is collapsible but visible initially');
   assert.doesNotMatch(contents[0], /fte-editor-intro/, 'skill editor has no redundant explanatory paragraph');
   assert.match(contents[1], /fte-editor-intro/, 'other editor explanations remain unchanged');

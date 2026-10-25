@@ -114,3 +114,12 @@
 .fte-editor:has([data-skill-pyramid]) .fte-toolbar{min-height:42px!important;padding:5px 14px!important}
 .fte-editor:has([data-skill-pyramid]) .fte-toolbar>button{min-height:32px!important;max-height:34px!important}
 @media(max-width:640px){.fte-editor:has([data-skill-pyramid]) .fte-editor-tools{grid-template-columns:minmax(0,1fr)!important;gap:4px!important}.fte-editor .fte-pyramid-toggle{padding-inline:10px!important}.fte-editor .fte-pyramid{padding-inline:10px!important}.fte-editor:has([data-skill-pyramid]) .fte-skill-summary{padding-inline:10px!important}.fte-editor:has([data-skill-pyramid]) .fte-skills{padding-inline:8px!important}}
+
+/* Skill allocation is rank-only; names and the skill set belong to world configuration. */
+.fte-editor.is-skill-assignment .fte-skill-head{grid-template-columns:minmax(0,1fr) 82px!important}
+.fte-editor.is-skill-assignment .fte-trait.fte-skill-row{grid-template-columns:minmax(0,1fr) 82px!important}
+.fte-editor.is-skill-assignment .fte-skill-label{display:block!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:13px!important;font-weight:500!important}
+@media(max-width:440px){
+.fte-editor.is-skill-assignment .fte-skill-head{grid-template-columns:minmax(0,1fr) 56px!important}
+.fte-editor.is-skill-assignment .fte-trait.fte-skill-row{grid-template-columns:minmax(0,1fr) 56px!important}
+}

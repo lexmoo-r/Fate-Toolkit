@@ -77,6 +77,15 @@
 .fte-editor:has([data-skill-pyramid]) .fte-toolbar{min-height:42px!important;padding:5px 14px!important}
 .fte-editor:has([data-skill-pyramid]) .fte-toolbar>button{min-height:32px!important;max-height:34px!important}
 @media(max-width:640px){.fte-editor:has([data-skill-pyramid]) .fte-editor-tools{grid-template-columns:minmax(0,1fr)!important;gap:4px!important}.fte-editor .fte-pyramid-toggle{padding-inline:10px!important}.fte-editor .fte-pyramid{padding-inline:10px!important}.fte-editor:has([data-skill-pyramid]) .fte-skill-summary{padding-inline:10px!important}.fte-editor:has([data-skill-pyramid]) .fte-skills{padding-inline:8px!important}}
+
+/* Skill allocation is rank-only; names and the skill set belong to world configuration. */
+.fte-editor.is-skill-assignment .fte-skill-head{grid-template-columns:minmax(0,1fr) 82px!important}
+.fte-editor.is-skill-assignment .fte-trait.fte-skill-row{grid-template-columns:minmax(0,1fr) 82px!important}
+.fte-editor.is-skill-assignment .fte-skill-label{display:block!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:13px!important;font-weight:500!important}
+@media(max-width:440px){
+.fte-editor.is-skill-assignment .fte-skill-head{grid-template-columns:minmax(0,1fr) 56px!important}
+.fte-editor.is-skill-assignment .fte-trait.fte-skill-row{grid-template-columns:minmax(0,1fr) 56px!important}
+}
 `;
   function ensureEditorStyles(){
     if(typeof document==='undefined'||!document.head)return;
@@ -162,7 +171,10 @@
     return `<section class="fte-pyramid ${stats.limit===null?'is-free':''}" data-skill-pyramid aria-label="Лестница навыков">${stats.tiers.length?'':'<p class="fte-pyramid-empty">Нет навыков выше +0</p>'}${stats.tiers.map(t=>`<div class="fte-pyramid-tier ${stats.limit===null?'is-free':''}" data-pyramid-tier="${t.rank}"><span class="fte-pyramid-grade">+${t.rank}</span><div class="fte-pyramid-track">${Array.from({length:t.cap},(_,i)=>`<span class="fte-pyramid-slot ${t.names[i]?'is-filled':''}" data-pyramid-slot="${i}" title="${quote(t.names[i]||'Свободное место')}">${quote(t.names[i]||'＋')}</span>`).join('')}</div><span class="fte-pyramid-usage" data-pyramid-usage>${stats.limit===null?t.names.length+' нав.':t.names.length+'/'+t.cap}</span></div>`).join('')}</section>`;
   }
   function skillRows(root,actor){
-    return [...(root?.querySelectorAll?.(isPlayerSkills(actor)?'.fte-skill-row:not([data-extra-owned="true"])':'.fte-skill-row')||[])].map(r=>({name:r.querySelector('[name="name"]')?.value||'',rank:r.querySelector('[name="rank"]')?.value}));
+    return [...(root?.querySelectorAll?.(isPlayerSkills(actor)?'.fte-skill-row:not([data-extra-owned="true"])':'.fte-skill-row')||[])].map(r=>({
+      name:r.querySelector('[name="name"]')?.value||r.dataset.skillName||'',
+      rank:r.querySelector('[name="rank"]')?.value
+    }));
   }
   function updateSkillSummary(root,actor){
     const panel=root?.querySelector?.('[data-skill-summary]');if(!panel)return;
@@ -185,14 +197,17 @@
     if(save){save.disabled=!stats.valid;save.title=stats.valid?'Сохранить распределение':'Исправьте ошибки распределения навыков';}
     return stats;
   }
-  function entry(kind,id,data,readonly=false,names=[]){
+  function entry(kind,id,data,readonly=false,names=[],skillCatalogMode=false){
     const fixed=Boolean(data.extra_id), locked=readonly||fixed;
     const lockedName=locked?'readonly':'';
     const fixedBadge=fixed?'<span class="fte-owned-badge" title="Это свойство задаётся дополнением и изменяется в его редакторе">Из дополнения</span>':'';
     const del=`<button type="button" class="fte-remove" data-remove-trait title="Удалить запись" aria-label="Удалить запись" ${locked?'disabled':''}><i class="fa-solid fa-trash" aria-hidden="true"></i></button>`;
     if(kind==='skills'){
-      const name=`<input name="name" aria-label="Название навыка" value="${quote(prettyName(data.name||''))}" ${lockedName} placeholder="Название навыка" maxlength="100" required>`;
-      return `<article class="fte-trait fte-skill-row${fixed?' is-owned':''}" data-trait-key="${quote(id)}" data-extra-owned="${fixed}"><div class="fte-skill-name">${name}${fixedBadge}</div><input class="fte-skill-rank" name="rank" aria-label="Ранг навыка ${quote(data.name||'')}" type="number" min="0" max="12" step="1" value="${Number(data.rank||0)}" ${fixed?'disabled':''}>${del}</article>`;
+      const label=quote(globalThis.FateToolkitI18n?.skill?.(data.name)||prettyName(data.name||''));
+      const name=skillCatalogMode
+        ? `<input name="name" aria-label="Название навыка" value="${quote(prettyName(data.name||''))}" ${lockedName} placeholder="Название навыка" maxlength="100" required>`
+        : `<span class="fte-skill-label" title="${label}">${label}</span>`;
+      return `<article class="fte-trait fte-skill-row${fixed?' is-owned':''}" data-trait-key="${quote(id)}" data-skill-name="${quote(data.name||'')}" data-extra-owned="${fixed}"><div class="fte-skill-name">${name}${fixedBadge}</div><input class="fte-skill-rank" name="rank" aria-label="Ранг навыка ${quote(data.name||'')}" type="number" min="0" max="12" step="1" value="${Number(data.rank||0)}" ${fixed?'disabled':''}>${skillCatalogMode?del:''}</article>`;
     }
     const header=`<div class="fte-trait-head"><input name="name" aria-label="Название записи" value="${quote(prettyName(data.name||''))}" ${lockedName} placeholder="Название" maxlength="100" required>${fixedBadge}${del}</div>`;
     let fields='';
@@ -215,9 +230,10 @@
     ].join('');
     return `<article class="fte-trait${fixed?' is-owned':''}" data-trait-key="${quote(id)}" data-extra-owned="${fixed}">${header}<div class="fte-trait-fields">${fields}</div></article>`;
   }
-  function read(card,kind,old){
+  function read(card,kind,old,skillCatalogMode=false){
     const val=name=>card.querySelector(`[name="${name}"]`)?.value||'';
-    const result={...clone(old),name:val('name').trim().slice(0,100)};
+    const name=kind==='skills'&&!skillCatalogMode?String(old.name||''):val('name').trim().slice(0,100);
+    const result={...clone(old),name};
     if(!result.name) throw new Error('У всех записей должно быть название.');
     const number=(field,min,max)=>{const n=Number(val(field));if(!Number.isInteger(n)||n<min||n>max)throw new Error(`Недопустимое значение «${field}»: ${result.name}`);return n;};
     if(kind==='skills')result.rank=number('rank',0,12);
@@ -229,8 +245,9 @@
     }
     return result;
   }
-  async function editActor(actor,kind){
+  async function editActor(actor,kind,options={}){
     if(!Object.hasOwn(titles,kind)||!isEditable(actor,kind))throw new Error('Нет прав на редактирование.');
+    const skillCatalogMode=kind==='skills'&&Boolean(options.editCatalog)&&Boolean(game.user?.isGM);
     const original=Object.fromEntries(list(actor,kind).map(([key,value])=>[key,clone(value)]));
     const names=skillNames(actor);
     ensureEditorStyles();
@@ -240,7 +257,7 @@
        <span class="fte-skill-metric">Осталось <strong data-skill-remaining>${initialSkillStats.remaining===null?'—':initialSkillStats.remaining}</strong></span>
      </div><details class="fte-pyramid-shell" data-pyramid-shell open><summary class="fte-pyramid-toggle"><span>Лестница навыков</span><span data-pyramid-zero>+0: ${initialSkillStats.zero}</span></summary>${skillPyramidMarkup(initialSkillStats)}</details><div class="fte-skill-feedback" data-skill-warning role="status" ${initialSkillStats.valid?'hidden':''}>${initialSkillStats.note}</div>`:'';
     const intro=kind==='skills'?'':'<div class="fte-editor-intro">Изменения сохраняются в анкете персонажа. Свойства, полученные от дополнений, редактируются в самих дополнениях.</div>';
-    const form=`<div class="fte-editor" data-fte-editor autocomplete="off">${intro}<div class="fte-editor-tools"><strong>${titles[kind]} <span class="fte-count">${Object.keys(original).length}</span></strong><input type="search" class="fte-search" data-trait-search placeholder="Найти ${kind==='skills'?'навык':'запись'}…" aria-label="Поиск по названию"></div>${summary}${kind==='skills'?'<div class="fte-skill-head"><span>Навык</span><span>Ранг</span><span></span></div>':''}<div class="fte-list ${kind==='skills'?'fte-skills':''}" data-traits>${Object.entries(original).map(([k,v])=>entry(kind,k,v,!game.user?.isGM,names)).join('')}</div>${game.user?.isGM?`<div class="fte-toolbar"><button type="button" data-add-trait><i class="fa-solid fa-plus" aria-hidden="true"></i> Добавить ${kind==='skills'?'навык':kind==='aspects'?'аспект':kind==='stunts'?'трюк':'состояние'}</button></div>`:''}</div>`;
+    const form=`<div class="fte-editor${kind==='skills'&&!skillCatalogMode?' is-skill-assignment':''}" data-fte-editor autocomplete="off">${intro}<div class="fte-editor-tools"><strong>${titles[kind]} <span class="fte-count">${Object.keys(original).length}</span></strong><input type="search" class="fte-search" data-trait-search placeholder="Найти ${kind==='skills'?'навык':'запись'}…" aria-label="Поиск по названию"></div>${summary}${kind==='skills'?`<div class="fte-skill-head"><span>Навык</span><span>Ранг</span>${skillCatalogMode?'<span></span>':''}</div>`:''}<div class="fte-list ${kind==='skills'?'fte-skills':''}" data-traits>${Object.entries(original).map(([k,v])=>entry(kind,k,v,!game.user?.isGM,names,skillCatalogMode)).join('')}</div>${game.user?.isGM&&(kind!=='skills'||skillCatalogMode)?`<div class="fte-toolbar"><button type="button" data-add-trait><i class="fa-solid fa-plus" aria-hidden="true"></i> Добавить ${kind==='skills'?'навык':kind==='aspects'?'аспект':kind==='stunts'?'трюк':'состояние'}</button></div>`:''}</div>`;
     const response=await foundry.applications.api.DialogV2.wait({window:{title:`Fate Toolkit · ${titles[kind]}`,resizable:true},position:{width:kind==='skills'?860:800,height:kind==='skills'?760:710},content:form,buttons:[
       {action:'cancel',label:'Отмена',callback:()=>null},
       {action:'save',label:'Сохранить',default:true,callback:(_event,button)=>{
@@ -249,7 +266,7 @@
         const rows=[...(root?.querySelectorAll?.('[data-trait-key]')||[])];
         const result=[];const names=new Set();
         try{
-          for(const row of rows){const key=row.dataset.traitKey;const base=original[key]||{...clone(defaults[kind]),name:''};const value=base.extra_id?clone(base):read(row,kind,base);const slug=value.name.trim().toLocaleLowerCase();if(names.has(slug)&&!value.extra_id)throw new Error(`Повторяется название «${value.name}».`);names.add(slug);result.push({key,value});}
+          for(const row of rows){const key=row.dataset.traitKey;if(kind==='skills'&&!skillCatalogMode&&!Object.hasOwn(original,key))continue;const base=original[key]||{...clone(defaults[kind]),name:''};const value=base.extra_id?clone(base):read(row,kind,base,skillCatalogMode);const slug=value.name.trim().toLocaleLowerCase();if(names.has(slug)&&!value.extra_id)throw new Error(`Повторяется название «${value.name}».`);names.add(slug);result.push({key,value});}
         }catch(error){ui.notifications.error(String(error.message||error));return null;}
         if(kind==='skills'){
           const evaluated=getSkillStats(actor,result.filter(r=>!isPlayerSkills(actor)||!r.value.extra_id).map(r=>({name:r.value.name,rank:r.value.rank})));
@@ -267,25 +284,25 @@
       app.element?.querySelector('[data-trait-search]')?.addEventListener('input',event=>{
         const q=String(event.target.value||'').toLocaleLowerCase().trim();
         for(const row of app.element.querySelectorAll('[data-trait-key]')){
-          const text=String(row.querySelector('[name="name"]')?.value||'').toLocaleLowerCase();
+          const text=String(row.querySelector('[name="name"]')?.value||row.querySelector('.fte-skill-label')?.textContent||row.dataset.skillName||'').toLocaleLowerCase();
           row.hidden=Boolean(q&&!text.includes(q));
         }
       });
       app.element?.addEventListener('click',event=>{
         const btn=event.target.closest('button');if(!btn)return;
-        if(btn.hasAttribute('data-add-trait')){
-          const list=app.element.querySelector('[data-traits]');const holder=document.createElement('div');holder.innerHTML=entry(kind,newKey(kind),{...clone(defaults[kind]),name:''},false,names);list?.append(holder.firstElementChild);
+        if(btn.hasAttribute('data-add-trait')&&(kind!=='skills'||skillCatalogMode)){
+          const list=app.element.querySelector('[data-traits]');const holder=document.createElement('div');holder.innerHTML=entry(kind,newKey(kind),{...clone(defaults[kind]),name:''},false,names,skillCatalogMode);list?.append(holder.firstElementChild);
           app.element.querySelector('[data-trait-search]')?.value && app.element.querySelector('[data-trait-search]').dispatchEvent(new Event('input',{bubbles:true}));
           list?.lastElementChild?.querySelector('[name="name"]')?.focus();
           if(kind==='skills'&&isPlayerSkills(actor)){const input=list?.lastElementChild?.querySelector('.fte-skill-rank');if(input)input.max='4';}
           updateSkillSummary(app.element,actor);
         }
-        if(btn.hasAttribute('data-remove-trait')){btn.closest('[data-trait-key]')?.remove();updateSkillSummary(app.element,actor);}
+        if(btn.hasAttribute('data-remove-trait')&&(kind!=='skills'||skillCatalogMode)){btn.closest('[data-trait-key]')?.remove();updateSkillSummary(app.element,actor);}
       });
     }});
     if(!response)return false;
     const oldKeys=new Set(Object.keys(original));const newKeys=new Set(response.map(x=>x.key));const update={};
-    for(const old of oldKeys)if(!newKeys.has(old)&&!original[old]?.extra_id&&game.user?.isGM)update[`system.${kind}.-=${old}`]=null;
+    for(const old of oldKeys)if(!newKeys.has(old)&&!original[old]?.extra_id&&game.user?.isGM&&(kind!=='skills'||skillCatalogMode))update[`system.${kind}.-=${old}`]=null;
     for(const {key,value} of response){
       if(original[key]?.extra_id){
         // Equipped Extras own these traits; changes made here must never overwrite
@@ -310,7 +327,7 @@
     if(selected.mode==='preset'){
       const result=await globalThis.FateToolkitFramework.request('world');
       ui.notifications.info(result.unchanged?'Набор уже существует.':`Набор обновлён: навыков ${result.added?.length||0}, аспектов ${result.addedAspects?.length||0}.`);
-    }else await editActor(world,selected.mode);
+    }else await editActor(world,selected.mode,{editCatalog:selected.mode==='skills'});
   }
   globalThis.FateToolkitEditors=Object.freeze({editActor,setupWorld});
 })();

@@ -13,7 +13,7 @@ const milestoneManager = read('templates/milestone-manager.hbs');
 const milestonePlayer = read('templates/milestone-player.hbs');
 const sheetJs = read('scripts/character-sheet.js');
 
-assert.equal(moduleJson.version, '1.50.0-preview.9.7');
+assert.equal(moduleJson.version, '1.50.0-preview.9.8');
 assert.ok(moduleJson.styles.includes('styles/layout-overhaul.css'), 'prior window layout corrections must remain installed');
 assert.ok(moduleJson.styles.indexOf('styles/layout-overhaul.css') < moduleJson.styles.indexOf('styles/compact-actions.css'), 'new compact action widget must override old large window settings');
 assert.match(css, /container-type:\s*inline-size/, 'Foundry child windows need container-based responsiveness');

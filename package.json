@@ -1,7 +1,7 @@
 {
   "name": "fate-aspect-widget-tests",
   "private": true,
-  "version": "1.50.0-preview.9.7",
+  "version": "1.50.0-preview.9.8",
   "scripts": {
     "test": "node tests/run.cjs"
   }
