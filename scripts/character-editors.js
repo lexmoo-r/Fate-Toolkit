@@ -40,6 +40,11 @@
 .fte-editor .fte-pyramid-usage{font-size:11px!important;text-align:right!important;font-variant-numeric:tabular-nums!important;color:var(--fte-dim)!important;}
 .fte-editor .fte-pyramid-tier.is-overfull .fte-pyramid-usage{color:#ffa6a6!important;font-weight:bold!important;}
 .fte-editor .fte-pyramid-zero{display:flex!important;justify-content:space-between!important;gap:12px!important;font-size:11px!important;color:var(--fte-dim)!important;}
+.fte-editor .fte-pyramid.is-free{flex:0 1 auto!important;overflow-y:auto!important;scrollbar-width:thin!important;}
+.fte-editor .fte-pyramid-tier.is-free{height:auto!important;min-height:27px!important;align-items:start!important;}
+.fte-editor .fte-pyramid-tier.is-free .fte-pyramid-track{justify-content:flex-start!important;flex-wrap:wrap!important;}
+.fte-editor .fte-pyramid-tier.is-free .fte-pyramid-slot{flex:0 1 auto!important;min-width:80px!important;max-width:calc(100% - 8px)!important;}
+.fte-editor .fte-pyramid-empty{margin:4px 0!important;color:var(--fte-dim)!important;font-size:12px!important;}
 .fte-editor .fte-skill-feedback{padding:5px 18px!important;border-bottom:1px solid var(--fte-line)!important;color:#c5b3a8!important;font-size:11px!important;line-height:1.4!important;flex:none!important;}
 .fte-editor .fte-skill-feedback.is-error{background:rgba(191,61,61,.14)!important;color:#ffb0a7!important;font-weight:600!important;}
 .fte-editor .fte-skill-row input.fte-skill-rank:out-of-range{border-color:#c65f5f!important;box-shadow:inset 0 0 0 1px #c65f5f!important;}
@@ -103,13 +108,21 @@
     const entries=rows.map(row=>typeof row==='object'&&row!==null?row:{name:'',rank:row});
     const isPc=isPlayerSkills(actor);
     const limit=allowedSkillBudget(actor);
-    const tiers=SKILL_TIERS.map(({rank,cap})=>({rank,cap,names:entries.filter(r=>Number(r.rank)===rank).map(r=>String(r.name||'').trim()||'Без названия')}));
-    const invalid=entries.filter(r=>String(r.rank??'').trim()===''||!Number.isInteger(Number(r.rank)) || Number(r.rank)<0 || (isPc&&Number(r.rank)>4));
+    // Fixed slots for PCs; actual ranks and per-rank skill counts for NPCs.
+    const tiers=isPc
+      ? SKILL_TIERS.map(({rank,cap})=>({rank,cap,names:entries.filter(r=>Number(r.rank)===rank).map(r=>String(r.name||'').trim()||'Без названия')}))
+      : [...new Set(entries.map(r=>Number(r.rank)).filter(rank=>Number.isInteger(rank)&&rank>0))]
+          .sort((a,b)=>b-a)
+          .map(rank=>{
+            const names=entries.filter(r=>Number(r.rank)===rank).map(r=>String(r.name||'').trim()||'Без названия');
+            return {rank,cap:names.length,names};
+          });
+    const invalid=entries.filter(r=>String(r.rank??'').trim()===''||!Number.isInteger(Number(r.rank)) || Number(r.rank)<0 || Number(r.rank)>(isPc?4:12));
     const spent=entries.reduce((sum,r)=>sum+(Number.isFinite(Number(r.rank))?Math.max(0,Number(r.rank)):0),0);
     const overloaded=isPc?tiers.filter(t=>t.names.length>t.cap):[];
     const overBudget=limit!==null&&spent>limit;
     const errors=[];
-    if(invalid.length)errors.push(isPc?'Для ПК допустимы только целые ранги от +0 до +4.':'Ранги должны быть целыми неотрицательными числами.');
+    if(invalid.length)errors.push(isPc?'Для ПК допустимы только целые ранги от +0 до +4.':'Для NPC допустимы только целые ранги от +0 до +12.');
     if(overloaded.length)errors.push('Превышено число мест на ступени '+overloaded.map(t=>`+${t.rank}`).join(', ')+'.');
     if(overBudget)errors.push(`Превышен бюджет на ${pointsLabel(spent-limit)}.`);
     const remaining=limit===null?null:limit-spent;
@@ -119,14 +132,14 @@
     return {spent,limit,remaining,tiers,invalid:invalid.length,valid:errors.length===0,errors,note,complete,zero:entries.filter(r=>Number(r.rank)===0).length};
   }
   function skillPyramidMarkup(stats){
-    return `<section class="fte-pyramid" data-skill-pyramid aria-label="Пирамида навыков"><div class="fte-pyramid-heading"><strong>Пирамида навыков</strong><span data-pyramid-mode>${stats.limit===null?'Свободное распределение NPC':'Начальная форма · +4 / +3 / +2 / +1'}</span></div>${stats.tiers.map(t=>`<div class="fte-pyramid-tier" data-pyramid-tier="${t.rank}"><span class="fte-pyramid-grade">+${t.rank}</span><div class="fte-pyramid-track">${Array.from({length:t.cap},(_,i)=>`<span class="fte-pyramid-slot ${t.names[i]?'is-filled':''}" data-pyramid-slot="${i}" title="${quote(t.names[i]||'Свободное место')}">${quote(t.names[i]||'＋')}</span>`).join('')}</div><span class="fte-pyramid-usage" data-pyramid-usage>${t.names.length}/${t.cap}</span></div>`).join('')}<div class="fte-pyramid-zero"><span>+0 — ${stats.zero} навык(ов)</span><span>Заполняйте ступени в списке ниже</span></div></section>`;
+    return `<section class="fte-pyramid ${stats.limit===null?'is-free':''}" data-skill-pyramid aria-label="Пирамида навыков"><div class="fte-pyramid-heading"><strong>Пирамида навыков</strong><span data-pyramid-mode>${stats.limit===null?'Свободное распределение NPC':'Начальная форма · +4 / +3 / +2 / +1'}</span></div>${stats.tiers.length?'':'<p class="fte-pyramid-empty">Навыки с рангом +1 и выше появятся здесь.</p>'}${stats.tiers.map(t=>`<div class="fte-pyramid-tier ${stats.limit===null?'is-free':''}" data-pyramid-tier="${t.rank}"><span class="fte-pyramid-grade">+${t.rank}</span><div class="fte-pyramid-track">${Array.from({length:t.cap},(_,i)=>`<span class="fte-pyramid-slot ${t.names[i]?'is-filled':''}" data-pyramid-slot="${i}" title="${quote(t.names[i]||'Свободное место')}">${quote(t.names[i]||'＋')}</span>`).join('')}</div><span class="fte-pyramid-usage" data-pyramid-usage>${stats.limit===null?t.names.length+' нав.':t.names.length+'/'+t.cap}</span></div>`).join('')}<div class="fte-pyramid-zero"><span>+0 — ${stats.zero} навык(ов)</span><span>Заполняйте ступени в списке ниже</span></div></section>`;
   }
-  function skillRows(root){
-    return [...(root?.querySelectorAll?.('.fte-skill-row:not([data-extra-owned="true"])')||[])].map(r=>({name:r.querySelector('[name="name"]')?.value||'',rank:r.querySelector('[name="rank"]')?.value}));
+  function skillRows(root,actor){
+    return [...(root?.querySelectorAll?.(isPlayerSkills(actor)?'.fte-skill-row:not([data-extra-owned="true"])':'.fte-skill-row')||[])].map(r=>({name:r.querySelector('[name="name"]')?.value||'',rank:r.querySelector('[name="rank"]')?.value}));
   }
   function updateSkillSummary(root,actor){
     const panel=root?.querySelector?.('[data-skill-summary]');if(!panel)return;
-    const stats=getSkillStats(actor,skillRows(root));
+    const stats=getSkillStats(actor,skillRows(root,actor));
     const assign=(sel,value)=>{const el=root.querySelector(sel);if(el)el.textContent=String(value);};
     assign('[data-skill-spent]',stats.spent);
     assign('[data-skill-remaining]',stats.remaining===null?'—':stats.remaining);
@@ -135,14 +148,9 @@
     if(note){note.textContent=stats.note;note.classList.toggle('is-error',!stats.valid);note.setAttribute('role',stats.valid?'status':'alert');}
     const progress=root.querySelector('[data-skill-progress]');
     if(progress){progress.max=Math.max(1,stats.limit??stats.spent??1);progress.value=Math.min(progress.max,stats.spent);}
-    for(const tier of stats.tiers){
-      const el=root.querySelector(`[data-pyramid-tier="${tier.rank}"]`);if(!el)continue;
-      el.classList.toggle('is-overfull',stats.limit!==null&&tier.names.length>tier.cap);
-      const usage=el.querySelector('[data-pyramid-usage]');if(usage)usage.textContent=`${tier.names.length}/${tier.cap}`;
-      [...el.querySelectorAll('[data-pyramid-slot]')].forEach((cell,i)=>{
-        cell.textContent=tier.names[i]||'＋';cell.title=tier.names[i]||'Свободное место';cell.classList.toggle('is-filled',Boolean(tier.names[i]));
-      });
-    }
+    // Rebuild entire graphic: NPC tiers and slot counts vary as inputs change.
+    const pyramid=root.querySelector?.('[data-skill-pyramid]');
+    if(pyramid) pyramid.outerHTML=skillPyramidMarkup(stats);
     assign('.fte-pyramid-zero span',`+0 — ${stats.zero} навыков`);
     panel.classList.toggle('is-invalid',!stats.valid);
     const editor=root.querySelector('.fte-editor')||root;
@@ -201,7 +209,7 @@
     const original=Object.fromEntries(list(actor,kind).map(([key,value])=>[key,clone(value)]));
     const names=skillNames(actor);
     ensureEditorStyles();
-    const initialSkillStats=getSkillStats(actor,Object.values(original).filter(row=>!row?.extra_id).map(row=>({name:row.name,rank:row.rank})));
+    const initialSkillStats=getSkillStats(actor,Object.values(original).filter(row=>!isPlayerSkills(actor)||!row?.extra_id).map(row=>({name:row.name,rank:row.rank})));
     const summary=kind==='skills'?`<div data-skill-summary class="fte-skill-summary" role="status" aria-live="polite">
        <div class="fte-skill-metric"><span>Распределено</span><strong data-skill-spent>${initialSkillStats.spent}</strong></div>
        <div class="fte-skill-metric"><span>Осталось</span><strong data-skill-remaining>${initialSkillStats.remaining===null?'—':initialSkillStats.remaining}</strong></div>
@@ -220,7 +228,7 @@
           for(const row of rows){const key=row.dataset.traitKey;const base=original[key]||{...clone(defaults[kind]),name:''};const value=base.extra_id?clone(base):read(row,kind,base);const slug=value.name.trim().toLocaleLowerCase();if(names.has(slug)&&!value.extra_id)throw new Error(`Повторяется название «${value.name}».`);names.add(slug);result.push({key,value});}
         }catch(error){ui.notifications.error(String(error.message||error));return null;}
         if(kind==='skills'){
-          const evaluated=getSkillStats(actor,result.filter(r=>!r.value.extra_id).map(r=>({name:r.value.name,rank:r.value.rank})));
+          const evaluated=getSkillStats(actor,result.filter(r=>!isPlayerSkills(actor)||!r.value.extra_id).map(r=>({name:r.value.name,rank:r.value.rank})));
           if(!evaluated.valid){ui.notifications.error(evaluated.note);return null;}
         }
         return result;
