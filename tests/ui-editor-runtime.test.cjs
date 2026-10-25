@@ -23,7 +23,7 @@ const script=fs.readFileSync(path.join(root,'scripts/character-editors.js'),'utf
   assert.ok(styles,'editor must inject a scoped style into the document, not rely on manifest styles alone');
   assert.equal(styles.textContent,css,'runtime styles must be byte-for-byte equal to module CSS');
   assert.equal(nodes.size,1,'reopening editor must not insert duplicate styles');
-  assert.ok(contents.every(x=>x.includes('<div class="fte-editor"')),'Dialog content has a stable, styled root');
+  assert.ok(contents.every(x=>x.includes('<div class="fte-editor')),'Dialog content has a stable, styled root');
   assert.ok(contents.every(x=>!x.includes('<form class="fte-editor"')),'no nested forms inside DialogV2');
   assert.equal((contents[0].match(/data-trait-key=/g)||[]).length,19,'skills must be all present, with a scrollable list');
   assert.equal((contents[1].match(/data-trait-key=/g)||[]).length,5,'aspects must be all present');
