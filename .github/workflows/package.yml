@@ -51,7 +51,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           version=$(node -p "require('./module.json').version")
-          git add "dist/fate-toolkit-v${version}.zip"
+          git add -f "dist/fate-toolkit-v${version}.zip"
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "Package Fate Toolkit v${version}"
           git push origin HEAD:main
