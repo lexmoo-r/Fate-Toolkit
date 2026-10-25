@@ -26,10 +26,9 @@ const script=fs.readFileSync(path.join(__dirname,'..','scripts/character-editors
  assert.match(alerts.pop(),/от \+0 до \+4/);
  assert.equal(await click([['one','Атлетика','4'],['two','Драка','4']]),null,'duplicate +4 without supporting lower skills breaks ladder');
  assert.match(alerts.pop(),/Нарушена лестница/);
- assert.equal(await click([['one','Атлетика','2'],['two','Драка','1']]),null,'one +1 does not support one +2');
- assert.match(alerts.pop(),/Нарушена лестница/);
+ assert.equal((await click([['one','Атлетика','2'],['two','Драка','1']])).length,2,'same count on +1 and +2 is valid');
  assert.equal((await click([['one','Атлетика','1'],['two','Драка','1']])).length,2,'a single positive tier is a valid partial ladder');
- // Shape is strictly decreasing upward; specific 5/3/2/1 capacity is not required.
+ // Skill columns are non-increasing upward; fixed 5/3/2/1 capacities are not required.
  const helperContext=script.replace('  globalThis.FateToolkitEditors=Object.freeze({editActor,setupWorld});','  globalThis.__skillPyramidHelpers={getSkillStats,skillPyramidMarkup,updateSkillSummary};\n  globalThis.FateToolkitEditors=Object.freeze({editActor,setupWorld});');
  const pc2=baseContext({game:{user:{isGM:true,id:'gm'},settings:{get:()=>null}}});
  pc2.foundry.utils.deepClone=structuredClone; pc2.FateToolkitWill={enabled:()=>true,details:()=>({isPc:true})};
@@ -40,6 +39,16 @@ const script=fs.readFileSync(path.join(__dirname,'..','scripts/character-editors
  assert.equal(altStats.valid,true,'4/3/1 is a valid alternative PC ladder despite the original fixed slots');
  assert.deepEqual(Array.from(altStats.tiers,t=>t.cap),[1,3,4]);
  assert.equal((pc2.__skillPyramidHelpers.skillPyramidMarkup(altStats).match(/data-pyramid-slot=/g)||[]).length,8);
+ const equalPc=pc2.__skillPyramidHelpers.getSkillStats(actor,[
+  {name:'A',rank:3},{name:'B',rank:3},
+  {name:'C',rank:2},{name:'D',rank:2},
+  {name:'E',rank:1},{name:'F',rank:1}
+ ]);
+ assert.equal(equalPc.valid,true,'2/2/2 distribution is legal');
+ assert.deepEqual(Array.from(equalPc.tiers,t=>t.cap),[2,2,2]);
+ assert.doesNotMatch(pc2.__skillPyramidHelpers.skillPyramidMarkup(equalPc),/is-broken/,'equal tiers are not visually marked invalid');
+ const partialEqual=pc2.__skillPyramidHelpers.getSkillStats(actor,[{name:'A',rank:3},{name:'B',rank:2},{name:'C',rank:1}]);
+ assert.equal(partialEqual.valid,true,'1/1/1 distribution is legal');
  const brokenPc=pc2.__skillPyramidHelpers.getSkillStats(actor,[{name:'Высший',rank:3},{name:'Низший',rank:1}]);
  assert.equal(brokenPc.valid,false,'missing intermediate tier breaks the ladder');
  assert.deepEqual(Array.from(brokenPc.brokenRanks),[3]);
@@ -71,6 +80,12 @@ const script=fs.readFileSync(path.join(__dirname,'..','scripts/character-editors
  assert.match(helpers.skillPyramidMarkup(allowed),/is-override/);
  const npcLadder=helpers.getSkillStats(actor,[{name:'A',rank:2},{name:'B',rank:1},{name:'C',rank:1}]);
  assert.equal(npcLadder.valid,true,'NPCs may obey the standard lower-tier rule');
+ const npcEqual=helpers.getSkillStats(actor,[{name:'A',rank:4},{name:'B',rank:3},{name:'C',rank:2},{name:'D',rank:1}]);
+ assert.equal(npcEqual.valid,true,'NPCs accept equality across every adjacent rank');
+ assert.equal(npcEqual.npcOverride,false,'NPC equality requires no opt-out');
+ const npcBroken=helpers.getSkillStats(actor,[{name:'High A',rank:2},{name:'High B',rank:2},{name:'Low',rank:1}]);
+ assert.equal(npcBroken.valid,false,'fewer skills at lower rank still invalid for NPC');
+ assert.deepEqual(Array.from(npcBroken.brokenRanks),[2]);
  assert.match(n.content,/fte-pyramid-empty/,'empty NPC ladder has a compact hint');
 
  // The toggle recalculates the ladder without saving and the override is persisted on Save.

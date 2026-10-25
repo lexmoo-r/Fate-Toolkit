@@ -6,7 +6,7 @@ const read = rel => fs.readFileSync(path.join(root, rel), 'utf8');
 
 const moduleJson = JSON.parse(read('module.json'));
 const packageJson = JSON.parse(read('package.json'));
-assert.equal(moduleJson.version, '1.50.0-preview.9.9', 'reference-parity release version mismatch');
+assert.equal(moduleJson.version, '1.50.0-preview.9.10', 'reference-parity release version mismatch');
 assert.equal(packageJson.version, moduleJson.version, 'package/module versions must stay synchronized');
 
 const templateDir = path.join(root, 'templates');

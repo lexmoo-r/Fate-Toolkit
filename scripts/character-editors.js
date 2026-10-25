@@ -165,13 +165,13 @@
       return {rank,cap:names.length,names};
     });
     const counts=new Map(tiers.map(t=>[t.rank,t.names.length]));
-    // A genuine ladder needs strictly more skills at every lower adjacent rank.
+    // Fate Core columns require at least as many skills at every lower adjacent rank.
     // There is no fixed 1/2/3/5 slot distribution, including for NPCs.
-    const brokenRanks=tiers.filter(t=>t.rank>1&&(counts.get(t.rank-1)||0)<=t.names.length).map(t=>t.rank);
+    const brokenRanks=tiers.filter(t=>t.rank>1&&(counts.get(t.rank-1)||0)<t.names.length).map(t=>t.rank);
     const overBudget=limit!==null&&spent>limit;
     const errors=[];
     if(invalid.length)errors.push(isPc?'Для ПК допустимы только целые ранги от +0 до +4.':'Для NPC допустимы только целые ранги от +0 до +12.');
-    if(brokenRanks.length&&!skipLadder&&!override)errors.push('Нарушена лестница: на каждой нижней ступени должно быть больше навыков, чем на соседней верхней.');
+    if(brokenRanks.length&&!skipLadder&&!override)errors.push('Нарушена лестница: на каждой нижней ступени должно быть не меньше навыков, чем на соседней верхней.');
     if(overBudget)errors.push(`Превышен бюджет на ${pointsLabel(spent-limit)}.`);
     const remaining=limit===null?null:limit-spent;
     const complete=isPc&&!errors.length&&remaining===0;
