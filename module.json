@@ -2,7 +2,7 @@
   "id": "fate-aspect-widget",
   "title": "Fate Toolkit: Аспекты и броски",
   "description": "Fate Toolkit для Foundry VTT v13: русифицированные аспекты, действия, броски, конфликты и анкета персонажа.",
-  "version": "1.50.0-preview.9.3",
+  "version": "1.50.0-preview.9.4",
   "authors": [
     {
       "name": "Фиша"

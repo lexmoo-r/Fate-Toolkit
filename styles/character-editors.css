@@ -47,3 +47,15 @@
 .fte-editor [hidden]{display:none!important;}
 @media(max-width:690px){.application:has(.fte-editor){min-width:0!important;}.fte-editor .fte-trait-fields{grid-template-columns:1fr!important;}.fte-editor .fte-trait-head:has(.fte-owned-badge){grid-template-columns:minmax(0,1fr) 34px!important;}.fte-editor .fte-trait-head .fte-owned-badge{grid-column:1/-1;grid-row:2;}.fte-editor .fte-trait-head button{grid-column:2;grid-row:1;}.fte-editor .fte-editor-tools{grid-template-columns:1fr!important;}.fte-editor .fte-field textarea{min-height:90px!important;}}
 @media(max-width:440px){.fte-editor-intro{padding-inline:12px!important;}.fte-editor .fte-editor-tools{padding-inline:12px!important;}.fte-editor .fte-list{padding-inline:12px!important;}.fte-editor .fte-toolbar{padding-inline:12px!important;}.fte-editor .fte-skill-head{grid-template-columns:minmax(0,1fr) 56px 32px!important;gap:7px!important;padding-inline:19px!important;}.fte-editor .fte-trait.fte-skill-row{grid-template-columns:minmax(0,1fr) 56px 32px!important;gap:7px!important;padding-inline:4px!important;}.fte-editor .fte-skill-row input.fte-skill-rank{width:56px!important;}.fte-editor button.fte-remove{width:32px!important;min-width:32px!important;}}
+
+  .fte-editor .fte-skill-summary{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important;padding:8px 18px 12px!important;border-bottom:1px solid var(--fte-line)!important;flex:none!important}
+  .fte-editor .fte-skill-metric{display:flex!important;flex-direction:column!important;gap:2px!important;padding:10px!important;border-radius:8px!important;background:rgba(255,255,255,.055)!important;min-width:0!important}
+  .fte-editor .fte-skill-metric strong{font-size:20px!important;font-variant-numeric:tabular-nums!important}
+  .fte-editor .fte-skill-metric span{font-size:11px!important;color:var(--fte-dim)!important}
+  .fte-editor .fte-skill-guidance{padding:9px 18px!important;border-bottom:1px solid var(--fte-line)!important;font-size:12px!important;flex:none!important;color:var(--fte-dim)!important;line-height:1.5!important}
+  .fte-editor .fte-skill-guidance strong{color:var(--fte-ink)!important}
+  .fte-editor .fte-skill-guidance [data-skill-distribution]{display:block!important;margin-top:4px!important;font-variant-numeric:tabular-nums!important}
+  .fte-editor .fte-skill-row .fte-skill-name input{width:100%!important}
+  .fte-editor .fte-field select{height:36px!important;min-height:36px!important;padding:4px 9px!important}
+  .fte-editor .fte-trait:has([name="linked_skill"]) .fte-field-full{grid-column:1/-1!important}
+  @media(max-width:640px){.fte-editor .fte-skill-summary{padding:8px 12px!important;gap:5px!important}.fte-editor .fte-skill-metric{padding:7px!important}.fte-editor .fte-skill-metric strong{font-size:17px!important}.fte-editor .fte-skill-guidance{padding:8px 12px!important}}

@@ -7,12 +7,28 @@
   // Foundry themes may not apply module styles to DialogV2 consistently.
   // Install the exact stylesheet at dialog-opening time, after system CSS.
   const EDITOR_STYLE_TEXT = "/* Fate Toolkit editors – a self-contained, resize-safe UI.\n   This is also injected by character-editors.js when the dialogs open. Foundry\n   and the Fate Core system can otherwise override dialog form layouts. */\n.application:has(.fte-editor){min-width:min(600px,calc(100vw - 28px))!important;max-width:calc(100vw - 20px)!important;}\n.application:has(.fte-editor) .window-content{display:flex!important;flex-direction:column!important;min-height:0!important;overflow:hidden!important;padding:0!important;}\n.application:has(.fte-editor) .dialog-content{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;min-height:0!important;overflow:hidden!important;padding:0!important;}\n.application:has(.fte-editor) .dialog-content>form{display:flex!important;flex-direction:column!important;min-height:0!important;flex:1 1 auto!important;overflow:hidden!important;margin:0!important;}\n.application:has(.fte-editor) .dialog-buttons{display:flex!important;gap:10px!important;flex:0 0 auto!important;padding:12px 18px!important;border-top:1px solid rgba(215,180,157,.19)!important;}\n.application:has(.fte-editor) .dialog-buttons button{flex:1 1 0!important;min-height:38px!important;}\n.fte-editor{--fte-line:rgba(220,203,194,.18);--fte-subtle:rgba(255,255,255,.035);--fte-accent:#cf7455;--fte-ink:#eae2dc;--fte-dim:#b5aaa5;display:flex!important;flex-direction:column!important;gap:0!important;box-sizing:border-box!important;width:100%!important;min-width:0!important;height:clamp(370px,68vh,690px)!important;max-height:calc(100vh - 165px)!important;padding:0!important;margin:0!important;overflow:hidden!important;color:var(--fte-ink);font-size:13px;line-height:1.45;}\n.fte-editor,.fte-editor *, .fte-editor *:before,.fte-editor *:after{box-sizing:border-box!important;}\n.fte-editor-intro{flex:none;padding:12px 18px 9px;font-size:12px;line-height:1.45;color:var(--fte-dim);border-bottom:1px solid var(--fte-line);}\n.fte-editor-tools{display:grid!important;grid-template-columns:minmax(100px,1fr) minmax(180px,270px)!important;align-items:center!important;gap:12px!important;flex:none!important;padding:12px 18px!important;min-width:0!important;}\n.fte-editor-tools strong{font-weight:700;font-size:14px;}\n.fte-count{display:inline-block;padding:1px 8px;margin-left:6px;border:1px solid var(--fte-line);border-radius:99px;font-weight:500;font-size:11px;color:var(--fte-dim);}\n.fte-editor :is(input,select,textarea){display:block!important;box-sizing:border-box!important;margin:0!important;min-width:0!important;width:100%!important;max-width:100%!important;color:var(--fte-ink)!important;background:#302a30!important;border:1px solid rgba(205,179,168,.26)!important;border-radius:6px!important;box-shadow:none!important;font:inherit!important;line-height:1.4!important;}\n.fte-editor input:not([type=checkbox]){height:34px!important;min-height:34px!important;padding:6px 9px!important;}\n.fte-editor input[type=search]{padding-inline:12px!important;}\n.fte-editor textarea{min-height:104px!important;resize:vertical!important;padding:9px 11px!important;line-height:1.48!important;}\n.fte-editor :is(input,textarea):focus-visible{outline:2px solid var(--fte-accent)!important;outline-offset:1px!important;}\n.fte-editor :is(input,textarea):disabled,.fte-editor input[readonly]{opacity:.64;cursor:not-allowed;}\n.fte-editor .fte-list{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:10px!important;flex:1 1 auto!important;min-height:100px!important;max-height:none!important;margin:0!important;padding:2px 18px 16px!important;overflow-y:scroll!important;overflow-x:hidden!important;overscroll-behavior:contain!important;scrollbar-gutter:stable!important;scrollbar-width:thin!important;scrollbar-color:var(--fte-accent) rgba(255,255,255,.055);}\n.fte-editor .fte-list::-webkit-scrollbar{width:10px;}\n.fte-editor .fte-list::-webkit-scrollbar-track{background:rgba(255,255,255,.04);border-radius:10px;}\n.fte-editor .fte-list::-webkit-scrollbar-thumb{background:#91604e;border-radius:10px;border:2px solid #211d23;}\n.fte-editor .fte-trait{display:block!important;flex:0 0 auto!important;width:100%!important;min-width:0!important;min-height:0!important;margin:0!important;padding:13px 15px!important;border:1px solid var(--fte-line)!important;border-radius:9px!important;background:var(--fte-subtle)!important;}\n.fte-editor .fte-trait-head{display:grid!important;grid-template-columns:minmax(0,1fr) 34px!important;align-items:center!important;gap:10px!important;margin-bottom:12px!important;min-width:0!important;}\n.fte-editor .fte-trait-head:has(.fte-owned-badge){grid-template-columns:minmax(0,1fr) auto 34px!important;}\n.fte-editor .fte-trait-head>input{font-weight:650!important;font-size:14px!important;}\n.fte-editor button.fte-remove{display:grid!important;place-items:center!important;flex:none!important;width:34px!important;max-width:34px!important;min-width:34px!important;height:34px!important;min-height:34px!important;max-height:34px!important;margin:0!important;padding:0!important;border:1px solid var(--fte-line)!important;border-radius:6px!important;background:rgba(0,0,0,.10)!important;color:var(--fte-dim)!important;cursor:pointer;}\n.fte-editor button.fte-remove:hover:not(:disabled){color:#ffa99a!important;border-color:#ac645c!important;}\n.fte-editor .fte-trait-fields{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;align-items:start!important;gap:12px!important;min-width:0!important;}\n.fte-editor .fte-field{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:6px!important;width:100%!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;}\n.fte-editor .fte-field-full{grid-column:auto!important;}\n.fte-editor .fte-field-label{display:block!important;flex:none!important;position:static!important;width:100%!important;padding:0!important;margin:0!important;font-size:12px!important;font-weight:600!important;line-height:1.35!important;text-align:left!important;color:var(--fte-dim)!important;}\n.fte-editor .fte-owned-badge{display:inline-flex!important;align-items:center!important;width:auto!important;white-space:nowrap!important;padding:4px 8px!important;font-size:11px!important;border:1px solid var(--fte-line)!important;border-radius:99px;color:var(--fte-dim);}\n.fte-editor .fte-trait.is-owned{opacity:.70;}\n.fte-editor .fte-toolbar{flex:0 0 auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;min-height:59px!important;margin:0!important;padding:10px 18px!important;border-top:1px solid var(--fte-line)!important;}\n.fte-editor .fte-toolbar>button{display:inline-flex!important;justify-content:center!important;gap:7px!important;width:auto!important;min-width:154px!important;max-width:100%!important;min-height:36px!important;padding:6px 16px!important;border:1px solid var(--fte-accent)!important;border-radius:6px!important;background:rgba(207,116,85,.11)!important;color:var(--fte-ink)!important;}\n.fte-editor .fte-skill-head{display:grid!important;grid-template-columns:minmax(0,1fr) 82px 34px!important;gap:12px!important;flex:0 0 auto!important;align-items:center!important;min-height:28px!important;margin:0!important;padding:4px 30px!important;color:var(--fte-dim)!important;border-bottom:1px solid var(--fte-line)!important;font-size:11px!important;letter-spacing:.02em!important;}\n.fte-editor .fte-skills{gap:0!important;padding:0 18px 8px!important;max-height:none!important;}\n.fte-editor .fte-trait.fte-skill-row{display:grid!important;grid-template-columns:minmax(0,1fr) 82px 34px!important;align-items:center!important;gap:12px!important;flex:0 0 auto!important;min-height:46px!important;max-height:56px!important;width:100%!important;margin:0!important;padding:5px 12px!important;border:0!important;border-bottom:1px solid var(--fte-line)!important;border-radius:0!important;background:transparent!important;}\n.fte-editor .fte-trait.fte-skill-row:nth-child(even){background:rgba(255,255,255,.022)!important;}\n.fte-editor .fte-skill-name{display:flex!important;align-items:center!important;gap:7px!important;min-width:0!important;height:auto!important;}\n.fte-editor .fte-skill-name input{font-size:13px!important;font-weight:500!important;background:transparent!important;}\n.fte-editor .fte-skill-row input.fte-skill-rank{width:82px!important;max-width:82px!important;text-align:center!important;font-size:14px!important;font-weight:650!important;font-variant-numeric:tabular-nums!important;}\n.fte-editor [hidden]{display:none!important;}\n@media(max-width:690px){.application:has(.fte-editor){min-width:0!important;}.fte-editor .fte-trait-fields{grid-template-columns:1fr!important;}.fte-editor .fte-trait-head:has(.fte-owned-badge){grid-template-columns:minmax(0,1fr) 34px!important;}.fte-editor .fte-trait-head .fte-owned-badge{grid-column:1/-1;grid-row:2;}.fte-editor .fte-trait-head button{grid-column:2;grid-row:1;}.fte-editor .fte-editor-tools{grid-template-columns:1fr!important;}.fte-editor .fte-field textarea{min-height:90px!important;}}\n@media(max-width:440px){.fte-editor-intro{padding-inline:12px!important;}.fte-editor .fte-editor-tools{padding-inline:12px!important;}.fte-editor .fte-list{padding-inline:12px!important;}.fte-editor .fte-toolbar{padding-inline:12px!important;}.fte-editor .fte-skill-head{grid-template-columns:minmax(0,1fr) 56px 32px!important;gap:7px!important;padding-inline:19px!important;}.fte-editor .fte-trait.fte-skill-row{grid-template-columns:minmax(0,1fr) 56px 32px!important;gap:7px!important;padding-inline:4px!important;}.fte-editor .fte-skill-row input.fte-skill-rank{width:56px!important;}.fte-editor button.fte-remove{width:32px!important;min-width:32px!important;}}\n";
+
+  // The same constrained layout is applied at DialogV2 runtime: FCO themes can
+  // override style sheets registered with the Foundry module manifest.
+  const EDITOR_VNEXT_STYLE = String.raw`
+  .fte-editor .fte-skill-summary{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important;padding:8px 18px 12px!important;border-bottom:1px solid var(--fte-line)!important;flex:none!important}
+  .fte-editor .fte-skill-metric{display:flex!important;flex-direction:column!important;gap:2px!important;padding:10px!important;border-radius:8px!important;background:rgba(255,255,255,.055)!important;min-width:0!important}
+  .fte-editor .fte-skill-metric strong{font-size:20px!important;font-variant-numeric:tabular-nums!important}
+  .fte-editor .fte-skill-metric span{font-size:11px!important;color:var(--fte-dim)!important}
+  .fte-editor .fte-skill-guidance{padding:9px 18px!important;border-bottom:1px solid var(--fte-line)!important;font-size:12px!important;flex:none!important;color:var(--fte-dim)!important;line-height:1.5!important}
+  .fte-editor .fte-skill-guidance strong{color:var(--fte-ink)!important}
+  .fte-editor .fte-skill-guidance [data-skill-distribution]{display:block!important;margin-top:4px!important;font-variant-numeric:tabular-nums!important}
+  .fte-editor .fte-skill-row .fte-skill-name input{width:100%!important}
+  .fte-editor .fte-field select{height:36px!important;min-height:36px!important;padding:4px 9px!important}
+  .fte-editor .fte-trait:has([name="linked_skill"]) .fte-field-full{grid-column:1/-1!important}
+  @media(max-width:640px){.fte-editor .fte-skill-summary{padding:8px 12px!important;gap:5px!important}.fte-editor .fte-skill-metric{padding:7px!important}.fte-editor .fte-skill-metric strong{font-size:17px!important}.fte-editor .fte-skill-guidance{padding:8px 12px!important}}
+`;
   function ensureEditorStyles(){
     if(typeof document==='undefined'||!document.head)return;
     const id='fate-toolkit-character-editors-runtime-v2';
     let node=document.getElementById(id);
     if(!node){node=document.createElement('style');node.id=id;document.head.appendChild(node);}
-    if(node.textContent!==EDITOR_STYLE_TEXT)node.textContent=EDITOR_STYLE_TEXT;
+    if(node.textContent!==(EDITOR_STYLE_TEXT+EDITOR_VNEXT_STYLE))node.textContent=EDITOR_STYLE_TEXT+EDITOR_VNEXT_STYLE;
   }
 
   const quote=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -30,16 +46,55 @@
   // Use explicit field wrappers instead of naked <label> elements: Foundry's
   // system themes can replace label layout rules inside DialogV2 windows.
   const field=(label,control,full=false)=>`<div class="fte-field${full?' fte-field-full':''}"><span class="fte-field-label">${label}</span>${control}</div>`;
-  function entry(kind,id,data,readonly=false){
+  const prettyName=value=>{
+    const raw=String(value??'');
+    return /^New Aspect(?: \d+)?$/i.test(raw)?'Новый аспект':
+      /^New Stunt(?: \d+)?$/i.test(raw)?'Новый трюк':
+      /^New Skill(?: \d+)?$/i.test(raw)?'Новый навык':raw;
+  };
+  const skillNames=actor=>[...new Set([...Object.values(actor?.system?.skills||{})
+    .map(v=>String(v?.name||'').trim()),...(globalThis.FateToolkitFramework?.names||[])].filter(Boolean))]
+    .sort((a,b)=>a.localeCompare(b,'ru'));
+  function skillSelect(current,names,disabled=''){
+    const raw=String(current||'None').trim();
+    const normalized=raw==='None'?'':raw;
+    const extra=normalized&&!names.includes(normalized)?[normalized]:[];
+    return `<select name="linked_skill" aria-label="Связанный навык" ${disabled}><option value="None" ${!normalized?'selected':''}>Без связанного навыка</option>${[...names,...extra].map(v=>`<option value="${quote(v)}" ${v===normalized?'selected':''}>${quote(globalThis.FateToolkitI18n?.skill?.(v)||v)}</option>`).join('')}</select>`;
+  }
+  function getSkillStats(actor,ranks){
+    const values=ranks.map(v=>Number(v)||0);
+    const spent=values.reduce((sum,v)=>sum+Math.max(0,v),0);
+    const isPc=Boolean(globalThis.FateToolkitWill?.enabled?.()&&globalThis.FateToolkitWill?.details?.(actor)?.isPc);
+    const override=actor.system?.override;
+    const limit=isPc?(override?.active?Math.max(21,Number(override.skillPoints)||0):21):null;
+    const byRank=[4,3,2,1].map(i=>values.filter(v=>v===i).length);
+    const distribution=`+4: ${byRank[0]} из 1 · +3: ${byRank[1]} из 2 · +2: ${byRank[2]} из 3 · +1: ${byRank[3]} из 5`;
+    const warning=limit===null?'У NPC распределение свободное.':
+      spent>limit?'Превышен базовый бюджет. Рост после создания персонажа оформляется через вехи.':
+      values.some(v=>v>4)?'Ранг выше +4 требует отдельного разрешения ведущего.':
+      'Стартовая пирамида: +4 × 1, +3 × 2, +2 × 3, +1 × 5; остальные +0. Дальнейший рост — через вехи.';
+    return {spent,limit,remaining:limit===null?'—':String(Math.max(0,limit-spent)),distribution,warning};
+  }
+  function updateSkillSummary(root,actor){
+    const panel=root?.querySelector('[data-skill-summary]');if(!panel)return;
+    const rows=[...root.querySelectorAll('.fte-skill-row:not([data-extra-owned="true"])')];
+    const data=getSkillStats(actor,rows.map(r=>r.querySelector('[name="rank"]')?.value));
+    panel.querySelector('[data-skill-spent]').textContent=String(data.spent);
+    panel.querySelector('[data-skill-remaining]').textContent=data.remaining;
+    panel.querySelector('[data-skill-limit]').textContent=data.limit===null?'Не ограничен':String(data.limit);
+    panel.querySelector('[data-skill-distribution]').textContent=data.distribution;
+    panel.querySelector('[data-skill-warning]').textContent=data.warning;
+  }
+  function entry(kind,id,data,readonly=false,names=[]){
     const fixed=Boolean(data.extra_id), locked=readonly||fixed;
     const lockedName=locked?'readonly':'';
     const fixedBadge=fixed?'<span class="fte-owned-badge" title="Это свойство задаётся дополнением и изменяется в его редакторе">Из дополнения</span>':'';
     const del=`<button type="button" class="fte-remove" data-remove-trait title="Удалить запись" aria-label="Удалить запись" ${locked?'disabled':''}><i class="fa-solid fa-trash" aria-hidden="true"></i></button>`;
     if(kind==='skills'){
-      const name=`<input name="name" aria-label="Название навыка" value="${quote(data.name||'')}" ${lockedName} placeholder="Название навыка" maxlength="100" required>`;
+      const name=`<input name="name" aria-label="Название навыка" value="${quote(prettyName(data.name||''))}" ${lockedName} placeholder="Название навыка" maxlength="100" required>`;
       return `<article class="fte-trait fte-skill-row${fixed?' is-owned':''}" data-trait-key="${quote(id)}" data-extra-owned="${fixed}"><div class="fte-skill-name">${name}${fixedBadge}</div><input class="fte-skill-rank" name="rank" aria-label="Ранг навыка ${quote(data.name||'')}" type="number" min="-2" max="12" step="1" value="${Number(data.rank||0)}" ${fixed?'disabled':''}>${del}</article>`;
     }
-    const header=`<div class="fte-trait-head"><input name="name" aria-label="Название записи" value="${quote(data.name||'')}" ${lockedName} placeholder="Название" maxlength="100" required>${fixedBadge}${del}</div>`;
+    const header=`<div class="fte-trait-head"><input name="name" aria-label="Название записи" value="${quote(prettyName(data.name||''))}" ${lockedName} placeholder="Название" maxlength="100" required>${fixedBadge}${del}</div>`;
     let fields='';
     const disabled=fixed?'disabled':'';
     if(kind==='aspects')fields=[
@@ -48,7 +103,7 @@
     ].join('');
     if(kind==='stunts')fields=[
       field('Описание трюка',`<textarea name="description" rows="4" ${disabled}>${quote(data.description||'')}</textarea>`,true),
-      field('Связанный навык',`<input name="linked_skill" value="${quote(data.linked_skill||'None')}" ${disabled}>`),
+      field('Связанный навык',skillSelect(data.linked_skill,names,disabled)),
       field('Бонус',`<input name="bonus" type="number" min="-20" max="20" value="${Number(data.bonus||0)}" ${disabled}>`),
       field('Стоимость резерва',`<input name="refresh_cost" type="number" min="0" max="20" value="${Number(data.refresh_cost??1)}" ${disabled}>`)
     ].join('');
@@ -77,8 +132,15 @@
   async function editActor(actor,kind){
     if(!Object.hasOwn(titles,kind)||!isEditable(actor,kind))throw new Error('Нет прав на редактирование.');
     const original=Object.fromEntries(list(actor,kind).map(([key,value])=>[key,clone(value)]));
+    const names=skillNames(actor);
     ensureEditorStyles();
-    const form=`<div class="fte-editor" data-fte-editor autocomplete="off"><div class="fte-editor-intro">Изменения сохраняются в анкете персонажа. Свойства, полученные от дополнений, редактируются в самих дополнениях.</div><div class="fte-editor-tools"><strong>${titles[kind]} <span class="fte-count">${Object.keys(original).length}</span></strong><input type="search" class="fte-search" data-trait-search placeholder="Найти ${kind==='skills'?'навык':'запись'}…" aria-label="Поиск по названию"></div>${kind==='skills'?'<div class="fte-skill-head"><span>Навык</span><span>Ранг</span><span></span></div>':''}<div class="fte-list ${kind==='skills'?'fte-skills':''}" data-traits>${Object.entries(original).map(([k,v])=>entry(kind,k,v,!game.user?.isGM)).join('')}</div>${game.user?.isGM?`<div class="fte-toolbar"><button type="button" data-add-trait><i class="fa-solid fa-plus" aria-hidden="true"></i> Добавить ${kind==='skills'?'навык':kind==='aspects'?'аспект':kind==='stunts'?'трюк':'состояние'}</button></div>`:''}</div>`;
+    const initialSkillStats=getSkillStats(actor,Object.values(original).filter(row=>!row?.extra_id).map(row=>row.rank));
+    const summary=kind==='skills'?`<div data-skill-summary class="fte-skill-summary" role="status" aria-live="polite">
+       <div class="fte-skill-metric"><span>Распределено</span><strong data-skill-spent>${initialSkillStats.spent}</strong></div>
+       <div class="fte-skill-metric"><span>Осталось от бюджета</span><strong data-skill-remaining>${initialSkillStats.remaining}</strong></div>
+       <div class="fte-skill-metric"><span>Бюджет очков</span><strong data-skill-limit>${initialSkillStats.limit===null?'Не ограничен':initialSkillStats.limit}</strong></div>
+     </div><div class="fte-skill-guidance"><strong>Ступени навыков</strong><span data-skill-distribution>${initialSkillStats.distribution}</span><span data-skill-warning>${initialSkillStats.warning}</span></div>`:'';
+    const form=`<div class="fte-editor" data-fte-editor autocomplete="off"><div class="fte-editor-intro">Изменения сохраняются в анкете персонажа. Свойства, полученные от дополнений, редактируются в самих дополнениях.</div><div class="fte-editor-tools"><strong>${titles[kind]} <span class="fte-count">${Object.keys(original).length}</span></strong><input type="search" class="fte-search" data-trait-search placeholder="Найти ${kind==='skills'?'навык':'запись'}…" aria-label="Поиск по названию"></div>${summary}${kind==='skills'?'<div class="fte-skill-head"><span>Навык</span><span>Ранг</span><span></span></div>':''}<div class="fte-list ${kind==='skills'?'fte-skills':''}" data-traits>${Object.entries(original).map(([k,v])=>entry(kind,k,v,!game.user?.isGM,names)).join('')}</div>${game.user?.isGM?`<div class="fte-toolbar"><button type="button" data-add-trait><i class="fa-solid fa-plus" aria-hidden="true"></i> Добавить ${kind==='skills'?'навык':kind==='aspects'?'аспект':kind==='stunts'?'трюк':'состояние'}</button></div>`:''}</div>`;
     const response=await foundry.applications.api.DialogV2.wait({window:{title:`Fate Toolkit · ${titles[kind]}`,resizable:true},position:{width:800,height:710},content:form,buttons:[
       {action:'cancel',label:'Отмена',callback:()=>null},
       {action:'save',label:'Сохранить',default:true,callback:(_event,button)=>{
@@ -91,6 +153,8 @@
         return result;
       }}
     ],render:(_event,app)=>{
+      updateSkillSummary(app.element,actor);
+      app.element?.addEventListener('input',event=>{if(event.target.matches('.fte-skill-rank'))updateSkillSummary(app.element,actor);});
       app.element?.querySelector('[data-trait-search]')?.addEventListener('input',event=>{
         const q=String(event.target.value||'').toLocaleLowerCase().trim();
         for(const row of app.element.querySelectorAll('[data-trait-key]')){
@@ -101,11 +165,11 @@
       app.element?.addEventListener('click',event=>{
         const btn=event.target.closest('button');if(!btn)return;
         if(btn.hasAttribute('data-add-trait')){
-          const list=app.element.querySelector('[data-traits]');const holder=document.createElement('div');holder.innerHTML=entry(kind,newKey(kind),{...clone(defaults[kind]),name:''});list?.append(holder.firstElementChild);
+          const list=app.element.querySelector('[data-traits]');const holder=document.createElement('div');holder.innerHTML=entry(kind,newKey(kind),{...clone(defaults[kind]),name:''},false,names);list?.append(holder.firstElementChild);
           app.element.querySelector('[data-trait-search]')?.value && app.element.querySelector('[data-trait-search]').dispatchEvent(new Event('input',{bubbles:true}));
-          list?.lastElementChild?.querySelector('[name="name"]')?.focus();
+          list?.lastElementChild?.querySelector('[name="name"]')?.focus();updateSkillSummary(app.element,actor);
         }
-        if(btn.hasAttribute('data-remove-trait')){btn.closest('[data-trait-key]')?.remove();}
+        if(btn.hasAttribute('data-remove-trait')){btn.closest('[data-trait-key]')?.remove();updateSkillSummary(app.element,actor);}
       });
     }});
     if(!response)return false;

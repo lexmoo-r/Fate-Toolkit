@@ -130,7 +130,7 @@
                 </div>
                 <label class="fms-field"><span>{{localize "FMS.Description"}}</span><textarea rows="3" data-fms-path="minor.stunt.description">{{draft.minor.stunt.description}}</textarea></label>
                 <div class="fms-two-fields">
-                  <label class="fms-field"><span>{{localize "FMS.LinkedSkill"}}</span><input type="text" data-fms-path="minor.stunt.linked_skill" value="{{minorStuntLinkedSkill}}" placeholder="{{localize 'FMS.NoLinkedSkill'}}"></label>
+                  <label class="fms-field"><span>{{localize "FMS.LinkedSkill"}}</span><select data-fms-path="minor.stunt.linked_skill"><option value="None" {{#unless minorStuntLinkedSkill}}selected{{/unless}}>{{localize "FMS.NoLinkedSkill"}}</option>{{#each stuntSkillsMinor}}<option value="{{name}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
                   <label class="fms-field small"><span>{{localize "FMS.Bonus"}}</span><input type="number" data-fms-path="minor.stunt.bonus" value="{{draft.minor.stunt.bonus}}" step="1"></label>
                 </div>
                 <div class="fms-action-checks">
@@ -156,7 +156,7 @@
                 </div>
                 <label class="fms-field"><span>{{localize "FMS.Description"}}</span><textarea rows="3" data-fms-path="minor.buyStunt.description">{{draft.minor.buyStunt.description}}</textarea></label>
                 <div class="fms-two-fields">
-                  <label class="fms-field"><span>{{localize "FMS.LinkedSkill"}}</span><input type="text" data-fms-path="minor.buyStunt.linked_skill" value="{{minorBuyStuntLinkedSkill}}" placeholder="{{localize 'FMS.NoLinkedSkill'}}"></label>
+                  <label class="fms-field"><span>{{localize "FMS.LinkedSkill"}}</span><select data-fms-path="minor.buyStunt.linked_skill"><option value="None" {{#unless minorBuyStuntLinkedSkill}}selected{{/unless}}>{{localize "FMS.NoLinkedSkill"}}</option>{{#each stuntSkillsBuy}}<option value="{{name}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
                   <label class="fms-field small"><span>{{localize "FMS.Bonus"}}</span><input type="number" data-fms-path="minor.buyStunt.bonus" value="{{draft.minor.buyStunt.bonus}}" step="1"></label>
                 </div>
                 <div class="fms-action-checks">
@@ -241,7 +241,7 @@
                 </div>
                 <label class="fms-field"><span>{{localize "FMS.Description"}}</span><textarea rows="3" data-fms-path="majorStunt.description">{{draft.majorStunt.description}}</textarea></label>
                 <div class="fms-two-fields">
-                  <label class="fms-field"><span>{{localize "FMS.LinkedSkill"}}</span><input type="text" data-fms-path="majorStunt.linked_skill" value="{{majorStuntLinkedSkill}}" placeholder="{{localize 'FMS.NoLinkedSkill'}}"></label>
+                  <label class="fms-field"><span>{{localize "FMS.LinkedSkill"}}</span><select data-fms-path="majorStunt.linked_skill"><option value="None" {{#unless majorStuntLinkedSkill}}selected{{/unless}}>{{localize "FMS.NoLinkedSkill"}}</option>{{#each stuntSkillsMajor}}<option value="{{name}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
                   <label class="fms-field small"><span>{{localize "FMS.Bonus"}}</span><input type="number" data-fms-path="majorStunt.bonus" value="{{draft.majorStunt.bonus}}" step="1"></label>
                 </div>
                 <div class="fms-action-checks">

@@ -1,0 +1,40 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const {baseContext}=require('./harness.cjs');
+const root=path.join(__dirname,'..');
+const text=p=>fs.readFileSync(path.join(root,p),'utf8');
+const doc=()=>{const nodes=new Map();return {nodes,head:{appendChild(n){nodes.set(n.id,n)}},getElementById(id){return nodes.get(id)},createElement:()=>({id:'',textContent:''})};};
+(async()=>{
+  const d=doc();const ctx=baseContext({game:{user:{isGM:true,id:'gm'},settings:{get:()=>null}}});
+  ctx.document=d;ctx.foundry.utils.deepClone=structuredClone;
+  ctx.FateToolkitWill={enabled:()=>true,details:()=>({isPc:true})};
+  let data='';ctx.foundry.applications.api.DialogV2.wait=async config=>{data=config.content;return null;};
+  vm.createContext(ctx);vm.runInContext(text('scripts/character-editors.js'),ctx);
+  const a={isOwner:true,system:{skills:{one:{name:'Атлетика',rank:4},two:{name:'Драка',rank:3}},stunts:{one:{name:'Удар',linked_skill:'Драка',description:''}}}};
+  await ctx.FateToolkitEditors.editActor(a,'skills');
+  assert.match(data,/data-skill-summary/, 'live skill allocation totals missing');
+  assert.match(data,/<strong data-skill-spent>7<\/strong>/,'initial skill spend must show actual totals even before render');
+  assert.match(data,/<strong data-skill-remaining>14<\/strong>/,'21-point creation budget must be visible');
+  assert.match(data,/\+4: 1 из 1/,'pyramid rank hints missing');
+  await ctx.FateToolkitEditors.editActor(a,'stunts');
+  assert.match(data,/<select name="linked_skill"/,'linked skill must be a dropdown, not a text box');
+  assert.match(data,/<option value="Драка" selected>/,'current skill choice must persist');
+  assert.match(data,/Без связанного навыка/,'None must have a Russian label');
+  const mile=text('templates/milestone-player.hbs');
+  for(const target of ['minor.stunt.linked_skill','minor.buyStunt.linked_skill','majorStunt.linked_skill']){
+    assert.match(mile,new RegExp(`<select data-fms-path="${target.replaceAll('.', '\\.')}"`),'milestone stunt skill selection missing');
+    assert.doesNotMatch(mile,new RegExp(`<input[^>]*data-fms-path="${target.replaceAll('.', '\\.')}"`),'manual skill entry left in milestone wizard');
+  }
+  const ectx=baseContext({game:{user:{id:'gm',isGM:true}}});const ed=doc();ectx.document=ed;
+  ectx.FateToolkitExtras={definition:()=>({name:'Защитная печать',description:'',mode:'active',willCost:0,effects:[{kind:'rollModifier',amount:1,skill:'Драка'}]})};
+  let builder='';ectx.foundry.applications.api.DialogV2.wait=async config=>{builder=config.content;return null;};
+  vm.createContext(ectx);vm.runInContext(text('scripts/extra-builder-ui.js'),ectx);
+  await ectx.FateToolkitExtraBuilder.edit({name:'Защитная печать',parent:a,system:{description:{value:''}},img:''});
+  for(const step of ['Образ и описание','Как работает','Что делает дополнение'])assert.ok(builder.includes(step),'missing editor step '+step);
+  for(const preset of ['passive','action','status'])assert.ok(builder.includes('data-extra-preset="'+preset+'"'),'missing easy preset '+preset);
+  assert.match(builder,/data-extra-preview-body/,'live preview missing');
+  assert.match(builder,/<select name="skill"/,'effect skill entry must support selection');
+  assert.ok(ed.nodes.has('fate-toolkit-extra-builder-runtime-v3'),'builder must inject its own scoped styles at runtime');
+  assert.match(ed.nodes.get('fate-toolkit-extra-builder-runtime-v3').textContent,/overflow-y:auto!important/,'scrollable builder required');
+  console.log('ui-workflow.test.cjs OK');
+})().catch(error=>{console.error(error);process.exit(1)});
