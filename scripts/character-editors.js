@@ -86,6 +86,13 @@
 .fte-editor.is-skill-assignment .fte-skill-head{grid-template-columns:minmax(0,1fr) 56px!important}
 .fte-editor.is-skill-assignment .fte-trait.fte-skill-row{grid-template-columns:minmax(0,1fr) 56px!important}
 }
+
+/* NPCs use the same ladder by default; explicit GM override is per actor. */
+.fte-editor .fte-npc-ladder-toggle{display:inline-flex!important;align-items:center!important;gap:6px!important;flex:0 0 auto!important;white-space:nowrap!important;font-size:11px!important;color:var(--fte-dim)!important;cursor:pointer!important}
+.fte-editor .fte-npc-ladder-toggle input[type=checkbox]{display:inline-block!important;width:14px!important;min-width:14px!important;height:14px!important;margin:0!important;accent-color:var(--fte-accent)!important}
+.fte-editor .fte-pyramid-vacant{color:var(--fte-dim)!important;font-size:11px!important}
+.fte-editor .fte-pyramid-tier.is-broken:not(.is-override) .fte-pyramid-grade{color:#ffa6a6!important}
+.fte-editor .fte-pyramid-tier.is-broken.is-override .fte-pyramid-grade{color:#d8b16b!important}
 `;
   function ensureEditorStyles(){
     if(typeof document==='undefined'||!document.head)return;
@@ -126,7 +133,9 @@
     const extra=normalized&&!names.includes(normalized)?[normalized]:[];
     return `<select name="linked_skill" aria-label="Связанный навык" ${disabled}><option value="None" ${!normalized?'selected':''}>Без связанного навыка</option>${[...names,...extra].map(v=>`<option value="${quote(v)}" ${v===normalized?'selected':''}>${quote(globalThis.FateToolkitI18n?.skill?.(v)||v)}</option>`).join('')}</select>`;
   }
-  const SKILL_TIERS=Object.freeze([{rank:4,cap:1},{rank:3,cap:2},{rank:2,cap:3},{rank:1,cap:5}]);
+  const NPC_LADDER_OVERRIDE='npcSkillLadderOverride';
+  const npcLadderOverride=actor=>Boolean(actor?.getFlag?.(ID,NPC_LADDER_OVERRIDE)??actor?.flags?.[ID]?.[NPC_LADDER_OVERRIDE]);
+  const editNpcLadderOverride=(root,actor)=>Boolean(root?.querySelector?.('[data-npc-ladder-override]')?.checked??npcLadderOverride(actor));
   function pointsLabel(number){
     const n=Math.abs(Math.trunc(number)),mod10=n%10,mod100=n%100;
     return `${number} ${mod10===1&&mod100!==11?'очко':mod10>=2&&mod10<=4&&(mod100<12||mod100>14)?'очка':'очков'}`;
@@ -141,34 +150,35 @@
       .reduce((sum,row)=>sum+Math.max(0,Number(row?.rank)||0),0);
     return Math.max(21,alreadySpent,override?.active?(Number(override.skillPoints)||0):0);
   }
-  function getSkillStats(actor,rows){
+  function getSkillStats(actor,rows,options={}){
     const entries=rows.map(row=>typeof row==='object'&&row!==null?row:{name:'',rank:row});
-    const isPc=isPlayerSkills(actor);
-    const limit=allowedSkillBudget(actor);
-    // Fixed slots for PCs; actual ranks and per-rank skill counts for NPCs.
-    const tiers=isPc
-      ? SKILL_TIERS.map(({rank,cap})=>({rank,cap,names:entries.filter(r=>Number(r.rank)===rank).map(r=>String(r.name||'').trim()||'Без названия')}))
-      : [...new Set(entries.map(r=>Number(r.rank)).filter(rank=>Number.isInteger(rank)&&rank>0))]
-          .sort((a,b)=>b-a)
-          .map(rank=>{
-            const names=entries.filter(r=>Number(r.rank)===rank).map(r=>String(r.name||'').trim()||'Без названия');
-            return {rank,cap:names.length,names};
-          });
-    const invalid=entries.filter(r=>String(r.rank??'').trim()===''||!Number.isInteger(Number(r.rank)) || Number(r.rank)<0 || Number(r.rank)>(isPc?4:12));
+    const isPc=isPlayerSkills(actor),limit=allowedSkillBudget(actor);
+    const override=!isPc&&Boolean(options.npcOverride??npcLadderOverride(actor));
+    const skipLadder=Boolean(options.skipLadder);
+    const maxAllowed=isPc?4:12;
+    const invalid=entries.filter(r=>String(r.rank??'').trim()===''||!Number.isInteger(Number(r.rank))||Number(r.rank)<0||Number(r.rank)>maxAllowed);
     const spent=entries.reduce((sum,r)=>sum+(Number.isFinite(Number(r.rank))?Math.max(0,Number(r.rank)):0),0);
-    const overloaded=isPc?tiers.filter(t=>t.names.length>t.cap):[];
+    const top=Math.min(maxAllowed,Math.max(0,...entries.map(r=>Number(r.rank)).filter(rank=>Number.isInteger(rank)&&rank>0)));
+    const tiers=Array.from({length:top},(_,i)=>{
+      const rank=top-i;
+      const names=entries.filter(r=>Number(r.rank)===rank).map(r=>String(r.name||'').trim()||'Без названия');
+      return {rank,cap:names.length,names};
+    });
+    const counts=new Map(tiers.map(t=>[t.rank,t.names.length]));
+    // A genuine ladder needs strictly more skills at every lower adjacent rank.
+    // There is no fixed 1/2/3/5 slot distribution, including for NPCs.
+    const brokenRanks=tiers.filter(t=>t.rank>1&&(counts.get(t.rank-1)||0)<=t.names.length).map(t=>t.rank);
     const overBudget=limit!==null&&spent>limit;
     const errors=[];
     if(invalid.length)errors.push(isPc?'Для ПК допустимы только целые ранги от +0 до +4.':'Для NPC допустимы только целые ранги от +0 до +12.');
-    if(overloaded.length)errors.push('Превышено число мест на ступени '+overloaded.map(t=>`+${t.rank}`).join(', ')+'.');
+    if(brokenRanks.length&&!skipLadder&&!override)errors.push('Нарушена лестница: на каждой нижней ступени должно быть больше навыков, чем на соседней верхней.');
     if(overBudget)errors.push(`Превышен бюджет на ${pointsLabel(spent-limit)}.`);
     const remaining=limit===null?null:limit-spent;
-    const complete=isPc&&!errors.length&&remaining===0&&tiers.every(t=>t.names.length===t.cap);
-    const note=errors.join(' ');
-    return {spent,limit,remaining,tiers,invalid:invalid.length,valid:errors.length===0,errors,note,complete,zero:entries.filter(r=>Number(r.rank)===0).length};
+    const complete=isPc&&!errors.length&&remaining===0;
+    return {spent,limit,remaining,tiers,invalid:invalid.length,valid:errors.length===0,errors,note:errors.join(' '),complete,brokenRanks,npcOverride:override,zero:entries.filter(r=>Number(r.rank)===0).length};
   }
   function skillPyramidMarkup(stats){
-    return `<section class="fte-pyramid ${stats.limit===null?'is-free':''}" data-skill-pyramid aria-label="Лестница навыков">${stats.tiers.length?'':'<p class="fte-pyramid-empty">Нет навыков выше +0</p>'}${stats.tiers.map(t=>`<div class="fte-pyramid-tier ${stats.limit===null?'is-free':''}" data-pyramid-tier="${t.rank}"><span class="fte-pyramid-grade">+${t.rank}</span><div class="fte-pyramid-track">${Array.from({length:t.cap},(_,i)=>`<span class="fte-pyramid-slot ${t.names[i]?'is-filled':''}" data-pyramid-slot="${i}" title="${quote(t.names[i]||'Свободное место')}">${quote(t.names[i]||'＋')}</span>`).join('')}</div><span class="fte-pyramid-usage" data-pyramid-usage>${stats.limit===null?t.names.length+' нав.':t.names.length+'/'+t.cap}</span></div>`).join('')}</section>`;
+    return `<section class="fte-pyramid ${stats.limit===null?'is-free':''}" data-skill-pyramid aria-label="Лестница навыков">${stats.tiers.length?'':'<p class="fte-pyramid-empty">Нет навыков выше +0</p>'}${stats.tiers.map(t=>`<div class="fte-pyramid-tier ${stats.limit===null?'is-free':''} ${stats.brokenRanks.includes(t.rank)?'is-broken':''} ${stats.npcOverride?'is-override':''}" data-pyramid-tier="${t.rank}"><span class="fte-pyramid-grade">+${t.rank}</span><div class="fte-pyramid-track">${t.names.length?t.names.map((name,i)=>`<span class="fte-pyramid-slot is-filled" data-pyramid-slot="${i}" title="${quote(name)}">${quote(name)}</span>`).join(''):'<span class="fte-pyramid-vacant">—</span>'}</div><span class="fte-pyramid-usage" data-pyramid-usage>${t.names.length}</span></div>`).join('')}</section>`;
   }
   function skillRows(root,actor){
     return [...(root?.querySelectorAll?.(isPlayerSkills(actor)?'.fte-skill-row:not([data-extra-owned="true"])':'.fte-skill-row')||[])].map(r=>({
@@ -178,7 +188,7 @@
   }
   function updateSkillSummary(root,actor){
     const panel=root?.querySelector?.('[data-skill-summary]');if(!panel)return;
-    const stats=getSkillStats(actor,skillRows(root,actor));
+    const stats=getSkillStats(actor,skillRows(root,actor),{npcOverride:editNpcLadderOverride(root,actor),skipLadder:root?.querySelector?.('.fte-editor')?.dataset?.skillCatalogMode==='true'});
     const assign=(sel,value)=>{const el=root.querySelector(sel);if(el)el.textContent=String(value);};
     assign('[data-skill-spent]',stats.spent);
     assign('[data-skill-remaining]',stats.remaining===null?'—':stats.remaining);
@@ -251,13 +261,15 @@
     const original=Object.fromEntries(list(actor,kind).map(([key,value])=>[key,clone(value)]));
     const names=skillNames(actor);
     ensureEditorStyles();
-    const initialSkillStats=getSkillStats(actor,Object.values(original).filter(row=>!isPlayerSkills(actor)||!row?.extra_id).map(row=>({name:row.name,rank:row.rank})));
+    const initialSkillStats=getSkillStats(actor,Object.values(original).filter(row=>!isPlayerSkills(actor)||!row?.extra_id).map(row=>({name:row.name,rank:row.rank})),{skipLadder:skillCatalogMode});
+    const showNpcOverride=kind==='skills'&&!skillCatalogMode&&!isPlayerSkills(actor)&&Boolean(game.user?.isGM);
     const summary=kind==='skills'?`<div data-skill-summary class="fte-skill-summary" role="status" aria-live="polite">
        <span class="fte-skill-metric">Очки <strong data-skill-spent>${initialSkillStats.spent}</strong> / <strong data-skill-limit>${initialSkillStats.limit===null?'Без ограничений':initialSkillStats.limit}</strong></span>
        <span class="fte-skill-metric">Осталось <strong data-skill-remaining>${initialSkillStats.remaining===null?'—':initialSkillStats.remaining}</strong></span>
+       ${showNpcOverride?`<label class="fte-npc-ladder-toggle" title="Разрешить этому NPC распределять навыки без соблюдения лестницы"><input type="checkbox" data-npc-ladder-override ${npcLadderOverride(actor)?'checked':''}><span>Без лестницы (NPC)</span></label>`:''}
      </div><details class="fte-pyramid-shell" data-pyramid-shell open><summary class="fte-pyramid-toggle"><span>Лестница навыков</span><span data-pyramid-zero>+0: ${initialSkillStats.zero}</span></summary>${skillPyramidMarkup(initialSkillStats)}</details><div class="fte-skill-feedback" data-skill-warning role="status" ${initialSkillStats.valid?'hidden':''}>${initialSkillStats.note}</div>`:'';
     const intro=kind==='skills'?'':'<div class="fte-editor-intro">Изменения сохраняются в анкете персонажа. Свойства, полученные от дополнений, редактируются в самих дополнениях.</div>';
-    const form=`<div class="fte-editor${kind==='skills'&&!skillCatalogMode?' is-skill-assignment':''}" data-fte-editor autocomplete="off">${intro}<div class="fte-editor-tools"><strong>${titles[kind]} <span class="fte-count">${Object.keys(original).length}</span></strong><input type="search" class="fte-search" data-trait-search placeholder="Найти ${kind==='skills'?'навык':'запись'}…" aria-label="Поиск по названию"></div>${summary}${kind==='skills'?`<div class="fte-skill-head"><span>Навык</span><span>Ранг</span>${skillCatalogMode?'<span></span>':''}</div>`:''}<div class="fte-list ${kind==='skills'?'fte-skills':''}" data-traits>${Object.entries(original).map(([k,v])=>entry(kind,k,v,!game.user?.isGM,names,skillCatalogMode)).join('')}</div>${game.user?.isGM&&(kind!=='skills'||skillCatalogMode)?`<div class="fte-toolbar"><button type="button" data-add-trait><i class="fa-solid fa-plus" aria-hidden="true"></i> Добавить ${kind==='skills'?'навык':kind==='aspects'?'аспект':kind==='stunts'?'трюк':'состояние'}</button></div>`:''}</div>`;
+    const form=`<div class="fte-editor${kind==='skills'&&!skillCatalogMode?' is-skill-assignment':''}" data-fte-editor data-skill-catalog-mode="${skillCatalogMode}" autocomplete="off">${intro}<div class="fte-editor-tools"><strong>${titles[kind]} <span class="fte-count">${Object.keys(original).length}</span></strong><input type="search" class="fte-search" data-trait-search placeholder="Найти ${kind==='skills'?'навык':'запись'}…" aria-label="Поиск по названию"></div>${summary}${kind==='skills'?`<div class="fte-skill-head"><span>Навык</span><span>Ранг</span>${skillCatalogMode?'<span></span>':''}</div>`:''}<div class="fte-list ${kind==='skills'?'fte-skills':''}" data-traits>${Object.entries(original).map(([k,v])=>entry(kind,k,v,!game.user?.isGM,names,skillCatalogMode)).join('')}</div>${game.user?.isGM&&(kind!=='skills'||skillCatalogMode)?`<div class="fte-toolbar"><button type="button" data-add-trait><i class="fa-solid fa-plus" aria-hidden="true"></i> Добавить ${kind==='skills'?'навык':kind==='aspects'?'аспект':kind==='stunts'?'трюк':'состояние'}</button></div>`:''}</div>`;
     const response=await foundry.applications.api.DialogV2.wait({window:{title:`Fate Toolkit · ${titles[kind]}`,resizable:true},position:{width:kind==='skills'?860:800,height:kind==='skills'?760:710},content:form,buttons:[
       {action:'cancel',label:'Отмена',callback:()=>null},
       {action:'save',label:'Сохранить',default:true,callback:(_event,button)=>{
@@ -269,9 +281,10 @@
           for(const row of rows){const key=row.dataset.traitKey;if(kind==='skills'&&!skillCatalogMode&&!Object.hasOwn(original,key))continue;const base=original[key]||{...clone(defaults[kind]),name:''};const value=base.extra_id?clone(base):read(row,kind,base,skillCatalogMode);const slug=value.name.trim().toLocaleLowerCase();if(names.has(slug)&&!value.extra_id)throw new Error(`Повторяется название «${value.name}».`);names.add(slug);result.push({key,value});}
         }catch(error){ui.notifications.error(String(error.message||error));return null;}
         if(kind==='skills'){
-          const evaluated=getSkillStats(actor,result.filter(r=>!isPlayerSkills(actor)||!r.value.extra_id).map(r=>({name:r.value.name,rank:r.value.rank})));
+          const evaluated=getSkillStats(actor,result.filter(r=>!isPlayerSkills(actor)||!r.value.extra_id).map(r=>({name:r.value.name,rank:r.value.rank})),{npcOverride:editNpcLadderOverride(root,actor),skipLadder:skillCatalogMode});
           if(!evaluated.valid){ui.notifications.error(evaluated.note);return null;}
         }
+        if(kind==='skills'&&showNpcOverride)result.npcOverride=editNpcLadderOverride(root,actor);
         return result;
       }}
     ],render:(_event,app)=>{
@@ -280,7 +293,7 @@
       }
       updateSkillSummary(app.element,actor);
       app.element?.addEventListener('input',event=>{if(kind==='skills'&&event.target.matches('.fte-skill-rank, .fte-skill-name input'))updateSkillSummary(app.element,actor);});
-      app.element?.addEventListener('change',event=>{if(kind==='skills'&&event.target.matches('.fte-skill-rank, .fte-skill-name input'))updateSkillSummary(app.element,actor);});
+      app.element?.addEventListener('change',event=>{if(kind==='skills'&&event.target.matches('.fte-skill-rank, .fte-skill-name input, [data-npc-ladder-override]'))updateSkillSummary(app.element,actor);});
       app.element?.querySelector('[data-trait-search]')?.addEventListener('input',event=>{
         const q=String(event.target.value||'').toLocaleLowerCase().trim();
         for(const row of app.element.querySelectorAll('[data-trait-key]')){
@@ -302,6 +315,7 @@
     }});
     if(!response)return false;
     const oldKeys=new Set(Object.keys(original));const newKeys=new Set(response.map(x=>x.key));const update={};
+    if(showNpcOverride&&response.npcOverride!==npcLadderOverride(actor))update[`flags.${ID}.${NPC_LADDER_OVERRIDE}`]=response.npcOverride;
     for(const old of oldKeys)if(!newKeys.has(old)&&!original[old]?.extra_id&&game.user?.isGM&&(kind!=='skills'||skillCatalogMode))update[`system.${kind}.-=${old}`]=null;
     for(const {key,value} of response){
       if(original[key]?.extra_id){

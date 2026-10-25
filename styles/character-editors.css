@@ -123,3 +123,10 @@
 .fte-editor.is-skill-assignment .fte-skill-head{grid-template-columns:minmax(0,1fr) 56px!important}
 .fte-editor.is-skill-assignment .fte-trait.fte-skill-row{grid-template-columns:minmax(0,1fr) 56px!important}
 }
+
+/* NPCs use the same ladder by default; explicit GM override is per actor. */
+.fte-editor .fte-npc-ladder-toggle{display:inline-flex!important;align-items:center!important;gap:6px!important;flex:0 0 auto!important;white-space:nowrap!important;font-size:11px!important;color:var(--fte-dim)!important;cursor:pointer!important}
+.fte-editor .fte-npc-ladder-toggle input[type=checkbox]{display:inline-block!important;width:14px!important;min-width:14px!important;height:14px!important;margin:0!important;accent-color:var(--fte-accent)!important}
+.fte-editor .fte-pyramid-vacant{color:var(--fte-dim)!important;font-size:11px!important}
+.fte-editor .fte-pyramid-tier.is-broken:not(.is-override) .fte-pyramid-grade{color:#ffa6a6!important}
+.fte-editor .fte-pyramid-tier.is-broken.is-override .fte-pyramid-grade{color:#d8b16b!important}

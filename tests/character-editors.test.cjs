@@ -8,7 +8,7 @@ const {baseContext}=require('./harness.cjs');
    physical:{name:'Атлетика',rank:2,description:'Сохранить описание',attack:'special',pc:true},
    extra:{name:'Дар',rank:4,extra_id:'item-1'}
  };
- const actor={name:'Персонаж',isOwner:true,system:{skills:original},updates:[],async update(patch){this.updates.push(patch)}};
+ const actor={name:'Персонаж',isOwner:true,flags:{'fate-aspect-widget':{npcSkillLadderOverride:true}},system:{skills:original},updates:[],async update(patch){this.updates.push(patch)}};
  const user={id:'gm',isGM:true};
  const context=baseContext({game:{user,settings:{get:()=>''}},context:{ui:{notifications:{info:()=>{},error:()=>{}}}}});
  context.foundry.utils.deepClone=structuredClone;

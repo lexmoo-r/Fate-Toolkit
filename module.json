@@ -2,7 +2,7 @@
   "id": "fate-aspect-widget",
   "title": "Fate Toolkit: Аспекты и броски",
   "description": "Fate Toolkit для Foundry VTT v13: русифицированные аспекты, действия, броски, конфликты и анкета персонажа.",
-  "version": "1.50.0-preview.9.8",
+  "version": "1.50.0-preview.9.9",
   "authors": [
     {
       "name": "Фиша"
@@ -127,5 +127,5 @@
   "socket": true,
   "url": "https://github.com/lexmoo-r/Fate-Toolkit",
   "manifest": "https://raw.githubusercontent.com/lexmoo-r/Fate-Toolkit/main/module.json",
-  "download": "https://raw.githubusercontent.com/lexmoo-r/Fate-Toolkit/main/dist/fate-toolkit-v1.50.0-preview.9.8.zip"
+  "download": "https://raw.githubusercontent.com/lexmoo-r/Fate-Toolkit/main/dist/fate-toolkit-v1.50.0-preview.9.9.zip"
 }
